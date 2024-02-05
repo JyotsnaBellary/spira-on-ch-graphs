@@ -9,17 +9,20 @@
     prefix=kn@
 }
 \DeclareStringOption[bibliography]{bibfile}
-\DeclareBoolOption{oneside}
+\def\kn@defaulttarget{print}
+\DeclareStringOption[\kn@defaulttarget]{target}
 \DeclareBoolOption{chapters}
 \DeclareDefaultOption{
     \expandafter\PassOptionsToClass\expandafter{\CurrentOption}{scrreprt}
 }
 \ProcessKeyvalOptions* % process options
 
-\ifkn@oneside
-    \PassOptionsToClass{oneside}{scrreprt} % if loading class, pass option
+\ifx\kn@target\kn@defaulttarget
+    \PassOptionsToClass{twoside}{scrreprt}
+\else
+    \PassOptionsToClass{oneside}{scrreprt}
 \fi
-\LoadClass[10pt,a4paper,parskip,twoside,chapterprefix=true]{scrreprt} % load default page settings and document class
+\LoadClass[10pt,a4paper,parskip,chapterprefix=true]{scrreprt} % load default page settings and document class
 
 \RequirePackage{algotemplate/format} % Load formatting of general stuff
 \RequirePackage{babel}               % set language setting
@@ -38,7 +41,36 @@
 \addtolength{\textheight}{-25mm}
 
 % --------- Single/Double sided printing ---------
-\ifkn@oneside
+\ifx\kn@target\kn@defaulttarget
+    \fancyhead[RO]{\includegraphics[width=60pt]{figures/algo_see.pdf}\vspace{20pt}}
+    \fancyfoot[LE,RO]{
+        \vspace{20pt}
+        \begin{tcolorbox}[height=40pt,hbox,sharp corners,boxsep=2pt,left=0pt,right=0pt,top=2pt,colback=kn_seeblau,colframe=kn_seeblau,coltext=white]
+            \thepage
+        \end{tcolorbox}
+    }
+    \fancypagestyle{intro}{
+        \fancyhf{}
+        \fancyhead[RO]{\includegraphics[width=60pt]{figures/algo_see.pdf}\vspace{20pt}}
+        \renewcommand{\headrulewidth}{0pt} % clear lines in header and footer
+        \renewcommand{\footrulewidth}{0pt}
+        \fancyfoot[LE,RO]{
+            \vspace{20pt}
+            \begin{tcolorbox}[height=40pt,hbox,sharp corners,boxsep=2pt,left=0pt,right=0pt,top=2pt,colback=kn_seeblau,colframe=kn_seeblau,coltext=white]
+                \thepage
+            \end{tcolorbox}
+        }
+    }
+
+    % make \clearpage behave like \cleardoublepage
+    \let\@oldclearpage=\clearpage
+    \let\@oldcleardoublepage=\cleardoublepage
+    \def\@newclearpage{\let\clearpage=\@oldclearpage \@oldcleardoublepage \let\clearpage=\@newclearpage}
+    \let\clearpage=\@newclearpage
+    \let\cleardoublepage=\@newclearpage
+
+    \hypersetup{colorlinks=false}
+\else
     % In this case, the flag for single sided layout is set
     \fancyhead[R]{\includegraphics[width=60pt]{figures/algo_see.pdf}\vspace{20pt}}
     \fancyfoot[R]{
@@ -53,26 +85,6 @@
         \renewcommand{\headrulewidth}{0pt} % clear lines in header and footer
         \renewcommand{\footrulewidth}{0pt}
         \fancyfoot[R]{
-            \vspace{20pt}
-            \begin{tcolorbox}[height=40pt,hbox,sharp corners,boxsep=2pt,left=0pt,right=0pt,top=2pt,colback=kn_seeblau,colframe=kn_seeblau,coltext=white]
-                \thepage
-            \end{tcolorbox}
-        }
-    }
-\else
-    \fancyhead[RO]{\includegraphics[width=60pt]{figures/algo_see.pdf} \vspace{20pt}}
-    \fancyfoot[LE,RO]{
-        \vspace{20pt}
-        \begin{tcolorbox}[height=40pt,hbox,sharp corners,boxsep=2pt,left=0pt,right=0pt,top=2pt,colback=kn_seeblau,colframe=kn_seeblau,coltext=white]
-            \thepage
-        \end{tcolorbox}
-    }
-    \fancypagestyle{intro}{
-        \fancyhf{}
-        \fancyhead[RO]{\includegraphics[width=60pt]{figures/algo_see.pdf} \vspace{20pt}}
-        \renewcommand{\headrulewidth}{0pt} % clear lines in header and footer
-        \renewcommand{\footrulewidth}{0pt}
-        \fancyfoot[LE,RO]{
             \vspace{20pt}
             \begin{tcolorbox}[height=40pt,hbox,sharp corners,boxsep=2pt,left=0pt,right=0pt,top=2pt,colback=kn_seeblau,colframe=kn_seeblau,coltext=white]
                 \thepage
@@ -125,20 +137,11 @@
 \long\def\endabstract{}
 \gdef\kn@abstract{\ClassError{algotemplate/report}{No abstract specified}{Use e.g. \protect\begin{abstract} ... \protect\end{abstract}.}}
 \newcommand{\makeabstract}{
-    \ifkn@oneside
-    \else
-        \cleardoublepage
-    \fi
     \pagenumbering{roman}
     \pagestyle{intro}
     \addcontentsline{toc}{section}{Abstract}
     \section*{Abstract}
     {\kn@abstract}
-    \pagestyle{intro}
-    \ifkn@oneside
-    \else
-        \cleardoublepage
-    \fi
 }
 
 % --------- New format for sections, chapters ---------
@@ -224,13 +227,11 @@
 \AtBeginDocument{
     \addtocontents{toc}{\protect\thispagestyle{intro}}
     \maketitle
+    \clearpage
     \makeabstract
+    \clearpage
     \tableofcontents
-    \ifkn@oneside
-        \clearpage
-    \else
-        \cleardoublepage
-    \fi
+    \clearpage
     \pagenumbering{arabic}
 }
 
@@ -248,7 +249,7 @@
         }
     }
     % end for chapters
-    \newpage
+    \clearpage
     \addcontentsline{toc}{section}{References}
     \bibliography{\kn@bibfile}
     \bibliographystyle{algotemplate/knnat}

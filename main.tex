@@ -11,9 +11,9 @@
 
 % ------------------------------------------ How to use ------------------------
 % -> For the thesis template use:
-% \documentclass[oneside,chapters,yourlangeuage,bibfile=yourbibfile]{template/thesis}
-% - The option "oneside" controls if the template is compiled on a one-sided
-%   layout (digital), otherwise a two-sided layout is used
+% \documentclass[target=print,chapters,yourlangeuage,bibfile=yourbibfile]{template/thesis}
+% - The option "target" controls if the template is compiled on a two-sided
+%   layout (print, the default) or a one-sided one (digital)
 % - The option "chapters" controls if chapters can be used the section
 %   numberings and the TOC depth are modified accordingly
 % - The option "yourlanguage" is used to change the language of the document (no
@@ -33,7 +33,7 @@
 %   bibliography style. Default is bibstyle=algotemplate/knnat
 % ------------------------------------------------------------------------------
 
-\documentclass[english,oneside]{algotemplate/thesis}
+\documentclass[english]{algotemplate/thesis}
 
 % for filler text, can be deleted
 \usepackage{lipsum}
