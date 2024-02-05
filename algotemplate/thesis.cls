@@ -9,7 +9,7 @@
     prefix=kn@
 }
 \DeclareStringOption[bibliography]{bibfile}
-\DeclareStringOption[algotemplate/knnat]{bibstyle}
+\DeclareStringOption[abbrvurl]{bibstyle}
 \def\kn@defaulttarget{print}
 \DeclareStringOption[\kn@defaulttarget]{target}
 \DeclareBoolOption{chapters}

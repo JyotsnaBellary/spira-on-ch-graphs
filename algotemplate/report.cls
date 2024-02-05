@@ -9,7 +9,7 @@
     prefix=kn@
 }
 \DeclareStringOption{bibfile}
-\DeclareStringOption[algotemplate/knnat]{bibstyle}
+\DeclareStringOption[abbrvurl]{bibstyle}
 \DeclareBoolOption{twocolumn}
 \DeclareDefaultOption{
     \expandafter\PassOptionsToClass\expandafter{\CurrentOption}{article}
