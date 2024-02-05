@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
 % define the class thesis
-\ProvidesClass{kntemplate/thesis}
+\ProvidesClass{algotemplate/thesis}
 
 % ---------- key value options for classes ----------
 \RequirePackage{kvoptions}
@@ -21,9 +21,9 @@
 \fi
 \LoadClass[10pt,a4paper,parskip,twoside,chapterprefix=true]{scrreprt} % load default page settings and document class
 
-\RequirePackage{kntemplate/format} % Load formatting of general stuff
-\RequirePackage{babel}             % set language setting
-\RequirePackage{setspace}          % for titlepage
+\RequirePackage{algotemplate/format} % Load formatting of general stuff
+\RequirePackage{babel}               % set language setting
+\RequirePackage{setspace}            % for titlepage
 
 % --------------------------------- Thesis specific formatting ---------------------------------
 
@@ -248,7 +248,7 @@
     % end for chapters
     \newpage
     \bibliography{\kn@bibfile}
-    \bibliographystyle{kntemplate/knnat}
+    \bibliographystyle{algotemplate/knnat}
     \addcontentsline{toc}{section}{References}
 }
 

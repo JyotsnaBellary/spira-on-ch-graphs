@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
 % define the class thesis
-\ProvidesClass{kntemplate/report}
+\ProvidesClass{algotemplate/report}
 
 % ---------- key value options for classes ----------
 \RequirePackage{kvoptions}
@@ -9,7 +9,7 @@
     prefix=kn@
 }
 \DeclareStringOption{bibfile}
-\DeclareStringOption[kntemplate/knnat]{bibstyle}
+\DeclareStringOption[algotemplate/knnat]{bibstyle}
 \DeclareBoolOption{twocolumn}
 \DeclareDefaultOption{
     \expandafter\PassOptionsToClass\expandafter{\CurrentOption}{article}
@@ -22,7 +22,7 @@
 \RequirePackage{xstring}
 
 % Load formatting of general stuff
-\RequirePackage{kntemplate/format}
+\RequirePackage{algotemplate/format}
 
 % set language setting
 \RequirePackage{babel}
