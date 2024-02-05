@@ -207,6 +207,7 @@
     }
 \else
     \setkomafont{sectioning}{\sffamily\LARGE\sectionuline}
+    \addtokomafont{subsubsection}{\rule[0.5ex]{1.5em}{0.5pt}\hskip1em\relax}
     \renewcommand\thesection{\arabic{section}}
     \renewcommand\thesubsection{\thesection.\arabic{subsection}}
     \renewcommand\thesubsubsection{\thesubsection.\arabic{subsubsection}}
