@@ -121,7 +121,8 @@
 }
 
 % --------- New format for abstract ---------
-\renewcommand{\abstract}[1]{\def\kn@abstract{#1}}
+\long\def\abstract#1\end#2{\gdef\kn@abstract{#1}\end{#2}}
+\long\def\endabstract{}
 \gdef\kn@abstract{\ClassError{algotemplate/report}{No abstract specified}{Use e.g. \protect\begin{abstract} ... \protect\end{abstract}.}}
 \newcommand{\makeabstract}{
     \ifkn@oneside
