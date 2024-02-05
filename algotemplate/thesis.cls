@@ -32,7 +32,12 @@
 % --------------------------------- Thesis specific formatting ---------------------------------
 
 % --------- page layout ---------
-\RequirePackage[top=25mm, bottom=3cm, left=25mm, right=25mm]{geometry}
+\RequirePackage[top=25mm,bottom=3cm]{geometry}
+\ifx\kn@target\kn@defaulttarget
+    \geometry{inner=3cm,outer=2cm}
+\else
+    \geometry{left=25mm,right=25mm}
+\fi
 
 % --------- Header and footer ---------
 \fancyhf{}                         % clear header and footer
