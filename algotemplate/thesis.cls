@@ -11,7 +11,7 @@
 \DeclareStringOption[bibliography]{bibfile}
 \DeclareStringOption[abbrvurl]{bibstyle}
 \def\kn@defaulttarget{print}
-\DeclareStringOption[\kn@defaulttarget]{target}
+\expandafter\DeclareStringOption\expandafter[\kn@defaulttarget]{target}
 \DeclareBoolOption{chapters}
 \DeclareDefaultOption{
     \expandafter\PassOptionsToClass\expandafter{\CurrentOption}{scrreprt}
