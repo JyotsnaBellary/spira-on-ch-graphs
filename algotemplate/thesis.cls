@@ -28,14 +28,14 @@
 % --------------------------------- Thesis specific formatting ---------------------------------
 
 % --------- page layout ---------
-\RequirePackage[top=2.5cm, bottom=3cm, left=2.5cm, right=2.5cm]{geometry}
+\RequirePackage[top=25mm, bottom=3cm, left=25mm, right=25mm]{geometry}
 
 % --------- Header and footer ---------
 \fancyhf{}                         % clear header and footer
 \renewcommand{\headrulewidth}{0pt} % clear lines in header and footer
 \renewcommand{\footrulewidth}{0pt}
-\setlength\headheight{80.0pt}      % set height of header
-\addtolength{\textheight}{-80.0pt}
+\setlength\headheight{25mm}        % set height of header
+\addtolength{\textheight}{-25mm}
 
 % --------- Single/Double sided printing ---------
 \ifkn@oneside
@@ -83,19 +83,19 @@
 
 % --------- Title page --------- (Please do not change - title page is fixed from the university)
 \newcommand{\studentno}[1]{\def\@studentno{#1}}
-\newcommand{\@studentno}{}
+\newcommand{\@studentno}{\ClassError{algotemplate/report}{No studentno specified}{Use e.g. \protect\studentno{123456}.}}
 \newcommand{\institute}[1]{\def\@institute{#1}}
 \newcommand{\@institute}{}
 \newcommand{\department}[1]{\def\@department{#1}}
-\newcommand{\@department}{}
+\newcommand{\@department}{\ClassError{algotemplate/report}{No department specified}{Use e.g. \protect\department{Computer and Information Science}.}}
 \newcommand{\group}[1]{\def\@group{#1}}
-\newcommand{\@group}{}
+\newcommand{\@group}{\ClassError{algotemplate/report}{No group specified}{Use e.g. \protect\group{Algorithmics and Theoretical Computer Science}.}}
 \newcommand{\type}[1]{\def\@type{#1}}
-\newcommand{\@type}{}
+\newcommand{\@type}{\ClassError{algotemplate/report}{No type specified}{Use e.g. \protect\type{Master Thesis}.}}
 \newcommand{\advisor}[1]{\def\@advisor{#1}}
-\newcommand{\@advisor}{}
+\newcommand{\@advisor}{\ClassError{algotemplate/report}{No advisor specified}{Use e.g. \protect\advisor{Prof.~Dr.~Sabine Storandt}.}}
 \newcommand{\reviewer}[1]{\def\@reviewer{#1}}
-\newcommand{\@reviewer}{}
+\newcommand{\@reviewer}{\ClassError{algotemplate/report}{No reviewer specified}{Use e.g. \protect\reviewer{Prof.~Dr.~Sabine Storandt}.}}
 
 \renewcommand{\maketitle}{
 \begin{titlepage}
@@ -122,6 +122,7 @@
 
 % --------- New format for abstract ---------
 \renewcommand{\abstract}[1]{\def\kn@abstract{#1}}
+\gdef\kn@abstract{\ClassError{algotemplate/report}{No abstract specified}{Use e.g. \protect\begin{abstract} ... \protect\end{abstract}.}}
 \newcommand{\makeabstract}{
     \ifkn@oneside
     \else
@@ -129,10 +130,10 @@
     \fi
     \pagenumbering{roman}
     \pagestyle{intro}
+    \addcontentsline{toc}{section}{Abstract}
     \section*{Abstract}
     {\kn@abstract}
     \pagestyle{intro}
-    \addcontentsline{toc}{section}{Abstract}
     \ifkn@oneside
     \else
         \cleardoublepage
@@ -148,7 +149,6 @@
 \setcounter{secnumdepth}{3} % show section numbering up to 3 numberings, eg 1.2.1
 
 \newcommand{\chapbox}[2]{
-        % \clearpage
         \begin{minipage}[t]{\textwidth}
             \begin{tcolorbox}
                 [sharp corners,
@@ -214,8 +214,8 @@
 
 % sections have blue underlinings
 \newcommand\sectionuline{%
-    \bgroup\markoverwith{\textcolor{kn_seeblau}{\rule[\dimexpr-4pt-2pt\relax]{2pt}{2pt}}}%
-    \ULon
+    \bgroup\markoverwith{\textcolor{kn_seeblau}%
+    {\rule[\dimexpr-4pt-2pt\relax]{2pt}{2pt}}}\ULon
 }
 
 % --------- Generate Intro ---------
@@ -247,9 +247,9 @@
     }
     % end for chapters
     \newpage
+    \addcontentsline{toc}{section}{References}
     \bibliography{\kn@bibfile}
     \bibliographystyle{algotemplate/knnat}
-    \addcontentsline{toc}{section}{References}
 }
 
 % --------- Page numbers ---------
