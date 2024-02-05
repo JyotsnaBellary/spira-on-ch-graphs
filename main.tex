@@ -1,0 +1,69 @@
+% Algorithmics Thesis Template
+% Version: 2.1.2, 2023-06-28
+
+% "THE BEER-WARE LICENSE" (Revision 42):
+% <kevin.kullmann@uni-konstanz.de> and <gregor.diatzko@uni-konstanz.de> wrote
+% this file. As long as you retain this notice you can do whatever you want with
+% this stuff. If we meet some day, and you think this stuff is worth it, you can
+% buy me a beer in return.
+% - Kevin Kullmann, Gregor Diatzko
+
+
+% ------------------------------------------ How to use ------------------------
+% -> For the thesis template use:
+% \documentclass[oneside,chapters,yourlangeuage,bibfile=yourbibfile]{template/thesis}
+% - The option "oneside" controls if the template is compiled on a one-sided
+%   layout (digital), otherwise a two-sided layout is used
+% - The option "chapters" controls if chapters can be used the section
+%   numberings and the TOC depth are modified accordingly
+% - The option "yourlanguage" is used to change the language of the document (no
+%   babel package in main required)
+% - The option "bibfile=yourbibfile" is used to input a bibliography file to the
+%   document, default value is bibfile=bibliography
+%
+% -> For the report template use:
+% \documentclass[twocolumn,yourlanguage,bibfile=yourbibfile,bibstyle=yourbstfile]{template/report}
+% - The option "twocolumn" controls whether there shall be two columns per page
+%   (if set) or one (if not).
+% - The option "yourlanguage" is used to change the language of the document (no
+%   babel package in main required)
+% - The option "bibfile=yourbibfile" is used to input a bibliography file to the
+%   document. If no bibfile is given, no bibliography is created
+% - The option "bibstyle=yourbstfile" can be used to choose a different
+%   bibliography style. Default is bibstyle=kntemplate/knnat
+% ------------------------------------------------------------------------------
+
+\documentclass[english,oneside]{kntemplate/thesis}
+
+% for filler text, can be deleted
+\usepackage{lipsum}
+
+% ------------------------------------------ Title page ------------------------
+\title{Generic Title}
+\type{Bachelor Thesis/Master Thesis/Report}
+\author{Generic Student}
+\studentno{01/123456}
+\group{Algorithmics}
+\department{Computer and Information Science}
+\institute{University of Konstanz}
+\advisor{Prof. Dr. Sabine Storandt}
+\reviewer{Generic Reviewer}
+\date{\today}
+% ------------------------------------------------------------------------------
+
+% ------------------------------------------ Abstract --------------------------
+\abstract{
+    In this text block you should summarize all the important contents of the
+    paper so that the reader gets a good impression of the material.
+
+    The provided sections are intended to serve as a guideline for how a thesis
+    can be subdivided. They are by no means a fixed requirement.
+}
+% ------------------------------------------------------------------------------
+
+% --------------------------------- Document / Main Content --------------------
+\begin{document}
+
+\input{Manual}
+
+\end{document}

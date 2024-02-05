@@ -1,0 +1,190 @@
+\NeedsTeXFormat{LaTeX2e}
+% define the class thesis
+\ProvidesPackage{kntemplate/CD_2023}
+
+% --------- university of Konstanz, corporate design colors ---------
+\RequirePackage{kntemplate/CD_2023_colours}
+
+% --------- university of Konstanz, corporate design definitions etc ---------
+% Create new counter for tcolorbox
+\newcounter{statements}[section]\setcounter{statements}{1}
+\newcommand\theStatements{\thesection.\arabic{statements}}
+
+% configure tcolorbox package
+\newenvironment{knbox}[3]
+{\begin{tcolorbox}
+    [sharp corners,
+    center,
+    width=\linewidth,
+    parbox=false,
+    colback=white,
+    boxrule=1pt,
+    breakable,
+    enhanced,
+    left=4mm,
+    top=4mm,
+    right=4mm,
+    bottom=4mm,
+    colframe={#1},
+    overlay broken = {
+        \draw[line width=1pt, {#1}, sharp corners]
+        ([yshift=0.5pt, xshift=-0.5pt]frame.south east) rectangle ([yshift=-0.5pt, xshift=0.5pt]frame.north west);
+    }]
+    \refstepcounter{statements}\textbf{\color{#1}{{\lbrack}#2 \theStatements{\rbrack} #3}}
+}
+{
+    \end{tcolorbox}
+}
+
+% configure theoremstyle for all created environments of amsthm
+% -> empty theorem - styling is done by tcolorbox
+\newtheoremstyle{kn}% name of the style to be used
+{}% measure of space to leave above the theorem. E.g.: 3pt
+{}% measure of space to leave below the theorem. E.g.: 3pt
+{}% name of font to use in the body of the theorem
+{}% measure of space to indent
+{}% name of head font
+{}% punctuation between head and body
+{.0em}% space after theorem head; " " = normal interword space
+{\thmname{}\thmnumber{}\thmnote{}}
+
+% use empty theorem style
+\theoremstyle{kn}
+
+% create custom theorem environments (note at first definition [section] create 1.1, 1.2, 1.3 etc for section 1)
+% all subsequent environments have [definition as second argument - shared counter]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{observation}[definition]{Observation}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{example}[definition]{Example}
+
+% switch back to standard theorem style
+\theoremstyle{plain}
+
+% teaching cref package the later created environments
+\crefname{lemma}{Lemma}{lemmas}
+\Crefname{lemma}{Lemma}{Lemmas}
+\crefname{definition}{Definition}{definitions}
+\Crefname{definition}{Definition}{Definitions}
+\crefname{corollary}{Corollary}{corollaries}
+\Crefname{corollary}{Corollary}{Corollaries}
+\crefname{theorem}{Theorem}{theorems}
+\Crefname{theorem}{Theorem}{Theorems}
+\crefname{observation}{Observation}{observations}
+\Crefname{observation}{Observation}{Observations}
+\crefname{remark}{Remark}{remarks}
+\Crefname{remark}{Remark}{Remarks}
+\crefname{example}{Example}{examples}
+\Crefname{example}{Example}{Examples}
+
+% renew environments to paste nested tcolorbox
+\let\oldDefinition\definition
+\let\oldEndDefinition\enddefinition
+
+\renewenvironment{definition}[1][]{
+    \begin{knbox}{kn_seeblau}{Definition}{#1}
+        \oldDefinition
+}{
+        \oldEndDefinition
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+\let\oldLemma\lemma
+\let\oldEndLemma\endlemma
+
+\renewenvironment{lemma}[1][]{
+    \begin{knbox}{kn_seeblau}{Lemma}{#1}
+        \oldLemma
+}{
+        \oldEndLemma
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+\let\oldCorollary\corollary
+\let\oldEndCorollary\endcorollary
+
+\renewenvironment{corollary}[1][]{
+    \begin{knbox}{kn_seeblau}{Corollary}{#1}
+        \oldCorollary
+}{
+        \oldEndCorollary
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+\let\oldTheorem\theorem
+\let\oldEndTheorem\endtheorem
+
+\renewenvironment{theorem}[1][]{
+    \begin{knbox}{kn_seeblau}{Theorem}{#1}
+        \oldTheorem
+}{
+        \oldEndTheorem
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+\let\oldObservation\observation
+\let\oldEndObservation\endobservation
+
+\renewenvironment{observation}[1][]{
+    \begin{knbox}{kn_karpfenblau}{Observation}{#1}
+        \oldObservation
+}{
+        \oldEndObservation
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+\let\oldRemark\remark
+\let\oldEndRemark\endremark
+
+\renewenvironment{remark}[1][]{
+    \begin{knbox}{kn_karpfenblau}{Remark}{#1}
+        \oldRemark
+}{
+        \oldEndRemark
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+\let\oldExample\example
+\let\oldEndExample\endexample
+
+\renewenvironment{example}[1][]{
+    \begin{knbox}{kn_seegruen}{Example}{#1}
+        \oldExample
+}{
+        \oldEndExample
+    \end{knbox}
+    \ignorespacesafterend
+}
+
+
+% --------- Placement of figures inside statements ---------
+\newenvironment{statementfigure}{
+    \begin{minipage}[t]{\linewidth}
+    \captionsetup{type=figure}
+}{
+    \end{minipage}
+}
+
+% --------- university of Konstanz, corporate design underlinings ---------
+\setul{0.55ex}{0.25ex}
+\setulcolor{kn_seeblau}
+\newcommand{\knul}[1]{\ul{#1}}
+
+\newcommand{\knuli}{\setul{0.55ex}{0.25ex}\textcolor{kn_seeblau}{\ul}}
+
+% --------- university of Konstanz, corporate design tables ---------
+\renewcommand{\arraystretch}{1.25} % more space between rows
+\setlength\heavyrulewidth{0.25ex} % thickness for \toprule and \bottomrule
+\setlength\lightrulewidth{0.125ex} % thickness for \midrule
+\let\topruleOld\toprule
+\arrayrulecolor{kn_seeblau}
+\renewcommand{\toprule}{\arrayrulecolor{kn_seeblau}\topruleOld}% change rule color of all tables when use \toprule
