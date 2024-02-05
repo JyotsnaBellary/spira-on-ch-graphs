@@ -9,6 +9,7 @@
     prefix=kn@
 }
 \DeclareStringOption[bibliography]{bibfile}
+\DeclareStringOption[algotemplate/knnat]{bibstyle}
 \def\kn@defaulttarget{print}
 \DeclareStringOption[\kn@defaulttarget]{target}
 \DeclareBoolOption{chapters}
@@ -252,7 +253,7 @@
     \clearpage
     \addcontentsline{toc}{section}{References}
     \bibliography{\kn@bibfile}
-    \bibliographystyle{algotemplate/knnat}
+    \bibliographystyle{\kn@bibstyle}
 }
 
 % --------- Page numbers ---------
