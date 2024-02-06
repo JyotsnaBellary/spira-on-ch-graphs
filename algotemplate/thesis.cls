@@ -28,26 +28,14 @@
 \RequirePackage{algotemplate/format} % Load formatting of general stuff
 \RequirePackage{babel}               % set language setting
 \RequirePackage{setspace}            % for titlepage
+\RequirePackage[top=25mm,bottom=3cm]{geometry}
 
 % --------------------------------- Thesis specific formatting ---------------------------------
 
-% --------- page layout ---------
-\RequirePackage[top=25mm,bottom=3cm]{geometry}
-\ifx\kn@target\kn@defaulttarget
-    \geometry{inner=3cm,outer=2cm}
-\else
-    \geometry{left=25mm,right=25mm}
-\fi
-
-% --------- Header and footer ---------
-\fancyhf{}                         % clear header and footer
-\renewcommand{\headrulewidth}{0pt} % clear lines in header and footer
-\renewcommand{\footrulewidth}{0pt}
-\setlength\headheight{25mm}        % set height of header
-\addtolength{\textheight}{-25mm}
-
 % --------- Single/Double sided printing ---------
 \ifx\kn@target\kn@defaulttarget
+    \geometry{inner=3cm,outer=2cm}  % 1cm binding correction
+
     \fancyhead[RO]{\includegraphics[width=60pt]{figures/algo_see.pdf}\vspace{20pt}}
     \fancyfoot[LE,RO]{
         \vspace{20pt}
@@ -78,6 +66,8 @@
     \hypersetup{colorlinks=false}
 \else
     % In this case, the flag for single sided layout is set
+    \geometry{left=25mm,right=25mm}
+
     \fancyhead[R]{\includegraphics[width=60pt]{figures/algo_see.pdf}\vspace{20pt}}
     \fancyfoot[R]{
         \vspace{20pt}
@@ -98,6 +88,13 @@
         }
     }
 \fi
+
+% --------- Header and footer ---------
+\fancyhf{}                         % clear header and footer
+\renewcommand{\headrulewidth}{0pt} % clear lines in header and footer
+\renewcommand{\footrulewidth}{0pt}
+\setlength\headheight{25mm}        % set height of header
+\addtolength{\textheight}{-25mm}
 
 % --------- Title page --------- (Please do not change - title page is fixed from the university)
 \newcommand{\studentno}[1]{\def\@studentno{#1}}
