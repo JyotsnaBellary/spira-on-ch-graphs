@@ -28,13 +28,15 @@
 
 ## Class Options
 
-*   `target=print` or `target=digital`:
+*   `target=print` or `target=digital` (thesis only):
     Optimize for viewing on paper or screen.
     `target=print` changes `\clearpage` to mean the same as `\cleardoublepage`.
     (default: `target=print`)
-*   `chapters`:
+*   `chapters=false` or `chapters=true` (thesis only):
     Use chapters as top-level structure.
     Recommended only for dissertations.
+    Instead of `chapters=true`, you may type `chapters`.
+    (default: `chapters=false`)
 *   `english`, `ngerman`, …:
     Your advisor's favorite language.
     (default: `english`)
@@ -44,6 +46,10 @@
 *   `bibstyle=mystyle.bst`:
     Name of your advisor's favorite bibliography style.
     (default: `bibstyle=abbrvurl`)
+*   `twocolumn=false` or `twocolumn=true` (report only):
+    Set the text in two columns per page.
+    Instead of `twocolumn=true`, you may type `twocolumn`.
+    (default: `twocolumn=false`)
 
 ## Included Packages
 
