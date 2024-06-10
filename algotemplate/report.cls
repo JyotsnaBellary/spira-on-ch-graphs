@@ -15,6 +15,8 @@
     \expandafter\PassOptionsToClass\expandafter{\CurrentOption}{article}
 }
 \ProcessKeyvalOptions* % process options
+\newif\ifkn@chapters
+\newcounter{chapter}
 
 \LoadClass{article}
 
@@ -38,7 +40,8 @@
 \newcommand{\reviewer}[1]{}
 
 % --------- Page settings and line breaks ---------
-\setlength{\parskip}{10pt}
+\parskip=10pt plus1pt minus1pt
+\parindent=0pt
 \usepackage[margin=2cm, top=2cm, bottom=2cm, headheight=0pt, headsep=0pt]{geometry}
 
 % --------- Generate References ---------
@@ -93,7 +96,8 @@
 }
 
 % --------- Abstract and title design ---------
-\renewcommand{\abstract}[1]{\def\kn@abstract{#1}}
+\long\def\abstract#1\end#2{\gdef\kn@abstract{#1}\end{#2}}
+\long\def\endabstract{}
 
 \renewcommand{\maketitle}{
     % count the number of line breaks
