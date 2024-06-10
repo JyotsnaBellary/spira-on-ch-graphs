@@ -10,6 +10,7 @@
 }
 \DeclareStringOption[bibliography]{bibfile}
 \DeclareStringOption[abbrvurl]{bibstyle}
+\DeclareStringOption[1]{openuptoc}
 \def\kn@defaulttarget{print}
 \expandafter\DeclareStringOption\expandafter[\kn@defaulttarget]{target}
 \DeclareBoolOption{chapters}
@@ -56,14 +57,7 @@
         }
     }
 
-    % make \clearpage behave like \cleardoublepage
-    \let\@oldclearpage=\clearpage
-    \let\@oldcleardoublepage=\cleardoublepage
-    \def\@newclearpage{\let\clearpage=\@oldclearpage \@oldcleardoublepage \let\clearpage=\@newclearpage}
-    \let\clearpage=\@newclearpage
-    \let\cleardoublepage=\@newclearpage
-
-    \hypersetup{colorlinks=false}
+    \AddToHook{begindocument/before}[algotemplate]{\hypersetup{colorlinks=false}}
 \else
     % In this case, the flag for single sided layout is set
     \geometry{left=25mm,right=25mm}
@@ -87,6 +81,9 @@
             \end{tcolorbox}
         }
     }
+
+    % make \cleardoublepage behave like \clearpage
+    \let\cleardoublepage=\clearpage
 \fi
 
 % --------- Header and footer ---------
@@ -98,19 +95,19 @@
 
 % --------- Title page --------- (Please do not change - title page is fixed from the university)
 \newcommand{\studentno}[1]{\def\@studentno{#1}}
-\newcommand{\@studentno}{\ClassError{algotemplate/report}{No studentno specified}{Use e.g. \protect\studentno{123456}.}}
+\newcommand{\@studentno}{\ClassError{algotemplate/thesis}{No studentno specified}{Use e.g. \protect\studentno{123456}.}}
 \newcommand{\institute}[1]{\def\@institute{#1}}
 \newcommand{\@institute}{}
 \newcommand{\department}[1]{\def\@department{#1}}
-\newcommand{\@department}{\ClassError{algotemplate/report}{No department specified}{Use e.g. \protect\department{Computer and Information Science}.}}
+\newcommand{\@department}{\ClassError{algotemplate/thesis}{No department specified}{Use e.g. \protect\department{Computer and Information Science}.}}
 \newcommand{\group}[1]{\def\@group{#1}}
-\newcommand{\@group}{\ClassError{algotemplate/report}{No group specified}{Use e.g. \protect\group{Algorithmics and Theoretical Computer Science}.}}
+\newcommand{\@group}{\ClassError{algotemplate/thesis}{No group specified}{Use e.g. \protect\group{Algorithmics and Theoretical Computer Science}.}}
 \newcommand{\type}[1]{\def\@type{#1}}
-\newcommand{\@type}{\ClassError{algotemplate/report}{No type specified}{Use e.g. \protect\type{Master Thesis}.}}
+\newcommand{\@type}{\ClassError{algotemplate/thesis}{No type specified}{Use e.g. \protect\type{Master Thesis}.}}
 \newcommand{\advisor}[1]{\def\@advisor{#1}}
-\newcommand{\@advisor}{\ClassError{algotemplate/report}{No advisor specified}{Use e.g. \protect\advisor{Prof.~Dr.~Sabine Storandt}.}}
+\newcommand{\@advisor}{\ClassError{algotemplate/thesis}{No advisor specified}{Use e.g. \protect\advisor{Prof.~Dr.~Sabine Storandt}.}}
 \newcommand{\reviewer}[1]{\def\@reviewer{#1}}
-\newcommand{\@reviewer}{\ClassError{algotemplate/report}{No reviewer specified}{Use e.g. \protect\reviewer{Prof.~Dr.~Sabine Storandt}.}}
+\newcommand{\@reviewer}{\ClassError{algotemplate/thesis}{No reviewer specified}{Use e.g. \protect\reviewer{Prof.~Dr.~Sabine Storandt}.}}
 
 \renewcommand{\maketitle}{
 \begin{titlepage}
@@ -138,10 +135,11 @@
 % --------- New format for abstract ---------
 \long\def\abstract#1\end#2{\gdef\kn@abstract{#1}\end{#2}}
 \long\def\endabstract{}
-\gdef\kn@abstract{\ClassError{algotemplate/report}{No abstract specified}{Use e.g. \protect\begin{abstract} ... \protect\end{abstract}.}}
+\gdef\kn@abstract{\ClassError{algotemplate/thesis}{No abstract specified}{Use e.g. \protect\begin{abstract} ... \protect\end{abstract}.}}
 \newcommand{\makeabstract}{
     \pagenumbering{roman}
     \pagestyle{intro}
+    \phantomsection
     \addcontentsline{toc}{section}{Abstract}
     \section*{Abstract}
     {\kn@abstract}
@@ -227,19 +225,19 @@
 }
 
 % --------- Generate Intro ---------
-\AtBeginDocument{
+\AddToHook{begindocument/end}[algotemplate]{
     \addtocontents{toc}{\protect\thispagestyle{intro}}
     \maketitle
-    \clearpage
+    \cleardoublepage
     \makeabstract
-    \clearpage
-    \tableofcontents
-    \clearpage
+    \cleardoublepage
+    {\hypersetup{allcolors=black}\openup\kn@openuptoc\jot\tableofcontents}
+    \cleardoublepage
     \pagenumbering{arabic}
 }
 
 % --------- Generate References ---------
-\AtEndDocument{
+\AddToHook{enddocument}[algotemplate]{
     \fancypagestyle{plain}{\pagestyle{fancy}}
     \thispagestyle{fancy}
     %\renewcommand{\bibname}{References}
@@ -252,7 +250,8 @@
         }
     }
     % end for chapters
-    \clearpage
+    \cleardoublepage
+    \phantomsection
     \addcontentsline{toc}{section}{References}
     \bibliography{\kn@bibfile}
     \bibliographystyle{\kn@bibstyle}

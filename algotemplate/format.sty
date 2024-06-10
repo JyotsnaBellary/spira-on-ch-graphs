@@ -15,8 +15,6 @@
 \RequirePackage[numbers]{natbib}
 \RequirePackage[vlined,ruled,linesnumbered]{algorithm2e}
 \DontPrintSemicolon
-\RequirePackage[backref=page]{hyperref}
-\RequirePackage{bookmark}
 \RequirePackage{array}
 \RequirePackage{fancyhdr}
 \RequirePackage[most]{tcolorbox}
@@ -26,7 +24,6 @@
 \RequirePackage{etoolbox}
 \RequirePackage{caption}
 \RequirePackage{amsthm}
-\RequirePackage[capitalise,noabbrev,nameinlink]{cleveref}
 \RequirePackage{ifthen}
 \RequirePackage{lmodern}
 \RequirePackage{tikz}
@@ -36,13 +33,17 @@
 % Allow Fonts larger than \Huge
 \newcommand{\size}[2]{{\fontsize{#1}{0}\selectfont#2}}
 
-% include corporate design
-\RequirePackage{algotemplate/CD_2023}
-
 % --------- make links clickable ---------
-\hypersetup{
-    linktocpage=true,
-    colorlinks=true,
-    allcolors=kn_seeblau_d,
-    allbordercolors=white
+\AddToHook{begindocument/before}[algotemplate]{
+    \RequirePackage[
+        backref=page,
+        linktoc=all,
+        colorlinks=true,
+        allcolors=kn_seeblau_d,
+        pdfborder={0 0 0},
+        pdfusetitle,
+    ]{hyperref}
+    \RequirePackage{bookmark}
+    \RequirePackage[capitalise,noabbrev]{cleveref}
+    \RequirePackage{algotemplate/CD_2023}
 }

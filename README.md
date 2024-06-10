@@ -30,7 +30,9 @@
 
 *   `target=print` or `target=digital` (thesis only):
     Optimize for viewing on paper or screen.
-    `target=print` changes `\clearpage` to mean the same as `\cleardoublepage`.
+    `target=digital` changes `\cleardoublepage` to mean the same as `\clearpage`;
+    this means that saying `\cleardoublepage` before each new section
+    will not insert empty pages into the print version.
     (default: `target=print`)
 *   `chapters=false` or `chapters=true` (thesis only):
     Use chapters as top-level structure.
@@ -50,6 +52,10 @@
     Set the text in two columns per page.
     Instead of `twocolumn=true`, you may type `twocolumn`.
     (default: `twocolumn=false`)
+*   `openuptoc` (thesis only):
+    How much should the space between lines in the table of contents
+    be increased, in units of 3 pt.
+    (default: `openuptoc=1`)
 
 ## Included Packages
 
