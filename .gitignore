@@ -1,0 +1,8 @@
+/build/
+/build*/
+
+*.o
+*.log
+*.bin
+*.obj
+*.txt
