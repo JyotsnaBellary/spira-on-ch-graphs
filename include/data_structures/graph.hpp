@@ -5,6 +5,8 @@
 #include "data_structures/edge.hpp"
 #include <stdexcept>
 #include <iostream>
+#include <numeric>
+#include <assert.h>
 
 using namespace std;
 
@@ -14,7 +16,10 @@ struct Graph
     vector<uint8_t> active;
     vector<Edge> edges; // flat edge storage                    // 1=active, 0=inactive
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> adj;
-
+    unordered_map<uint64_t, size_t> edge_pos;
+    static inline uint64_t key_directed(NodeId u, NodeId v) {
+        return (uint64_t)u << 32 | (uint32_t)v;
+    }
     Graph() = default;
 
     // resize nodes, edges, active and adj
@@ -40,7 +45,28 @@ struct Graph
     inline const Node &get_node(NodeId id) const { return nodes[id]; }
     inline void set_node(NodeId id, const Node &node) { nodes[id] = node; }
     inline const vector<Node> &get_all_nodes() const { return nodes; }
+    inline const vector<NodeId> get_all_node_ids() {
+        vector<NodeId> nodes(num_nodes());
+        iota(nodes.begin(), nodes.end(), 0);
+        return nodes;
+ 
+    };
     inline const Edge &get_edge(EdgeId id) const { return edges[id]; }
+    // inline bool edge_exists(NodeId src, NodeId dst) const
+    // {
+    //     auto it = adj[src].find(dst);
+    //     return it != adj[src].end();
+    // }
+
+    inline bool edge_exists(NodeId src, NodeId dst) const {
+    return edge_pos.find(key_directed(src, dst)) != edge_pos.end();
+}
+
+    inline const Edge& get_edge(NodeId src, NodeId dst) const {
+        auto it = edge_pos.find(key_directed(src, dst));
+        if (it == edge_pos.end()) throw runtime_error("Edge not found");
+        return edges[it->second];
+    }
     inline const Edge &get_edge_by_src_dst(NodeId src, NodeId dst) const
     {
         auto it = adj[src].find(dst);
@@ -61,7 +87,8 @@ struct Graph
         rev_edge.id = eid + 1; // ensure reverse edge has a valid id
         rev_edge.rev_id = eid;
         edges.emplace_back(rev_edge);
-
+        edge_pos[key_directed(edge.src, edge.trg)] = edge.id;
+        edge_pos[key_directed(rev_edge.src, rev_edge.trg)] = rev_edge.id;
         add_edge_adj(eid, edge.src, edge.trg, edge.cost);
         add_edge_adj(eid + 1, rev_edge.src, rev_edge.trg, rev_edge.cost);
     }
@@ -130,6 +157,33 @@ struct Graph
         return adj[u];
     }
 
+vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank) const {
+    // Basic sanity checks
+    // assert(v >= 0 && static_cast<size_t>(v) < adj.size());
+    // // cout << node_rank.size()<< endl;
+    // // cout << num_nodes() << endl;
+
+    // assert(node_rank.size() == num_nodes()); // rank defined for every node
+
+
+    vector<NodeId> up_neighbors;
+    up_neighbors.reserve(adj[nodeId].size());
+
+    // Iterate the adjacency map directly; neighbors(v) is fine too.
+    for (const auto& [neighbor_id, _] : adj[nodeId]) {
+        // Guard against corrupted keys
+        if (neighbor_id < 0 || static_cast<size_t>(neighbor_id) >= node_rank.size()) continue;
+        // if (edge_exists(nodeId, neighbor_id)){
+        //     if(get_edge_by_src_dst(nodeId, neighbor_id).shortcut) continue;}
+        if (node_rank[neighbor_id] > node_rank[nodeId]) up_neighbors.push_back(neighbor_id);
+    }
+
+    sort(up_neighbors.begin(), up_neighbors.end(),
+              [&](NodeId a, NodeId b){ return node_rank[a] < node_rank[b]; });
+
+    return up_neighbors;
+}
+
     int add_shortcuts(vector<pair<Shortcut, ShortcutOpType>> &shortcuts)
     {
         // Add shortcuts for the given node
@@ -142,26 +196,35 @@ struct Graph
                 Edge edge1;
                 edge1.src = shortcut.u;
                 edge1.trg = shortcut.w;
+                // cout << "Creating shortcut edge: " << edge1.src << " -> " << edge1.trg << " and middle node: " << shortcut.v << endl;
+
                 edge1.cost = static_cast<Weight>(shortcut.cap);
                 edge1.shortcut = true;
                 edge1.sc = {
                     // get the edgeIds.
+                    edge1.sc.middle = shortcut.v,
                     edge1.sc.e_uv = get_edge_by_src_dst(shortcut.u, shortcut.v).id,
                     edge1.sc.e_vw = get_edge_by_src_dst(shortcut.v, shortcut.w).id,
-                    edge1.sc.middle = shortcut.v,
+
                 };
                 // set_edge();
 
                 Edge edge2;
                 edge2.src = shortcut.w;
                 edge2.trg = shortcut.u;
+                // cout << "Creating reverse shortcut edge: " << edge2.src << " -> " << edge2.trg << " and middle node: " << shortcut.v << endl;
                 edge2.cost = static_cast<Weight>(shortcut.cap);
                 edge2.shortcut = true;
                 edge2.sc = {
+                    edge2.sc.middle = shortcut.v,
                     edge2.sc.e_uv = get_edge_by_src_dst(shortcut.w, shortcut.v).id,
                     edge2.sc.e_vw = get_edge_by_src_dst(shortcut.v, shortcut.u).id,
-                    edge2.sc.middle = shortcut.v,
+
                 };
+                // cout << "Need shortcut edges: " << edge1.src << " -> " << edge1.trg << " and " << edge2.src << " -> " << edge2.trg << endl;
+                //print the sc
+                // cout << "Shortcut 1: " << edge1.sc.e_uv << ", " << edge1.sc.e_vw << ", " << edge1.sc.middle << endl;
+                // cout << "Shortcut 2: " << edge2.sc.e_uv << ", " << edge2.sc.e_vw << ", " << edge2.sc.middle << endl;
                 set_edge(edge1, edge2);
 
                 count += 1;

@@ -5,6 +5,8 @@
 #include <data_structures/graph.hpp>
 #include <climits>
 
+//not used
+
 // Helper function to get valid node from PQ
 pair<int, NodeId> pop_valid_node(priority_queue<pair<int, NodeId>, 
                                 vector<pair<int, NodeId>>, 
@@ -20,3 +22,5 @@ pair<int, NodeId> pop_valid_node(priority_queue<pair<int, NodeId>,
     }
     return {INT_MAX, INVALID_NODE};
 }
+
+

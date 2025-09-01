@@ -5,7 +5,9 @@
 #include <algorithms/CH.hpp>
 #include <chrono> // for timing
 #include <data_structures/ch_graph.hpp>
-
+#include <utils/kahip_runner.hpp>
+#include <algorithms/ch_dijkstra.hpp>
+#include <algorithms/CCH.hpp>
 using namespace std;
 using namespace std::chrono;
 
@@ -90,36 +92,36 @@ int main(int argc, char** argv) {
           // Read the input graph
           Graph graph = fh.read_file(filepath);
           cout << "Finished reading graph from " << filepath << endl;
-          // Preprocess the graph using Contraction Hierarchy
+    //       // Preprocess the graph using Contraction Hierarchy
 
-          // graph.printGraph();
-          auto start_ch = high_resolution_clock::now();
+    //       // graph.printGraph();
+    //       auto start_ch = high_resolution_clock::now();
 
-          // fh.exportToCSV(graph, "nodes.csv", "edges.csv", {}, nullopt);
-          // cout << "Finished exporting graph to CSV files." << endl;
+    //       // fh.exportToCSV(graph, "nodes.csv", "edges.csv", {}, nullopt);
+    //       // cout << "Finished exporting graph to CSV files." << endl;
           
           CH ch(graph);
           ch.preprocess();
-          auto end_ch = high_resolution_clock::now();
+    //       auto end_ch = high_resolution_clock::now();
 
-          auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_ch - start_ch);
+    //       auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_ch - start_ch);
 
-          auto h = std::chrono::duration_cast<std::chrono::hours>(duration);
-          duration -= h;
+    //       auto h = std::chrono::duration_cast<std::chrono::hours>(duration);
+    //       duration -= h;
 
-          auto m = std::chrono::duration_cast<std::chrono::minutes>(duration);
-          duration -= m;
+    //       auto m = std::chrono::duration_cast<std::chrono::minutes>(duration);
+    //       duration -= m;
 
-          auto s = std::chrono::duration_cast<std::chrono::seconds>(duration);
-          duration -= s;
+    //       auto s = std::chrono::duration_cast<std::chrono::seconds>(duration);
+    //       duration -= s;
 
-          auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+    //       auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
 
-          std::cout << "Contraction Hierarchy preprocessing time: "
-                    << h.count() << " h "
-                    << m.count() << " m "
-                    << s.count() << " s "
-                    << ms.count() << " ms" << std::endl;
+    //       std::cout << "Contraction Hierarchy preprocessing time: "
+    //                 << h.count() << " h "
+    //                 << m.count() << " m "
+    //                 << s.count() << " s "
+    //                 << ms.count() << " ms" << std::endl;
 
                     // Print the number of shortcuts added
                     // int shortcuts = ch.getEdgeCount() - graph.getEdgeCount();
@@ -129,20 +131,66 @@ int main(int argc, char** argv) {
           //export path to CSV
           // fh.exportToCSV(graph, "nodes.csv", "edges.csv", {}, nullopt);
           // fh.runPythonVisualizer("../output_files/visualizations/plot_network.py");
+        // for (NodeId u = 0; u < ch.get_rank_order().size(); ++u) {
+        //     if (ch.get_rank_order()[u] == INVALID_NODE) {
+        //         std::cerr << "Unranked node: " << u << "\n";
+        //         // optional: assign leftover ranks in any order:
+        //         // ch.get_rank_order()[u] = rank++;
+        //     }
+        // }
+        //   create an instance of CH_graph, nodes, edges and rank order to be given to it 
+        //   cout << "Rank order" << endl;
+        //   for (int i = 0; i < ch.get_rank_order().size(); ++i) {
+        //       cout << "rank" << i << ": " << ch.get_rank_order()[i] << endl;
+        //   }
+        //   cout << endl;
 
-          //create an instance of CH_graph, nodes, edges and rank order to be given to it 
         CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
-        cout << "Created CH_Graph. Ready for Querying. " << "" << endl;
-        cout << "Upward_edge_list:" << endl;
+        // // // // print rank order 
+        cout << "Rank order" << endl;
+        for (int i = 0; i < ch.get_rank_order().size(); ++i) {
+            cout << "rank" << i << ": " << ch.get_rank_order()[i] << endl;
+        }
+        cout << endl;
+
+        // cout << "Created CH_Graph. Ready for Querying. " << "" << endl;
+        // // cout << "Upward_edge_list:" << endl;
         chGraph.print_upward_adj();
-        // cout << "enter src and dst:";
-        // int src, dst;
+        cout << "enter src and dst:";
+        NodeId src, dst;
+        src = 3;
+        dst = 5;
         // cin >> src >> dst;
 
+        //perform dijkstra on normal graph
+        Dijkstra dijkstra(graph);
+        DijkstraResult normal_result = dijkstra.compute_shortest_path(src, dst);
+        cout << "Normal Dijkstra" << endl;
+        cout << "Total cost: " << normal_result.total_cost << endl;
+        for (auto &node : normal_result.path) {
+            cout << node << " ";
+        }
+        cout << endl;
+
         // Perform query on chGraph. Initialise CH Dijkstra
-        // CH_Dijkstra chDijkstra(chGraph);
-        // chDijkstra.run(src, dst);
+        CH_Dijkstra chDijkstra(chGraph);
+        CH_DijkstraResult result = chDijkstra.compute_shortest_path(src, dst);
+        cout << "CH Dijkstra" << endl;
+        cout << "Total cost: " << result.total_cost << endl;
+        for (auto &node : result.ch_path) {
+            cout << node << " ";
+        }
+
+        cout << "Edge IDs:" << endl;
+        for (const auto& edgeId : result.edge_ids) {
+            cout << edgeId << " ";
+        }
+        cout << endl;
+
+        // CCH cch(graph);
+
+        // cch.preprocess();
     }
 
-    return 0;
+    return 1;
 }

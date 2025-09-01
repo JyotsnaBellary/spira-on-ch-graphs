@@ -66,6 +66,9 @@ pair<bool, ShortcutOpType> Dijkstra::shortcut_search(NodeId src, NodeId dst, Nod
 
          // If we reached the destination, reconstruct the path.
         if (node == dst) {
+            if (curr_dist >= distanceCap){
+                return {true, has_direct ? ShortcutOpType::REPLACE : ShortcutOpType::ADD};
+            }
             return {false, ShortcutOpType::SKIP};
         };
 

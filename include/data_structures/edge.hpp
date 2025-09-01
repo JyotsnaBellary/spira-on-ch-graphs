@@ -23,6 +23,6 @@ struct Edge {
     EdgeId replaced_by = INVALID_EDGE;
 
     Edge() = default;
-    Edge(EdgeId eid, EdgeId rev_eid, NodeId u, NodeId v, Weight w, bool is_active=false)
-        : id(eid), rev_id(rev_eid), src(u), trg(v), cost(w), active(is_active) {}
+    Edge(EdgeId eid, EdgeId rev_eid, NodeId u, NodeId v, Weight w, bool active=true, bool shortcut=false)
+        : id(eid), rev_id(rev_eid), src(u), trg(v), cost(w), active(active), shortcut(shortcut) {}
 };
