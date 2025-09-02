@@ -29,7 +29,7 @@ struct CH_Graph {
         //build upward and downward adj list
         build_upward_adj_Lists(rank_order); 
     }
-    
+
     inline bool is_up(NodeId u, NodeId v) { return rank[v] > rank[u]; }   // your convention
 
     int num_nodes() const { return static_cast<int>(nodes.size()); }
@@ -46,7 +46,9 @@ struct CH_Graph {
         for (const auto& edge : edges) {
             if (is_up(edge.src, edge.trg)) {
                 upward_edges_adj[edge.src][edge.trg] = {edge.id, edge.cost};
-                // cout << "Added upward edge from " << edge.src << " to " << edge.trg << " (ID: " << edge.id << ", Cost: " << edge.cost << ")\n";
+                // cout << "Added ";
+                // if (edge.shortcut) cout << "shortcut ";
+                // cout << "upward edge from " << edge.src << " to " << edge.trg << " (ID: " << edge.id << ", Cost: " << edge.cost << ")\n";
             } 
         }
     }

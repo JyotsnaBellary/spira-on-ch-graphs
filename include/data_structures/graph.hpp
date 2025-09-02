@@ -51,21 +51,35 @@ struct Graph
         return nodes;
  
     };
-    inline const Edge &get_edge(EdgeId id) const { return edges[id]; }
-    // inline bool edge_exists(NodeId src, NodeId dst) const
-    // {
-    //     auto it = adj[src].find(dst);
-    //     return it != adj[src].end();
-    // }
+    // --- lookup helper ---
+    inline size_t edge_index(NodeId src, NodeId dst) const {
+        auto it = edge_pos.find(key_directed(src, dst));
+        if (it == edge_pos.end()) throw std::out_of_range("Edge not found");
+        return it->second; // this is the index (and also the id in your scheme)
+    }
+
+    void print_adj() {
+        for (NodeId src = 0; src < adj.size(); src++) {
+            for (const auto& [trg, edgeInfo] : adj[src]) {
+                cout << "Upward Edge from " << src << " to " << trg << " (ID: " << edgeInfo.first << ", Cost: " << edgeInfo.second << ")\n";
+            }
+        }
+        
+    }
+    inline Edge &get_edge(EdgeId id) { return edges.at(id); }
+    
+    // read-only
+    inline const Edge& get_edge(NodeId src, NodeId dst) const {
+        return edges[edge_index(src, dst)];
+    }
 
     inline bool edge_exists(NodeId src, NodeId dst) const {
     return edge_pos.find(key_directed(src, dst)) != edge_pos.end();
 }
 
-    inline const Edge& get_edge(NodeId src, NodeId dst) const {
-        auto it = edge_pos.find(key_directed(src, dst));
-        if (it == edge_pos.end()) throw runtime_error("Edge not found");
-        return edges[it->second];
+    inline Edge& get_edge(NodeId src, NodeId dst) {
+        return edges[edge_index(src, dst)];
+
     }
     inline const Edge &get_edge_by_src_dst(NodeId src, NodeId dst) const
     {
@@ -121,36 +135,9 @@ struct Graph
     // add edge to adjacency list
     EdgeId add_edge_adj(EdgeId edge_id, NodeId u, NodeId v, Weight w)
     {
-        // EdgeId eid = edges.size();
-        // edges.emplace_back(eid, u, v, w, is_shortcut);
         adj[u][v] = {edge_id, w};
         return edge_id;
     }
-
-    void update_edge(NodeId u, NodeId v, Weight w)
-    {
-        auto it = adj[u].find(v);
-        if (it != adj[u].end())
-        {
-            EdgeId eid = it->second.first;
-            edges[eid].cost = w;
-            it->second.second = w; // update cost in adj
-        }
-
-        // edit_edge_adj(u, v, w);
-    }
-
-    // void print_adj_list() const {
-    //     for (NodeId u = 0; u < num_nodes(); ++u) {
-    //         if (is_active(u)) {
-    //             cout << "Node " << u << ": ";
-    //             for (const auto& [v, edgeInfo] : adj[u]) {
-    //                 cout << "(to " << v << ", cost " << edgeInfo.second << ") ";
-    //             }
-    //             cout << endl;
-    //         }
-    //     }
-    // }
 
     const unordered_map<NodeId, pair<EdgeId, Weight>> &neighbors(NodeId u) const
     {
@@ -159,13 +146,6 @@ struct Graph
 
 vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank) const {
     // Basic sanity checks
-    // assert(v >= 0 && static_cast<size_t>(v) < adj.size());
-    // // cout << node_rank.size()<< endl;
-    // // cout << num_nodes() << endl;
-
-    // assert(node_rank.size() == num_nodes()); // rank defined for every node
-
-
     vector<NodeId> up_neighbors;
     up_neighbors.reserve(adj[nodeId].size());
 
@@ -173,8 +153,6 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
     for (const auto& [neighbor_id, _] : adj[nodeId]) {
         // Guard against corrupted keys
         if (neighbor_id < 0 || static_cast<size_t>(neighbor_id) >= node_rank.size()) continue;
-        // if (edge_exists(nodeId, neighbor_id)){
-        //     if(get_edge_by_src_dst(nodeId, neighbor_id).shortcut) continue;}
         if (node_rank[neighbor_id] > node_rank[nodeId]) up_neighbors.push_back(neighbor_id);
     }
 
@@ -196,7 +174,6 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                 Edge edge1;
                 edge1.src = shortcut.u;
                 edge1.trg = shortcut.w;
-                // cout << "Creating shortcut edge: " << edge1.src << " -> " << edge1.trg << " and middle node: " << shortcut.v << endl;
 
                 edge1.cost = static_cast<Weight>(shortcut.cap);
                 edge1.shortcut = true;
@@ -212,7 +189,6 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                 Edge edge2;
                 edge2.src = shortcut.w;
                 edge2.trg = shortcut.u;
-                // cout << "Creating reverse shortcut edge: " << edge2.src << " -> " << edge2.trg << " and middle node: " << shortcut.v << endl;
                 edge2.cost = static_cast<Weight>(shortcut.cap);
                 edge2.shortcut = true;
                 edge2.sc = {
@@ -221,10 +197,7 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                     edge2.sc.e_vw = get_edge_by_src_dst(shortcut.v, shortcut.u).id,
 
                 };
-                // cout << "Need shortcut edges: " << edge1.src << " -> " << edge1.trg << " and " << edge2.src << " -> " << edge2.trg << endl;
-                //print the sc
-                // cout << "Shortcut 1: " << edge1.sc.e_uv << ", " << edge1.sc.e_vw << ", " << edge1.sc.middle << endl;
-                // cout << "Shortcut 2: " << edge2.sc.e_uv << ", " << edge2.sc.e_vw << ", " << edge2.sc.middle << endl;
+                
                 set_edge(edge1, edge2);
 
                 count += 1;
@@ -275,5 +248,27 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                 return u;
         }
         return INVALID_NODE; // no active node found
+    }
+
+    void update_shortcut_info(EdgeId edgeId, EdgeId rev_edgeId, ShortcutInfo shortcutInfo, Weight cost, bool is_shortcut){
+        // Edge edge = get_edge(edgeId);
+        if (is_shortcut && edges[edgeId].replaced == false) {
+            edges[edgeId].replaced = true;
+            edges[edgeId].shortcut = true;
+            edges[edgeId].original_cost = edges[edgeId].cost;
+
+            edges[rev_edgeId].replaced = true;
+            edges[rev_edgeId].shortcut = true;
+            edges[rev_edgeId].original_cost = edges[rev_edgeId].cost;
+        }
+        edges[edgeId].sc.e_uv = shortcutInfo.e_uv;
+        edges[edgeId].sc.e_vw = shortcutInfo.e_vw;
+        edges[edgeId].sc.middle = shortcutInfo.middle;
+        edges[edgeId].cost = cost;
+
+        edges[rev_edgeId].sc.e_uv = shortcutInfo.e_uv;
+        edges[rev_edgeId].sc.e_vw = shortcutInfo.e_vw;
+        edges[rev_edgeId].sc.middle = shortcutInfo.middle;
+        edges[rev_edgeId].cost = cost;
     }
 };

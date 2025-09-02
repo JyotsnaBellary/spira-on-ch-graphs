@@ -1,23 +1,23 @@
 #pragma once
 #include <core/types.hpp>
 #include <data_structures/graph.hpp>
+#include <data_structures/ch_graph.hpp>
 
 class CCH
 {
 public:
     // but here. my graph should be edited
     CCH(Graph &graph);
-    void preprocess();
+    CH_Graph preprocess();
     vector<NodeId> compute_contraction_order();
     void compute_lower_triangles(const vector<NodeId> &contraction_order);
     void set_shortcut_rank();
     void print_shortcuts_by_trg_order() const;
     int add_shortcuts(const vector<NodeId> &neighbors, NodeId middleNode);
-    // void compute_nested_dissection();
     void compute_nested_dissection(vector<int> nodes, vector<NodeId> &reverse_contracted_nodes);
     void add_shortcut(NodeId u, NodeId v, Weight w);
-    // void remove_shortcut(NodeId u, NodeId v);
-    // vector<pair<Shortcut, ShortcutOpType>>& get_shortcuts(NodeId nodeId);
+    void customization(bool default_setting = true);
+    void reset_customization_state_upward_only();
 
 private:
     Graph &graph;
@@ -30,8 +30,7 @@ private:
     }
     std::unordered_map<uint64_t, size_t> shortcutPos; // (u,v) -> index in shortcutsCache
 
-    // std::unordered_map<NodeId, std::unordered_map<NodeId, size_t>> shortcutPositionLookup;
-    vector<vector<NodeId>> lower_triangle_nodes;
+    vector<vector<ShortcutInfo>> lower_triangle_nodes;
     vector<int> rank_of_node;
 
     // rank -> index in shortcutsCache (global order by target, then middle ranks lexicographically)
@@ -63,15 +62,4 @@ private:
         return v;
     }
 
-    inline int max_middle_rank(size_t idx) const
-    {
-        const auto &mids = lower_triangle_nodes[idx];
-        if (mids.empty())
-            return std::numeric_limits<int>::min(); // no middles = worst
-        int best = rank_of_node[mids[0]];
-        for (size_t i = 1; i < mids.size(); ++i)
-            if (rank_of_node[mids[i]] > best)
-                best = rank_of_node[mids[i]];
-        return best; // HIGHER is better (your spec)
-    }
 };

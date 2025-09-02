@@ -10,7 +10,6 @@ using namespace std;
     
 using NodeId = int32_t;
 using EdgeId = int32_t;
-//do I even need this anywhere?
 using Weight = int32_t;
 using Dist = long long;
 using PQItem = pair<int, NodeId>;
@@ -40,13 +39,6 @@ enum class ShortcutOpType { ADD, REPLACE, SKIP };
 struct Ordering {
     // 1-based: node_of_rank[r] = node, rank_of_node[v] = r
     vector<NodeId> node_of_rank, rank_of_node;
-};
-
-struct ShortcutRef {
-    EdgeId e_uv;
-    EdgeId e_vw;
-    NodeId v;
-
 };
 
 

@@ -19,8 +19,8 @@ struct Edge {
 
 
     // optional lineage (debugging)
-    EdgeId replaces    = INVALID_EDGE;  // direct edge this shortcut replaced
-    EdgeId replaced_by = INVALID_EDGE;
+    EdgeId replaced    = false;  // direct edge this shortcut replaced
+    EdgeId original_cost = cost;
 
     Edge() = default;
     Edge(EdgeId eid, EdgeId rev_eid, NodeId u, NodeId v, Weight w, bool active=true, bool shortcut=false)
