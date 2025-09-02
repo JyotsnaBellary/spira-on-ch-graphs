@@ -63,7 +63,6 @@ int CH::calculate_shortcuts(NodeId nodeId)
 
             Shortcut shortcut = {node1, node2, nodeId, bannedCap};
             //adding shortcut for nodeId. print
-            // cout << "Needed shortcut for node " << shortcut.v << ": " << shortcut.u << " -> " << shortcut.w << " with capacity " << shortcut.cap << endl;
 
             shortcutsCache[nodeId].emplace_back(shortcut, shortcutOpType);
             if (shortcutOpType == ShortcutOpType::ADD)
@@ -158,7 +157,6 @@ void CH::compute_rank_order()
     };
 
     while (contractedNodes < graph.num_nodes())
-    // while (contractedNodes <= graph.num_nodes())
     {
         // if there are only 1 or two nodes left, tehn contract one and continue to contract next
         //  get the new edge differences and update priority queue
@@ -189,12 +187,9 @@ void CH::compute_rank_order()
         size_t remaining = graph.num_nodes() - contractedNodes;
         size_t target = std::clamp(remaining / 500, size_t(64), size_t(5000)); // ~0.2% of remaining
 
-
-        // auto independent_nodes = utils.independent_nodes(graph, pq, /*delta=*/50, currentEdgeDiffs);
         int median = utils.compute_active_median(graph, currentEdgeDiffs, median_scratch);
         if (median == INT_MAX)
         {
-            // cout << "No active nodes left, stopping." << endl;
             if (seed_some_unknowns(1000) == 0)
                 break; // truly done
             continue;
@@ -203,14 +198,10 @@ void CH::compute_rank_order()
         auto independent_nodes = utils.independent_nodes(graph, pq, median, currentEdgeDiffs);
         if (independent_nodes.empty())
         {
-            // cout << "No independent nodes found with the delta, trying higher delta." << endl;
             auto independent_nodes = utils.independent_nodes(graph, pq, /*delta=*/median +1, currentEdgeDiffs);
         }
         if (independent_nodes.empty())
         {
-            // cout << "No independent nodes found with higher delta, stopping." << endl;
-            // cout << "number of nodes contracted:" << contractedNodes << endl;
-
             // added new
             //  fallback: contract one best node to guarantee progress
             NodeId u = pick_best_from_pq(pq);
@@ -250,7 +241,6 @@ void CH::compute_rank_order()
                     nbrs_of[i].push_back(v);
         }
 
-        // vector<vector<NodeId>> nbrs_of(independent_nodes.size());
         int deactivated = 0;
         for (size_t i = 0; i < independent_nodes.size(); ++i)
         {
@@ -267,21 +257,10 @@ void CH::compute_rank_order()
         }
         ++epoch; // new round for deduper
         contractedNodes += deactivated;
-        // maybe write an independent func for it?
-        //  for (const auto& [v, e] : graph.neighbors(nodeId)) {
-        //      if (graph.is_active(v)) nbrs_of[i].push_back(v);
-        //  }
-
-        // schedule recompute for its (previously snapshotted) neighbors
-        // for (NodeId v : nbrs_of[i]) push_unique(v);
-        // }
-        // for (NodeId v : nbrs_of[i]) push_unique(v);
+        
         for (auto &snap : nbrs_of)
             for (NodeId v : snap)
                 push_unique(v);
-
-        // cout << "number of contracted nodes: " << contractedNodes << endl;
-        // cout << "number of shortcuts added in total: " << shortcut_count << endl;
     }
 
     // recalculate edge differences for neighbours of contracted nodes
@@ -293,7 +272,6 @@ void CH::compute_rank_order()
     {
         if (rank_order[nodeId] == INT_MAX)
         {
-            // cerr << "Warning: Node " << nodeId << " has rank INT_MAX." << endl;
             errcount++;
         }
     }

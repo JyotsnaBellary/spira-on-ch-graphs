@@ -164,15 +164,25 @@ Ordering FileHandler::read_kahip_output(const string& file_path, int num_nodes) 
     Ordering ordering;
     // ordering.node_of_rank.assign(num_nodes, 0);
     ordering.rank_of_node.assign(num_nodes, 0);
+    ordering.node_of_rank.assign(num_nodes, 0);
 
     for (int i = 0; i < num_nodes; ++i) {
         int rank, nodeId;
-        if (!(in >> rank >> nodeId)) throw std::runtime_error("bad line " + std::to_string(i+2));
+        if (!(in >> nodeId >> rank)) throw std::runtime_error("bad line" + std::to_string(i+2));
 
         if (nodeId == num_nodes) nodeId = 0;
-        ordering.node_of_rank.push_back(nodeId);
+        ordering.node_of_rank[rank-1] = nodeId;
         ordering.rank_of_node[nodeId] = rank;
     }
+
+    // for (int i = 0; i < num_nodes; ++i) {
+    //     int rank, nodeId;
+    //     if (!(in >> rank >> nodeId)) throw std::runtime_error("bad line" + std::to_string(i+2));
+
+    //     if (nodeId == num_nodes) nodeId = 0;
+    //     ordering.node_of_rank.push_back(nodeId);
+    //     ordering.rank_of_node[nodeId] = rank;
+    // }
     return ordering;
 }
 

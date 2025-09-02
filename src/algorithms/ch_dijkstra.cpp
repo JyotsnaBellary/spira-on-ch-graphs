@@ -177,7 +177,7 @@ CH_Dijkstra::CH_Dijkstra(const CH_Graph& graph): graph(graph) {}
 // //turn this into bidirectional djikstra 
 CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
     int num_nodes = graph.num_nodes();
-
+    int number_of_pops = 0;
     
     // 1. Initialize for forward search
     vector<Dist> dist_forward(num_nodes, INF);
@@ -230,6 +230,7 @@ CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
             //-------------------FORWARD-------------------
             auto [curr_dist_forward, forward_node] = pq_forward.top();
             pq_forward.pop();
+            number_of_pops += 1;
 
             // cout << "Forward node: " << forward_node << ", Dist: " << curr_dist_forward << endl;
 
@@ -245,23 +246,23 @@ CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
 
             //do we not need this cjeck?
             if (curr_dist_forward >= best_dist) {
-                cout << "Forward search exceeded best known distance. Stopping." << endl;
+                // cout << "Forward search exceeded best known distance. Stopping." << endl;
                 stop_f = true;
                 if (stop_b) break; // both sides done
                 else continue;      // finish backward side
             }
 
-            cout << "Relaxing Neighbors" << endl;
+            // cout << "Relaxing Neighbors" << endl;
             //Relax upward neighbors
             for (auto& [adjacent_node, edgeInfo] : graph.up_neighbors(forward_node)) {
                 Dist new_dist = dist_forward[forward_node] + (Dist)(edgeInfo.second);
-                cout << "Relaxing edge: " << edgeInfo.first << " to node: " << adjacent_node << ", New Dist: " << new_dist << endl;
+                // cout << "Relaxing edge: " << edgeInfo.first << " to node: " << adjacent_node << ", New Dist: " << new_dist << endl;
                 if (new_dist < dist_forward[adjacent_node]) {
                     dist_forward[adjacent_node] = new_dist;
                     prev_forward[adjacent_node] = forward_node;
                     viaEdge_forward[adjacent_node] = edgeInfo.first;
                     pq_forward.push({new_dist, adjacent_node});
-                    cout << "Pushed to forward PQ: " << adjacent_node << ", Dist: " << new_dist << endl;
+                    // cout << "Pushed to forward PQ: " << adjacent_node << ", Dist: " << new_dist << endl;
                 }
             }
 
@@ -271,8 +272,9 @@ CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
             //-------------------BACKWARD-------------------
             auto [curr_dist_backward, backward_node] = pq_backward.top();
             pq_backward.pop();
+            number_of_pops += 1;
 
-            cout << "Backward node: " << backward_node << ", Dist: " << curr_dist_backward << endl;
+            // cout << "Backward node: " << backward_node << ", Dist: " << curr_dist_backward << endl;
 
             if (curr_dist_backward != dist_backward[backward_node]) continue;
 
@@ -286,7 +288,7 @@ CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
 
             // not needed?
             if (curr_dist_backward >= best_dist) {
-                cout << "Backward search exceeded best known distance. Stopping." << endl;
+                // cout << "Backward search exceeded best known distance. Stopping." << endl;
                 stop_b = true;
                 if (stop_f) break; // both sides done
                 else continue;      // finish forward side
@@ -298,14 +300,14 @@ CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
                    const EdgeId edgeId_up  = edgeInfo.first;                  // v->x (up)
                     const EdgeId edgeId_rev = graph.get_edge(edgeId_up).rev_id;    // x->v (actual) <<< flip
 
-                    cout << "Relaxing edge: " << edgeId_up << " to node: " << adjacent_node << ", New Dist: " << new_dist << endl;
+                    // cout << "Relaxing edge: " << edgeId_up << " to node: " << adjacent_node << ", New Dist: " << new_dist << endl;
                 if (new_dist < dist_backward[adjacent_node]) {
                     dist_backward[adjacent_node] = new_dist;
-                    // prev_backward[backward_node] = adjacent_node;
                     prev_backward[adjacent_node] = backward_node;
-                    viaEdge_backward[adjacent_node] = edgeId_rev;
+                    viaEdge_backward[adjacent_node] = edgeId_up;
+                    // viaEdge_backward[adjacent_node] = edgeId_rev;
                     pq_backward.push({new_dist, adjacent_node});
-                    cout << "Pushed to backward PQ: " << adjacent_node << ", Dist: " << new_dist << endl;
+                    // cout << "Pushed to backward PQ: " << adjacent_node << ", Dist: " << new_dist << endl;
                 }
             }
 
@@ -325,8 +327,8 @@ CH_DijkstraResult CH_Dijkstra::compute_shortest_path(NodeId src, NodeId dst) {
     // }
 
     // Finished. If no path:
-    if (best_dist >= INF || best_node == -1) return CH_DijkstraResult{ {}, {}, -1, {}, {} };
-    return build_ch_path(prev_forward, prev_backward, viaEdge_forward, viaEdge_backward, best_node, best_dist);
+    if (best_dist >= INF || best_node == -1) return CH_DijkstraResult{ {}, {}, -1, {}, {}, number_of_pops};
+    return build_ch_path(prev_forward, prev_backward, viaEdge_forward, viaEdge_backward, best_node, best_dist, number_of_pops);
 }
     
 vector<EdgeId> CH_Dijkstra::unpack_shortcut(Edge edge) {
@@ -347,9 +349,10 @@ vector<EdgeId> CH_Dijkstra::unpack_shortcut(Edge edge) {
     return unpacked;
 }
 
-CH_DijkstraResult CH_Dijkstra::build_ch_path(const vector<int>& prev_forward, const vector<int>& prev_backward, const vector<EdgeId>& viaEdge_forward, const vector<EdgeId>& viaEdge_backward, NodeId best_node, Dist best_dist) 
+CH_DijkstraResult CH_Dijkstra::build_ch_path(const vector<int>& prev_forward, const vector<int>& prev_backward, const vector<EdgeId>& viaEdge_forward, const vector<EdgeId>& viaEdge_backward, NodeId best_node, Dist best_dist, int number_of_pops) 
 {
     CH_DijkstraResult result;
+    result.number_of_pops = number_of_pops;
 
     result.total_cost = best_dist;
 
@@ -373,46 +376,46 @@ CH_DijkstraResult CH_Dijkstra::build_ch_path(const vector<int>& prev_forward, co
     reverse(left_nodes.begin(), left_nodes.end());
 
 
-    for (auto& left_node: left_nodes) {
-        cout << left_node << " ";
-    }
-    cout << endl;
+    // for (auto& left_node: left_nodes) {
+    //     cout << left_node << " ";
+    // }
+    // cout << endl;
 
     for (size_t i=1;i<left_nodes.size();++i) {
         Edge edge = graph.get_edge(viaEdge_forward[left_nodes[i]]);
         ch_left_edges.push_back(edge.id);
-        if (edge.shortcut) {
-            vector<EdgeId> unpacked = unpack_shortcut(edge);
-            ch_left_edges.insert(ch_left_edges.end(), unpacked.begin(), unpacked.end());
-        }
+        // if (edge.shortcut) {
+        //     // vector<EdgeId> unpacked = unpack_shortcut(edge);
+        //     ch_left_edges.insert(ch_left_edges.end(), unpacked.begin(), unpacked.end());
+        // }
         left_edges.push_back(edge.id);
     }
 
     // for (int cur = best_node; cur != -1; cur = prev_backward[cur]) right_nodes.push_back(cur);
     // reverse(right_nodes.begin(), right_nodes.end());
 
-    for (int cur = prev_backward[best_node]; cur != -1; cur = prev_backward[cur])
-    right_nodes.push_back(cur);
+    // for (int cur = prev_backward[best_node]; cur != -1; cur = prev_backward[cur])
+    // right_nodes.push_back(cur);
     // if (right_nodes.size() > 1)
     // {
-        for (size_t i=0;i<right_nodes.size();++i) {
-            Edge edge = graph.get_edge(viaEdge_backward[right_nodes[i]]);
-            ch_right_edges.push_back(edge.id);
-            if (edge.shortcut) {
-                vector<EdgeId> unpacked = unpack_shortcut(edge);
-                ch_right_edges.insert(ch_right_edges.end(), unpacked.begin(), unpacked.end());
-            }
-            right_edges.push_back(edge.id);
-        }
+        // for (size_t i=0;i<right_nodes.size();++i) {
+        //     Edge edge = graph.get_edge(viaEdge_backward[right_nodes[i]]);
+        //     ch_right_edges.push_back(edge.id);
+        //     if (edge.shortcut) {
+        //         vector<EdgeId> unpacked = unpack_shortcut(edge);
+        //         ch_right_edges.insert(ch_right_edges.end(), unpacked.begin(), unpacked.end());
+        //     }
+        //     right_edges.push_back(edge.id);
+        // }
 // }
-    for (auto& left_edge: left_edges) {
-        cout << left_edge << " ";
-    }
+    // for (auto& left_edge: left_edges) {
+    //     cout << left_edge << " ";
+    // }
 
-    for (auto& right_edge: right_edges) {
-        cout << right_edge << " ";
-    }
-    cout << endl;
+    // for (auto& right_edge: right_edges) {
+    //     cout << right_edge << " ";
+    // }
+    // cout << endl;
     return result;
 }
 

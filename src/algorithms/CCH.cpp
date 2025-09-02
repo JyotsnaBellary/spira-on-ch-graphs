@@ -1,6 +1,7 @@
 #include <algorithms/CCH.hpp>
 #include <io/file_handler.hpp>
 #include <utils/kahip_runner.hpp>
+
 using namespace std::chrono;
 
 CCH::CCH(Graph &graph) : graph(graph) {}
@@ -12,10 +13,20 @@ CCH::CCH(Graph &graph) : graph(graph) {}
 void CCH::preprocess()
 {
 
-    cout << "number if nodes:" << graph.num_nodes() << endl;
+    cout << "number of nodes:" << graph.num_nodes() << endl;
     cout << "number of edges:" << graph.num_edges() << endl; 
     auto start_ch = high_resolution_clock::now();
     vector<int> contraction_order = compute_contraction_order();
+    // cout << "contraction order" << endl;
+    // for (int i = 0; i < contraction_order.size(); i++) {
+    //     cout << "rank " << i << ": " << contraction_order[i] << endl;;
+    // }
+
+    // cout << "rank array" << endl;
+    // for (int i = 0; i < rank_of_node.size(); i++) {
+    //     cout << "node_ranks[" <<  i << "]: " << rank_of_node[i] << endl;
+
+    // }
     auto end_ch = high_resolution_clock::now();
 
           auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_ch - start_ch);
@@ -31,7 +42,7 @@ void CCH::preprocess()
 
           auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
 
-          std::cout << "Contraction order preprocessing time: "
+          std::cout << "Node Ordering time: "
                     << h.count() << " h "
                     << m.count() << " m "
                     << s.count() << " s "
@@ -40,6 +51,7 @@ void CCH::preprocess()
     auto start_lower = high_resolution_clock::now();
 
     compute_lower_triangles(contraction_order);
+    set_shortcut_rank();
     auto end_lower = high_resolution_clock::now();
 
      duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_lower - start_lower);
@@ -64,38 +76,104 @@ void CCH::preprocess()
     //write a test for this
 
     // print lower triangles
-    std::cout << "Lower triangles time: "
+    std::cout << "Lower Triangles processing time: "
               << h.count() << " h " << m.count() << " m "
               << s.count() << " s " << ms.count() << " ms\n";
+    // cout << "finished shorting" << endl;
+    // print_shortcuts_by_trg_order();
+    
 
     // Debug (guard or sample on large instances)
-    if (shortcutsCache.size() <= 100) {
-        for (size_t i = 0; i < shortcutsCache.size(); ++i) {
-            const auto& e = shortcutsCache[i];
-            if (e.shortcut) {
-                std::cout << "shortcut between " << e.src << " and " << e.trg << "\n  lower triangles: [";
-                for (auto w : lower_triangle_nodes[i]) std::cout << w << ", ";
-                std::cout << "]\n  ranks: [";
-                for (auto w : lower_triangle_nodes[i]) std::cout << node_ranks[w] << ", ";
-                std::cout << "]\n";
-            }
+    // if (shortcutsCache.size() <= 100) {
+        // for (size_t i = 0; i < shortcutsCache.size(); ++i) {
+        //     const auto& e = shortcutsCache[i];
+        //     if (e.shortcut) {
+        //         std::cout << "shortcut between " << e.src << " and " << e.trg << "\n  lower triangles: [";
+        //         for (auto w : lower_triangle_nodes[i]) std::cout << w << ", ";
+        //         // std::cout << "]\n  ranks: [";
+        //         // for (auto w : lower_triangle_nodes[i]) std::cout << node_ranks[w] << ", ";
+        //         std::cout << "]\n";
+        //     }
             
-        }
-    }
-    std::cout << "shortcut cache size: " << shortcutsCache.size() << "\n";
+        // }
+    // }
+    std::cout << "Number of triangles to customize: " << shortcutsCache.size() << "\n";
     return;
 
 }
 
-void sort_shortcut_cache()
-{
+void CCH::print_shortcuts_by_trg_order() const {
+for (int r = 0;  r< shortcut_of_rank_by_trg.size(); r++) {
+ size_t idx = shortcut_of_rank_by_trg[r];
+        const Edge& e = shortcutsCache[idx];
+        std::cout << "rank " << r
+                  << " : shortcut (" << e.src << " -> " << e.trg << ")  v=" << e.trg
+                  << " | middles: [";
+    
 
+    const auto& mids = lower_triangle_nodes[idx]; // print in stored order
+        for (size_t i = 0; i < mids.size(); ++i) {
+            if (i) std::cout << ", ";
+            NodeId w = mids[i];
+            std::cout << w << "(r=" << rank_of_node[w] << ")";
+        }
+    std::cout << "]\n";
+}
+}
+void CCH::set_shortcut_rank()
+{
+    const size_t M = shortcutsCache.size();
+
+    // 1) build cached signatures of middle-node ranks (DESC)
+    mid_rank_sig_desc.assign(M, {});
+    for (size_t i = 0; i < M; ++i) {
+        const auto& mids = lower_triangle_nodes[i];
+        auto& sig = mid_rank_sig_desc[i];
+        sig.reserve(mids.size());
+        for (NodeId w : mids) sig.push_back(rank_of_node[w]);
+        std::sort(sig.begin(), sig.end(), std::greater<int>());
+    }
+
+    // 2) sort an index by (v asc), then lexicographic sig desc
+    shortcut_of_rank_by_trg.resize(M);
+    std::iota(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(), 0);
+
+    auto lex_desc = [&](const std::vector<int>& A, const std::vector<int>& B) {
+        const size_t L = std::min(A.size(), B.size());
+        for (size_t i = 0; i < L; ++i) {
+            if (A[i] != B[i]) return A[i] < B[i]; // lower rank wins
+        }
+        // identical prefix: longer list wins (has a next comparison term)
+        // if (A.size() != B.size()) return A.size() > B.size();
+        return false; // equal
+    };
+
+    std::stable_sort(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(),
+        [&](size_t ia, size_t ib) {
+            const Edge& ea = shortcutsCache[ia];
+            const Edge& eb = shortcutsCache[ib];
+            // NodeId va = effective_trg(ea);
+            // NodeId vb = effective_trg(eb);
+            #ifndef NDEBUG
+            assert_upward(ea);
+            assert_upward(eb);
+            #endif
+            if (ea.trg != eb.trg) return ea.trg < eb.trg;          // primary: v ascending
+            if (lex_desc(mid_rank_sig_desc[ia], mid_rank_sig_desc[ib])) return true;
+            if (lex_desc(mid_rank_sig_desc[ib], mid_rank_sig_desc[ia])) return false;
+            // final tiebreakers for deterministic order:
+            if (ea.src != eb.src) return ea.src < eb.src; //which have lower src
+            return ia < ib;
+        });
+
+    // 3) build inverse mapping
+    rank_of_shortcut_by_trg.assign(M, -1);
+    for (size_t r = 0; r < M; ++r)
+        rank_of_shortcut_by_trg[shortcut_of_rank_by_trg[r]] = static_cast<int>(r);
 }
 
 int CCH::add_shortcuts(const vector<NodeId> &neighbors, NodeId middle_node)
 {
-    
-
     const int k = neighbors.size();
 if (k < 2) {
         return 0;
@@ -119,16 +197,30 @@ if (k < 2) {
             if (node1 == node2)
                 continue;
 
+                // decide direction by rank so v is always “higher”
+            if (rank_of_node[node1] > rank_of_node[node2]) swap(node1, node2);
+
+
+            uint64_t key = pair_key(node1, node2);
+            auto it = shortcutPos.find(key);
+
+            // auto it1 = shortcutPositionLookup.find(node1);
+            if (it != shortcutPos.end())
+            {
+                lower_triangle_nodes[it->second].push_back(middle_node);
+                continue;
+            }
             // Edge edge;
             if (!graph.edge_exists(node1, node2))
             {
                 
-                Edge edge = {graph.num_edges(), graph.num_edges() + 1, node1, node2, INF_WEIGHT, true};
-                Edge rev_edge = {graph.num_edges() + 1, edge.id, node2, node1, INF_WEIGHT, true};
-                // graph.set_edge(edge, rev_edge);
-                graph.edges.push_back(edge);
-                graph.edges.push_back(rev_edge);
+                Edge edge = {graph.num_edges(), graph.num_edges() + 1, node1, node2, INF_WEIGHT, true, true};
+                Edge rev_edge = {edge.rev_id, edge.id, node2, node1, INF_WEIGHT, true, true};
+                graph.set_edge(edge, rev_edge);
+                // graph.edges.push_back(edge);
+                // graph.edges.push_back(rev_edge);
                 new_edges += 1;
+                // cout << "Added shortcut between " << edge.src << "->" << edge.trg << endl;
                 // edge = graph.get_edge_by_src_dst(node1, node2);
 
                 // if shortcut/org edge exists, let its weight stay but add it to the cache list along with the lower mode ranks
@@ -138,14 +230,7 @@ if (k < 2) {
                 
             // }
 
-            uint64_t key = pair_key(node1, node2);
-            auto it = shortcutPos.find(key);
-
-            // auto it1 = shortcutPositionLookup.find(node1);
-            if (it != shortcutPos.end())
-            {
-                lower_triangle_nodes[it->second].push_back(middle_node);
-            } else {
+             
                 // create new shortcut record
                 //should not be doing this. should not be considering your new neighbors. find another wa to store your shortcuts
                 const Edge& e = graph.get_edge(node1, node2); // O(1)
@@ -154,7 +239,7 @@ if (k < 2) {
                 shortcutPos.emplace(key, pos);
                 // start triangle list with one element efficiently
                 lower_triangle_nodes.emplace_back(1, middle_node);
-            }
+            
         //         if (it2 != it1->second.end())
         //         {
         //             //  Exists
@@ -202,11 +287,11 @@ void CCH::compute_lower_triangles(const vector<NodeId> &contraction_order)
     for (int i = 0; i < contraction_order.size(); i++)
     {
         NodeId nodeId = contraction_order[i];
-        vector<NodeId> neighbors = graph.get_sorted_higher_neighbors(nodeId, node_ranks);
+        vector<NodeId> neighbors = graph.get_sorted_higher_original_neighbors(nodeId, rank_of_node);
         new_edges += add_shortcuts(neighbors, nodeId);
         graph.deactivate(nodeId);
     }
-    cout << "new_edges" << new_edges;
+    cout << "Shortcuts Added: " << new_edges << endl;
 }
 
 vector<NodeId> CCH::compute_contraction_order()
@@ -235,7 +320,12 @@ vector<NodeId> CCH::compute_contraction_order()
 
     Ordering ordering = fh.read_kahip_output(output_file_path, graph.num_nodes());
     vector<NodeId> contraction_order = ordering.node_of_rank;
-    node_ranks = ordering.rank_of_node;
+    // contraction_order = {0,1,2,3,4,5,6,7}; //assignment
+    // contraction_order = {2,0,4,7,5,3,1,6}; //my test
+
+    rank_of_node = ordering.rank_of_node;
+    // rank_of_node = {1,2,3,4,5,6,7,8}; assignment
+    // rank_of_node = {2, 7, 1, 6, 3, 5, 8, 4}; //my test
 
     // cout << "contraction order is" << endl;
     // for (auto &node : contraction_order)
@@ -383,10 +473,9 @@ vector<NodeId> CCH::compute_contraction_order()
 
 // }
 
-void CCH::add_shortcut(NodeId u, NodeId v, Weight w)
-{
-    // Implementation of adding a shortcut
-}
+
+
+
 
 // void CCH::remove_shortcut(NodeId u, NodeId v) {
 //     // Implementation of removing a shortcut
