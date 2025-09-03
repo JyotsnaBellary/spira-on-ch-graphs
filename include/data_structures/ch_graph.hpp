@@ -15,6 +15,7 @@ struct CH_Graph {
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> upward_edges_adj;
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> downward_edges_adj;
     vector<int> rank;
+    int shortcuts=0;
 
     CH_Graph() = default;
     inline const vector<Edge> &get_all_edges() const { return edges; }
@@ -34,6 +35,7 @@ struct CH_Graph {
 
     int num_nodes() const { return static_cast<int>(nodes.size()); }
     inline const Edge &get_edge(EdgeId id) const { return edges[id]; }
+    inline const int &get_number_of_shortcuts() const { return shortcuts; }
 
     const unordered_map<NodeId, pair<EdgeId, Weight>>& up_neighbors(NodeId node) const {
         if (node < 0 || node >= static_cast<int>(upward_edges_adj.size())) {
@@ -42,10 +44,15 @@ struct CH_Graph {
         return upward_edges_adj[node];
     }
 
+
+
+
+
     void build_upward_adj_Lists(vector<int> rank_order) {
         for (const auto& edge : edges) {
             if (is_up(edge.src, edge.trg)) {
                 upward_edges_adj[edge.src][edge.trg] = {edge.id, edge.cost};
+                if (edge.shortcut) shortcuts +=1;
                 // cout << "Added ";
                 // if (edge.shortcut) cout << "shortcut ";
                 // cout << "upward edge from " << edge.src << " to " << edge.trg << " (ID: " << edge.id << ", Cost: " << edge.cost << ")\n";

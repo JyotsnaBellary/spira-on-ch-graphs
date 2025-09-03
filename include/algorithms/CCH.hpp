@@ -3,25 +3,35 @@
 #include <data_structures/graph.hpp>
 #include <data_structures/ch_graph.hpp>
 
+struct CCH_Result {
+    int shortcuts;
+    int avg_lower_triangles_per_edge;
+    int maximum_triangles_edge;
+};
+
 class CCH
 {
 public:
     // but here. my graph should be edited
     CCH(Graph &graph);
-    CH_Graph preprocess();
-    vector<NodeId> compute_contraction_order();
+    CCH_Result preprocess();
+    void compute_contraction_order();
     void compute_lower_triangles(const vector<NodeId> &contraction_order);
     void set_shortcut_rank();
     void print_shortcuts_by_trg_order() const;
     int add_shortcuts(const vector<NodeId> &neighbors, NodeId middleNode);
     void compute_nested_dissection(vector<int> nodes, vector<NodeId> &reverse_contracted_nodes);
     void add_shortcut(NodeId u, NodeId v, Weight w);
-    void customization(bool default_setting = true);
-    void reset_customization_state_upward_only();
+    void customization(bool default_setting = true, bool assign_random_weights = false);
+    void reset_customization_update_weights(bool assign_random_weights=false, uint64_t seed = 0);
+    const Graph& get_graph() { return graph;}
+    const vector<int> get_ranks() {return rank_of_node; }
 
 private:
     Graph &graph;
     vector<Edge> shortcutsCache;
+    int shortcuts = 0;
+    vector<int> contraction_order;
     static inline uint64_t pair_key(NodeId u, NodeId v)
     {
         if (u > v)

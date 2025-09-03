@@ -1,13 +1,28 @@
 #include <algorithms/CCH.hpp>
 #include <io/file_handler.hpp>
 #include <utils/kahip_runner.hpp>
+#include <random>
 
 using namespace std::chrono;
 
 CCH::CCH(Graph &graph) : graph(graph) {}
 
-void CCH::reset_customization_state_upward_only()
+static inline Dist from_unit_double(double u)
 {
+    // If Dist is integer (e.g., long long), store fixed-point micro-weights.
+    const long long SCALE = 1'000'000;
+    long long w = llround(u * SCALE);
+    if (w <= 0)
+        w = 1;
+    return static_cast<Dist>(w);
+}
+
+void CCH::reset_customization_update_weights(bool assign_random_weights,
+                                             uint64_t seed)
+{
+    mt19937_64 gen(seed);
+    // Approximate open interval (0,1): avoid exact 0; 1 is already excluded by default.
+    uniform_real_distribution<double> U(std::nextafter(0.0, 1.0), 1.0);
     // Iterate all upward edges (your shortcutsCache is the upward edge set)
     for (size_t i = 0; i < shortcutsCache.size(); ++i)
     {
@@ -23,20 +38,33 @@ void CCH::reset_customization_state_upward_only()
             {
                 edge.cost = rev_edge.cost = edge.original_cost;
                 edge.replaced = rev_edge.cost = false;
-                edge.shortcut = rev_edge.shortcut = false;
+                // edge.shortcut = rev_edge.shortcut = false;
             }
         }
+        else
+        {
+            // base/original upward edge
+            if (assign_random_weights)
+            {
+                double r = U(gen);            // (0,1)
+                Dist w = from_unit_double(r); // or static_cast<Dist>(r) if Dist is double
+                edge.cost = rev_edge.cost = w;
+                // } else {
+                //     // edge.cost = rev_edge.cost = edge.original_cost;
+            }
+            // edge.replaced = false;
+            // rev_edge.replaced = false;
 
-        // Optional: clear decomposition record
+            // Optional: clear decomposition record
+        }
     }
 }
-void CCH::customization(bool default_setting)
+
+void CCH::customization(bool default_setting, bool assign_random_weights)
 {
     if (!default_setting)
     {
-        reset_customization_state_upward_only();
-        
-        //write the reassigning of data here
+        reset_customization_update_weights(assign_random_weights);
     }
 
     // coming to customization
@@ -59,7 +87,7 @@ void CCH::customization(bool default_setting)
             Edge e_vw = graph.get_edge(lowers[i].e_vw);
             // tie-break if you want: prefer smaller x on equal cost
             const Weight via = e_uv.cost + e_vw.cost;
-        
+
             if (i == 0)
             {
                 best_cost = via;
@@ -68,7 +96,7 @@ void CCH::customization(bool default_setting)
                 continue;
             }
 
-            //maybe the second check is not important
+            // maybe the second check is not important
             if (via < best_cost || (via == best_cost && rank_of_node[nodeId] < rank_of_node[best_node]))
             {
                 best_cost = via;
@@ -84,30 +112,47 @@ void CCH::customization(bool default_setting)
         graph.update_shortcut_info(e.id, e.rev_id, best_node_shortcut_info, best_cost, true);
         // cout << "check cost nowwwww" << graph.get_edge(e.id).cost << endl;
     }
+    return;
 }
 
-CH_Graph CCH::preprocess()
+CCH_Result CCH::preprocess()
 {
 
     cout << "number of nodes:" << graph.num_nodes() << endl;
     cout << "number of edges:" << graph.num_edges() << endl;
     auto start_ch = high_resolution_clock::now();
-    vector<int> contraction_order = compute_contraction_order();
+    // vector<int> contraction_order = compute_contraction_order();
 
     compute_lower_triangles(contraction_order);
     std::cout << "Number of triangles to customize: " << shortcutsCache.size() << "\n";
 
     set_shortcut_rank();
+    // ---- compute stats ----
+    const size_t M = shortcutsCache.size();
+    long long total_triangles = 0;
+    int max_triangles = 0;
 
-    customization();
-    
-    CH_Graph ch_graph(graph.get_all_nodes(), graph.get_all_edges(), rank_of_node);
-    return ch_graph;
+    for (size_t i = 0; i < M; ++i)
+    {
+        int t = static_cast<int>(lower_triangle_nodes[i].size());
+        total_triangles += t;
+        if (t > max_triangles)
+            max_triangles = t;
+    }
+
+    // avg as integer (rounded to nearest). If you prefer exact, change the field type to double.
+    int avg_triangles = M ? static_cast<int>((total_triangles + static_cast<long long>(M) / 2) /
+                                             static_cast<long long>(M))
+                          : 0;
+
+    CCH_Result cch_result = {shortcuts, avg_triangles, max_triangles};
+    return cch_result;
+    // return customization();
 }
 
 void CCH::print_shortcuts_by_trg_order() const
 {
-    
+
     for (int r = 0; r < shortcut_of_rank_by_trg.size(); r++)
     {
         size_t idx = shortcut_of_rank_by_trg[r];
@@ -130,15 +175,17 @@ void CCH::print_shortcuts_by_trg_order() const
 }
 void CCH::set_shortcut_rank()
 {
-    
+
     const size_t M = shortcutsCache.size();
     // 1) build cached signatures of middle-node ranks (DESC)
     mid_rank_sig_desc.assign(M, {});
-    for (size_t i = 0; i < M; ++i) {
-        const auto& mids = lower_triangle_nodes[i];
-        auto& sig = mid_rank_sig_desc[i];
+    for (size_t i = 0; i < M; ++i)
+    {
+        const auto &mids = lower_triangle_nodes[i];
+        auto &sig = mid_rank_sig_desc[i];
         sig.reserve(mids.size());
-        for (ShortcutInfo w : mids) sig.push_back(rank_of_node[w.middle]);
+        for (ShortcutInfo w : mids)
+            sig.push_back(rank_of_node[w.middle]);
         std::sort(sig.begin(), sig.end(), std::greater<int>());
     }
 
@@ -146,13 +193,17 @@ void CCH::set_shortcut_rank()
     shortcut_of_rank_by_trg.resize(M);
     std::iota(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(), 0);
 
-    auto lex_desc = [&](const std::vector<int>& A, const std::vector<int>& B) {
+    auto lex_desc = [&](const std::vector<int> &A, const std::vector<int> &B)
+    {
         const size_t L = std::min(A.size(), B.size());
-        for (size_t i = 0; i < L; ++i) {
-            if (A[i] != B[i]) return A[i] < B[i]; // lower rank wins
+        for (size_t i = 0; i < L; ++i)
+        {
+            if (A[i] != B[i])
+                return A[i] < B[i]; // lower rank wins
         }
         // identical prefix: longer list wins (has a next comparison term)
-        if (A.size() != B.size()) return A.size() > B.size();
+        if (A.size() != B.size())
+            return A.size() > B.size();
         return false; // equal
     };
 
@@ -161,15 +212,17 @@ void CCH::set_shortcut_rank()
                      {
                          const Edge &ea = shortcutsCache[ia];
                          const Edge &eb = shortcutsCache[ib];
-#ifndef NDEBUG
+                    #ifndef NDEBUG
                          assert_upward(ea);
                          assert_upward(eb);
-#endif
+                    #endif
                          if (ea.trg != eb.trg)
                              return rank_of_node[ea.trg] < rank_of_node[eb.trg]; // primary: v ascending
-                         if (lex_desc(mid_rank_sig_desc[ia], mid_rank_sig_desc[ib])) return true;
-                         if (lex_desc(mid_rank_sig_desc[ib], mid_rank_sig_desc[ia])) return false;
-                        //  final tiebreakers for deterministic order:
+                         if (lex_desc(mid_rank_sig_desc[ia], mid_rank_sig_desc[ib]))
+                             return true;
+                         if (lex_desc(mid_rank_sig_desc[ib], mid_rank_sig_desc[ia]))
+                             return false;
+                         //  final tiebreakers for deterministic order:
                          if (ea.src != eb.src)
                              return rank_of_node[ea.src] < rank_of_node[eb.src]; // which have lower src
                          return ia < ib;
@@ -203,7 +256,6 @@ int CCH::add_shortcuts(const vector<NodeId> &neighbors, NodeId middle_node)
             if (node1 == node2)
                 continue;
 
-
             uint64_t key = pair_key(node1, node2);
             auto it = shortcutPos.find(key);
 
@@ -220,7 +272,8 @@ int CCH::add_shortcuts(const vector<NodeId> &neighbors, NodeId middle_node)
                 continue;
             }
 
-            if (node1 == 0 && node2 == 17) {
+            if (node1 == 0 && node2 == 17)
+            {
                 // cout << "here";
             }
             // Edge edge;
@@ -249,23 +302,22 @@ int CCH::add_shortcuts(const vector<NodeId> &neighbors, NodeId middle_node)
 
 void CCH::compute_lower_triangles(const vector<NodeId> &contraction_order)
 {
-    int new_edges = 0;
     for (int i = 0; i < contraction_order.size(); i++)
     {
         NodeId nodeId = contraction_order[i];
         vector<NodeId> neighbors = graph.get_sorted_higher_neighbors(nodeId, rank_of_node);
-        new_edges += add_shortcuts(neighbors, nodeId);
+        shortcuts += add_shortcuts(neighbors, nodeId);
         graph.deactivate(nodeId);
     }
-    cout << "Shortcuts Added: " << new_edges << endl;
+    cout << "Shortcuts Added: " << shortcuts << endl;
     return;
 }
 
-vector<NodeId> CCH::compute_contraction_order()
+void CCH::compute_contraction_order()
 {
 
     vector<int> reverse_contracted_nodes;
-    
+
     FileHandler fh;
 
     fh.write_to_metis_format(graph, "./RoadNetworks/test.graph");
@@ -278,12 +330,12 @@ vector<NodeId> CCH::compute_contraction_order()
     catch (const std::exception &e)
     {
         std::cerr << "Error: " << e.what() << "\n";
-        return {};
+        return;
     }
 
     Ordering ordering = fh.read_kahip_output(output_file_path, graph.num_nodes());
-    vector<NodeId> contraction_order = ordering.node_of_rank;
+    contraction_order = ordering.node_of_rank;
 
     rank_of_node = ordering.rank_of_node;
-    return contraction_order;
+    // return contraction_order;
 }

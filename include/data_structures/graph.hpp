@@ -225,7 +225,7 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                 {
                     EdgeId eid = it1->second.first;
                     edges[eid].cost = static_cast<Weight>(shortcut.cap);
-                    it->second.second = static_cast<Weight>(shortcut.cap); // update cost in adj
+                    it1->second.second = static_cast<Weight>(shortcut.cap); // update cost in adj
                     edges[eid].shortcut = true;
                     edges[eid].sc = {
                         // get the edgeIds

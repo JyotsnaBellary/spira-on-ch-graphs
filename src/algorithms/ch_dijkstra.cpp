@@ -391,6 +391,28 @@ CH_DijkstraResult CH_Dijkstra::build_ch_path(const vector<int>& prev_forward, co
         left_edges.push_back(edge.id);
     }
 
+    for (int cur = best_node; cur != -1; cur = prev_backward[cur]) right_nodes.push_back(cur);
+    reverse(right_nodes.begin(), right_nodes.end());
+    for (size_t i=1;i<right_nodes.size();++i) {
+        Edge edge = graph.get_edge(viaEdge_backward[right_nodes[i]]);
+        ch_right_edges.push_back(edge.id);
+        // if (edge.shortcut) {
+        //     // vector<EdgeId> unpacked = unpack_shortcut(edge);
+        //     ch_left_edges.insert(ch_left_edges.end(), unpacked.begin(), unpacked.end());
+        // }
+        right_edges.push_back(edge.id);
+    }
+
+    // for (EdgeId edge: left_edges) {
+    //     cout << edge << " ";
+    // }
+    // cout << endl;
+
+    // for (EdgeId edge: right_edges) {
+    //     cout << edge << " ";
+    // }
+    // cout << endl;
+
     // for (int cur = best_node; cur != -1; cur = prev_backward[cur]) right_nodes.push_back(cur);
     // reverse(right_nodes.begin(), right_nodes.end());
 

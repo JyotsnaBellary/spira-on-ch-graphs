@@ -1,7 +1,7 @@
 #include "algorithms/CH.hpp"
 #include <utils/utils.hpp>
-#include <algorithms/dijkstra.hpp>
 #include <utils/helpers.hpp>
+#include <algorithms/witness_dijkstra.hpp>
 #include <queue>
 #include <algorithm>
 #include <numeric>
@@ -11,7 +11,7 @@
 CH::CH(Graph &graph)
     : graph(graph),
       utils(),
-      dijkstra(graph),
+      witnessDijkstra(graph),
       currentEdgeDiffs(graph.num_nodes(), INT_MAX),
       rank_order(graph.num_nodes(), INVALID_NODE),
       seen(graph.num_nodes(), 0),
@@ -57,7 +57,7 @@ int CH::calculate_shortcuts(NodeId nodeId)
             Dist bannedCap = utils.sat_add(weight1, weight2);
 
             // Check if a shortcut is needed
-            auto [shortcutNeeded, shortcutOpType] = dijkstra.shortcut_search(node1, node2, nodeId, bannedCap);
+            auto [shortcutNeeded, shortcutOpType] = witnessDijkstra.shortcut_search(node1, node2, nodeId, bannedCap);
             if (!shortcutNeeded)
                 continue;
 
@@ -107,7 +107,7 @@ void CH::recompute_edge_differences(vector<NodeId> nodes, NodePQ &pq)
     }
 }
 
-void CH::compute_rank_order()
+int CH::compute_rank_order()
 {
 
     // PQ of edge differences
@@ -198,7 +198,7 @@ void CH::compute_rank_order()
         auto independent_nodes = utils.independent_nodes(graph, pq, median, currentEdgeDiffs);
         if (independent_nodes.empty())
         {
-            auto independent_nodes = utils.independent_nodes(graph, pq, /*delta=*/median +1, currentEdgeDiffs);
+            independent_nodes = utils.independent_nodes(graph, pq, /*delta=*/median +1, currentEdgeDiffs);
         }
         if (independent_nodes.empty())
         {
@@ -228,7 +228,6 @@ void CH::compute_rank_order()
             }
         };
 
-        // added new
         //  snapshot neighbors for the whole batch BEFORE mutating
         std::vector<std::vector<NodeId>> nbrs_of(independent_nodes.size());
         for (size_t i = 0; i < independent_nodes.size(); ++i)
@@ -250,8 +249,6 @@ void CH::compute_rank_order()
 
             shortcut_count += graph.add_shortcuts(shortcutsCache[nodeId]);
             graph.deactivate(nodeId);
-            // cout << "Deactivated node: " << nodeId << endl;
-            // cout << "edge difference:" << currentEdgeDiffs[nodeId] << endl;
             deactivated++;
             rank_order[nodeId] = rank++;
         }
@@ -299,10 +296,11 @@ void CH::compute_rank_order()
     }
 
     cerr << "Number of nodes with INT_MAX rank: " << errcount << endl;
+    return shortcut_count;
 }
 
-void CH::preprocess()
+int CH::preprocess()
 {
-    compute_rank_order();
-    return;
+    int shortcuts = compute_rank_order();
+    return shortcuts;
 }

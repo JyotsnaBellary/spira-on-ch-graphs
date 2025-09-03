@@ -11,19 +11,29 @@ int main(int argc, char* argv[]) {
 
     std::string arg = argv[1];
     if (arg == "ch_100") {
-        Benchmarks::run_all_benchmarks();
+        Benchmarks::run_ch_benchmarks();
     }
-    if (arg == "ch") {
-        Benchmarks::run_ch_benchmark();
+    if (arg == "cch_100") {
+        Benchmarks::run_cch_benchmarks();
     }
-    if (arg == "cch") {
+    else if (arg == "ch") {
+        Benchmarks::run_ch_single_benchmark();
+    }
+    else if (arg == "cch") {
         Benchmarks::run_cch_benchmark();
+    }
+    else if (arg == "dj") {
+        Benchmarks::run_Dijkstra_benchmark();
     }
     else {
         std::cerr << "Unknown benchmark: " << arg << "\n";
         return 1;
     }
+    // Benchmarks::run_Dijkstra_benchmark();
+
 
     // Benchmarks::run_cch_benchmark();
     return 0;
+
+
 }
