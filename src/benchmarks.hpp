@@ -764,6 +764,11 @@ public:
 
                 append_to_2b_csv("output_files/2b.csv", filepath, i + 1, customizationtime);
             }
+
+            // setting back original weights
+            cch.customization(true, false);
+
+
             
             // Build CH graph view (once), and the query engine
             CH_Dijkstra cchDijkstra(cch_graph);
@@ -787,11 +792,13 @@ public:
                 // CH-Dijkstra
                 auto c0 = high_resolution_clock::now();
                 CH_DijkstraResult cres = chDijkstra.compute_shortest_path(src, dst);
+                cres = chGraph.unpack_shortcuts(cres);
                 auto c1 = high_resolution_clock::now();
 
                 // CCH-Dijkstra
                 auto cc0 = high_resolution_clock::now();
                 CH_DijkstraResult ccres = cchDijkstra.compute_shortest_path(src, dst);
+                cres = cch_graph.unpack_shortcuts(ccres);
                 auto cc1 = high_resolution_clock::now();
 
                 long long d_ms = to_ms(d0, d1);

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     else if (arg == "dj") {
         Benchmarks::run_Dijkstra_benchmark();
     }
-    else if (arg == "appquery") {
+    else if (arg == "appquerydjk") {
         if (argc < 5) {
             std::cerr << "Usage: " << argv[0] << " appquery <map> <src> <dst>\n";
             return 1;
@@ -37,6 +37,30 @@ int main(int argc, char* argv[]) {
         NodeId dst = std::stoi(argv[4]);
 
         WebAPP::run_Dijkstra_Query(map, src, dst);
+    }
+    else if (arg == "appquerych") {
+        if (argc < 5) {
+            std::cerr << "Usage: " << argv[0] << " appquery <map> <src> <dst>\n";
+            return 1;
+        }
+
+        std::string map = argv[2];
+        NodeId src = std::stoi(argv[3]);
+        NodeId dst = std::stoi(argv[4]);
+
+        WebAPP::run_CH_Dijkstra_Query(map, src, dst);
+    }
+    else if (arg == "appquerycch") {
+        if (argc < 5) {
+            std::cerr << "Usage: " << argv[0] << " appquery <map> <src> <dst>\n";
+            return 1;
+        }
+
+        std::string map = argv[2];
+        NodeId src = std::stoi(argv[3]);
+        NodeId dst = std::stoi(argv[4]);
+
+        WebAPP::run_CCH_Dijkstra_Query(map, src, dst);
     }
     else {
         std::cerr << "Unknown benchmark: " << arg << "\n";

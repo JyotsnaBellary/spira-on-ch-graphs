@@ -118,13 +118,13 @@ void CCH::customization(bool default_setting, bool assign_random_weights)
 CCH_Result CCH::preprocess()
 {
 
-    cout << "number of nodes:" << graph.num_nodes() << endl;
-    cout << "number of edges:" << graph.num_edges() << endl;
+    // cout << "number of nodes:" << graph.num_nodes() << endl;
+    // cout << "number of edges:" << graph.num_edges() << endl;
     auto start_ch = high_resolution_clock::now();
     // vector<int> contraction_order = compute_contraction_order();
 
     compute_lower_triangles(contraction_order);
-    std::cout << "Number of triangles to customize: " << shortcutsCache.size() << "\n";
+    // std::cout << "Number of triangles to customize: " << shortcutsCache.size() << "\n";
 
     set_shortcut_rank();
     // ---- compute stats ----
@@ -170,6 +170,7 @@ void CCH::print_shortcuts_by_trg_order() const
             NodeId w = mids[i].middle;
             std::cout << w << "(r=" << rank_of_node[w] << ")";
         }
+
         std::cout << "]\n";
     }
 }
@@ -309,7 +310,7 @@ void CCH::compute_lower_triangles(const vector<NodeId> &contraction_order)
         shortcuts += add_shortcuts(neighbors, nodeId);
         graph.deactivate(nodeId);
     }
-    cout << "Shortcuts Added: " << shortcuts << endl;
+    // cout << "Shortcuts Added: " << shortcuts << endl;
     return;
 }
 

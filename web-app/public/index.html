@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Map Loader</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Leaflet core -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- integrity="sha512-sA+e2t3nQG+0rPp3H6oTnKZf8H3x4gQ8T7dKpGzT8JwXg8I7W6i8pqk7oZP3YwU7v6nM2jv5B9l1B1x5Z3rVQw=="
+    crossorigin="" -->
+ 
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- integrity="sha512-vx6G2ZzJqC0+4q3zP0Xw8yN9y8iC2Z0LQJbqCq2mQdtpK3o3N1o9QZ1mH3DkQmYtH3H7S1u1m7kY8u2o6U9eQw==" -->
+    <!-- // crossorigin="" -->
+  </script>
+    <link rel="stylesheet" href="./styles.css" />
+
+  <!-- MarkerCluster for performance with 50k+ points -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+  />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- PapaParse (fast CSV/TXT parsing with workers) -->
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+
+</head>
+<body>
+  <div class="topbar">
+    <label class="file-btn">
+      <input id="file-input" type="file" accept=".txt,.csv" />
+      Load .txt/.csv
+    </label>
+    <span id="status">No file loaded</span>
+  </div>
+
+  <div id="map">
+  <div class="map-controls">
+    <select id="algo-select" title="Algorithm">
+      <option value="djk">Dijkstra</option>
+      <option value="ch">CH</option>
+      <option value="cch">CCH</option>
+    </select>
+    <label>
+      <input type="checkbox" id="toggle-shortcut" checked />
+      Shortcut path
+    </label>
+  </div>
+</div>
+<div class="ui-section legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><span class="legend-line route"></span><span>Main path</span></div>
+    <div class="legend-item"><span class="legend-line shortcut"></span><span>Shortcut path</span></div>
+    <div class="legend-item"><span class="legend-node"></span><span>All nodes</span></div>
+    <div class="legend-item"><span class="legend-dot start"></span><span>Start</span></div>
+    <div class="legend-item"><span class="legend-dot end"></span><span>End</span></div>
+  </div>
+</div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -261,7 +261,7 @@ int CH::compute_rank_order()
     }
 
     // recalculate edge differences for neighbours of contracted nodes
-    cout << "number of shortcuts added: " << shortcut_count << endl;
+    // cout << "number of shortcuts added: " << shortcut_count << endl;
 
     // Check if ranks are INT_MAX
     int errcount = 0;
