@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "benchmarks.hpp"
+#include "webApp.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -24,6 +25,18 @@ int main(int argc, char* argv[]) {
     }
     else if (arg == "dj") {
         Benchmarks::run_Dijkstra_benchmark();
+    }
+    else if (arg == "appquery") {
+        if (argc < 5) {
+            std::cerr << "Usage: " << argv[0] << " appquery <map> <src> <dst>\n";
+            return 1;
+        }
+
+        std::string map = argv[2];
+        NodeId src = std::stoi(argv[3]);
+        NodeId dst = std::stoi(argv[4]);
+
+        WebAPP::run_Dijkstra_Query(map, src, dst);
     }
     else {
         std::cerr << "Unknown benchmark: " << arg << "\n";

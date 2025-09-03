@@ -1,6 +1,6 @@
 /build/
 /build*/
-
+/web-app/
 *.o
 *.log
 *.bin

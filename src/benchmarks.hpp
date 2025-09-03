@@ -62,11 +62,11 @@ public:
     static void run_Dijkstra_benchmark()
     {
         std::vector<std::string> filepaths = {
-            // "./RoadNetworks/test.txt",
+            "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             // "./RoadNetworks/osm1.txt",
             // "./RoadNetworks/osm2.txt",
-            "./RoadNetworks/osm3.txt",
+            // "./RoadNetworks/osm3.txt",
             // "./RoadNetworks/osm4.txt",
             // "./RoadNetworks/osm5.txt",
             // "./RoadNetworks/osm6.txt",
@@ -133,16 +133,16 @@ public:
             // "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             "./RoadNetworks/osm1.txt",
-            "./RoadNetworks/osm2.txt",
-            "./RoadNetworks/osm3.txt",
-            "./RoadNetworks/osm4.txt",
-            "./RoadNetworks/osm5.txt",
-            "./RoadNetworks/osm6.txt",
-            "./RoadNetworks/osm7.txt",
-            "./RoadNetworks/osm8.txt",
-            "./RoadNetworks/osm9.txt",
-            "./RoadNetworks/osm10.txt",
-            "./RoadNetworks/osm11.txt",
+            // "./RoadNetworks/osm2.txt",
+            // "./RoadNetworks/osm3.txt",
+            // "./RoadNetworks/osm4.txt",
+            // "./RoadNetworks/osm5.txt",
+            // "./RoadNetworks/osm6.txt",
+            // "./RoadNetworks/osm7.txt",
+            // "./RoadNetworks/osm8.txt",
+            // "./RoadNetworks/osm9.txt",
+            // "./RoadNetworks/osm10.txt",
+            // "./RoadNetworks/osm11.txt",
         };
 
         const std::string OUT_DIR = "output_files/1b";
@@ -154,29 +154,39 @@ public:
             Graph graph = fh.read_file(filepath);
             std::cout << "Loaded file:" << filepath << "\n";
 
+            Dijkstra dijkstra(graph);
+
             CH ch(graph);
             ch.preprocess();
 
             CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(chGraph);
-            //     std::string line;
-            // while (true) {
-            //     std::cout << "query> ";
-            //     if (!std::getline(std::cin, line)) return;          // EOF -> stop all
-            //     if (line.empty()) continue;
+                std::string line;
+            while (true) {
+                std::cout << "query> ";
+                if (!std::getline(std::cin, line)) return;          // EOF -> stop all
+                if (line.empty()) continue;
 
-            //     // parse "u v"
-            //     std::istringstream iss(line);
-            //     int u, v;
-            //     iss >> u >> v;
-            //         std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
+                // parse "u v"
+                std::istringstream iss(line);
+                int u, v;
+                iss >> u >> v;
+                    // std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
 
-            //     auto c0 = high_resolution_clock::now();
-            //         CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
-            //         auto c1 = high_resolution_clock::now();
+                auto c0 = high_resolution_clock::now();
+                    CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
+                    cres = chGraph.unpack_shortcuts(cres);
+                    auto c1 = high_resolution_clock::now();
+                    cout << "path" << endl;
+                    for (int i = 0; i < cres.edge_ids.size(); i++){
+                        cout << cres.edge_ids[i] << " " ;
+                    }
+                    cout << endl;
 
-            //         cout << "cost: "<< cres.total_cost;
-            // }
+                    cout << "cost of ch: "<< cres.total_cost;
+
+
+            }
         }
     }
 
@@ -571,7 +581,7 @@ public:
         };
 
         constexpr size_t NUM_QUERIES = 100;
-        const std::string OUT_DIR = "output_files/1b-newer";
+        const std::string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
@@ -623,6 +633,7 @@ public:
                 // CH-Dijkstra
                 auto c0 = high_resolution_clock::now();
                 CH_DijkstraResult cres = chDijkstra.compute_shortest_path(src, dst);
+                chGraph.unpack_shortcuts(cres);
                 auto c1 = high_resolution_clock::now();
 
                 long long d_ms = to_ms(d0, d1);
@@ -672,7 +683,7 @@ public:
         };
 
         constexpr size_t NUM_QUERIES = 100;
-        const std::string OUT_DIR = "output_files/dc";
+        const std::string OUT_DIR = "output_files/2c";
 
         for (const auto &filepath : filepaths)
         {
@@ -818,4 +829,6 @@ public:
             write_cch_csv(OUT_DIR, basename_no_ext(filepath), rows);
         }
     }
+
+
 };
