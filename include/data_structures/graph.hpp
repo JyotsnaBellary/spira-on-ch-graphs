@@ -266,8 +266,8 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
         edges[edgeId].sc.middle = shortcutInfo.middle;
         edges[edgeId].cost = cost;
 
-        edges[rev_edgeId].sc.e_uv = shortcutInfo.e_uv;
-        edges[rev_edgeId].sc.e_vw = shortcutInfo.e_vw;
+        edges[rev_edgeId].sc.e_uv = get_edge(shortcutInfo.e_vw).rev_id; 
+        edges[rev_edgeId].sc.e_vw = get_edge(shortcutInfo.e_uv).rev_id;
         edges[rev_edgeId].sc.middle = shortcutInfo.middle;
         edges[rev_edgeId].cost = cost;
     }

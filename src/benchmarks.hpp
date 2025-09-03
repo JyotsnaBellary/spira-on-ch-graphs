@@ -235,40 +235,45 @@ public:
             
 
             // CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
-            // CH_Dijkstra chDijkstra(cch_graph);
-            // std::string line;
-            // while (true)
-            // {
-            //     std::cout << "query> ";
-            //     if (!std::getline(std::cin, line))
-            //         return; // EOF -> stop all
-            //     if (line.empty())
-            //         continue;
+            CH_Dijkstra chDijkstra(cchGraph);
+            std::string line;
+            while (true)
+            {
+                std::cout << "query> ";
+                if (!std::getline(std::cin, line))
+                    return; // EOF -> stop all
+                if (line.empty())
+                    continue;
 
-            //     // parse "u v"
-            //     std::istringstream iss(line);
-            //     int u, v;
-            //     iss >> u >> v;
-            //     // if (!(iss >> u >> v)) {
-            //     std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
+                // parse "u v"
+                std::istringstream iss(line);
+                int u, v;
+                iss >> u >> v;
+                // if (!(iss >> u >> v)) {
+                // std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
                 //     continue;
                 // }
-                // if (u < 0 || v < 0 || u >= (int)graph.num_nodes() || v >= (int)graph.num_nodes()) {
-                //     std::cout << "IDs out of range. Valid: 0.." << (graph.num_nodes()-1) << "\n";
-                //     continue;
-                // }
+                if (u < 0 || v < 0 || u >= (int)graph.num_nodes() || v >= (int)graph.num_nodes()) {
+                    std::cout << "IDs out of range. Valid: 0.." << (graph.num_nodes()-1) << "\n";
+                    continue;
+                }
 
-                // auto t0 = high_resolution_clock::now();
+                auto t0 = high_resolution_clock::now();
 
                 // Adjust this call to match your CH_Dijkstra API:
                 // Option A: returns (distance, path)
 
-            //     auto c0 = high_resolution_clock::now();
-            //     CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
-            //     auto c1 = high_resolution_clock::now();
+                auto c0 = high_resolution_clock::now();
+                CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
+                cres = cchGraph.unpack_shortcuts(cres);
+                cout << "path" << endl;
+                    for (int i = 0; i < cres.edge_ids.size(); i++){
+                        cout << cres.edge_ids[i] << " " ;
+                }
+                auto c1 = high_resolution_clock::now();
 
-            //     cout << "cost: " << cres.total_cost;
-            // }
+                cout << "cost: " << cres.total_cost;
+            }
         }
     }
 
