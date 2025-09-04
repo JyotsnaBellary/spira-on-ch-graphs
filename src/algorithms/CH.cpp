@@ -29,7 +29,7 @@ int CH::calculate_shortcuts(NodeId nodeId)
     int shortcut_count = 0;
 
     // CLEAR existing shortcuts for this node before recomputing
-    shortcutsCache[nodeId].clear();
+    shortcuts_cache[nodeId].clear();
 
     for (auto i = neighbors.begin(); i != neighbors.end(); ++i)
     {
@@ -40,7 +40,7 @@ int CH::calculate_shortcuts(NodeId nodeId)
             continue;
         const Dist weight1 = static_cast<Dist>(i->second.second);
 
-        for (auto j = std::next(i); j != neighbors.end(); ++j)
+        for (auto j = next(i); j != neighbors.end(); ++j)
         {
 
             // Get the second neighbor
@@ -62,9 +62,9 @@ int CH::calculate_shortcuts(NodeId nodeId)
                 continue;
 
             Shortcut shortcut = {node1, node2, nodeId, bannedCap};
-            //adding shortcut for nodeId. print
+            // adding shortcut for nodeId. print
 
-            shortcutsCache[nodeId].emplace_back(shortcut, shortcutOpType);
+            shortcuts_cache[nodeId].emplace_back(shortcut, shortcutOpType);
             if (shortcutOpType == ShortcutOpType::ADD)
             {
                 ++shortcut_count;
@@ -83,7 +83,7 @@ int CH::compute_edge_difference(NodeId nodeId)
     int count_active_neighbors = graph.num_active_neighbors(nodeId);
     if (count_active_neighbors < 2)
     { // no pairs, no witness runs
-        shortcutsCache[nodeId].clear();
+        shortcuts_cache[nodeId].clear();
         return 0 - count_active_neighbors; // edge diff = adds(0) - deg
     }
     int shortcut_count = calculate_shortcuts(nodeId);
@@ -112,14 +112,14 @@ int CH::compute_rank_order()
 
     // PQ of edge differences
     NodePQ pq;
-    static std::vector<int> median_scratch;
+    static vector<int> median_scratch;
     vector<NodeId> nodesToRecompute(graph.num_nodes());
     iota(nodesToRecompute.begin(), nodesToRecompute.end(), 0);
 
     int shortcut_count = 0;
     int rank = 0;
 
-    // helper: seed a few unknown scores so PQ has candidates (no full recompute)
+    // helper: seed a few unknown scores so PQ has candidates to contract (no full recompute)
     auto seed_some_unknowns = [&](int limit = 1000)
     {
         int seeded = 0;
@@ -139,7 +139,6 @@ int CH::compute_rank_order()
         return seeded;
     };
 
-
     // helper: pick best valid from PQ (skip stale/inactive)
     auto pick_best_from_pq = [&](NodePQ &pq) -> NodeId
     {
@@ -158,7 +157,6 @@ int CH::compute_rank_order()
 
     while (contractedNodes < graph.num_nodes())
     {
-        // if there are only 1 or two nodes left, tehn contract one and continue to contract next
         //  get the new edge differences and update priority queue
         if (nodesToRecompute.size() > 0)
         {
@@ -175,7 +173,7 @@ int CH::compute_rank_order()
             NodeId nodeId = graph.get_any_active_node();
             if (nodeId == -1)
                 break; // no active nodes left
-            shortcut_count += graph.add_shortcuts(shortcutsCache[nodeId]);
+            shortcut_count += graph.add_shortcuts(shortcuts_cache[nodeId]);
             graph.deactivate(nodeId);
 
             contractedNodes++;
@@ -185,7 +183,7 @@ int CH::compute_rank_order()
         }
 
         size_t remaining = graph.num_nodes() - contractedNodes;
-        size_t target = std::clamp(remaining / 500, size_t(64), size_t(5000)); // ~0.2% of remaining
+        size_t target = clamp(remaining / 500, size_t(64), size_t(5000)); // ~0.2% of remaining
 
         int median = utils.compute_active_median(graph, currentEdgeDiffs, median_scratch);
         if (median == INT_MAX)
@@ -198,11 +196,10 @@ int CH::compute_rank_order()
         auto independent_nodes = utils.independent_nodes(graph, pq, median, currentEdgeDiffs);
         if (independent_nodes.empty())
         {
-            independent_nodes = utils.independent_nodes(graph, pq, /*delta=*/median +1, currentEdgeDiffs);
+            independent_nodes = utils.independent_nodes(graph, pq, median + 1, currentEdgeDiffs);
         }
         if (independent_nodes.empty())
         {
-            // added new
             //  fallback: contract one best node to guarantee progress
             NodeId u = pick_best_from_pq(pq);
             if (u != -1)
@@ -229,7 +226,7 @@ int CH::compute_rank_order()
         };
 
         //  snapshot neighbors for the whole batch BEFORE mutating
-        std::vector<std::vector<NodeId>> nbrs_of(independent_nodes.size());
+        vector<vector<NodeId>> nbrs_of(independent_nodes.size());
         for (size_t i = 0; i < independent_nodes.size(); ++i)
         {
             NodeId u = independent_nodes[i];
@@ -247,21 +244,18 @@ int CH::compute_rank_order()
             if (!graph.is_active(nodeId))
                 continue; // skip if already contracted
 
-            shortcut_count += graph.add_shortcuts(shortcutsCache[nodeId]);
+            shortcut_count += graph.add_shortcuts(shortcuts_cache[nodeId]);
             graph.deactivate(nodeId);
             deactivated++;
             rank_order[nodeId] = rank++;
         }
         ++epoch; // new round for deduper
         contractedNodes += deactivated;
-        
+
         for (auto &snap : nbrs_of)
             for (NodeId v : snap)
                 push_unique(v);
     }
-
-    // recalculate edge differences for neighbours of contracted nodes
-    // cout << "number of shortcuts added: " << shortcut_count << endl;
 
     // Check if ranks are INT_MAX
     int errcount = 0;
@@ -274,7 +268,7 @@ int CH::compute_rank_order()
     }
 
     // check if same rank has been assigned to multiple nodes
-    std::unordered_map<int, std::vector<NodeId>> rank_groups;
+    unordered_map<int, vector<NodeId>> rank_groups;
     for (NodeId nodeId = 0; nodeId < graph.num_nodes(); ++nodeId)
     {
         if (rank_order[nodeId] != INT_MAX)

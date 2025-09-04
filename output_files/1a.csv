@@ -1,0 +1,12 @@
+file_name,runtime,shortcuts_added
+"./RoadNetworks/osm1.txt",58ms,381
+"./RoadNetworks/osm2.txt",106ms,816
+"./RoadNetworks/osm3.txt",305ms,1764
+"./RoadNetworks/osm4.txt",709ms,4395
+"./RoadNetworks/osm5.txt",1380ms,9035
+"./RoadNetworks/osm6.txt",2653ms,18346
+"./RoadNetworks/osm7.txt",6965ms,46100
+"./RoadNetworks/osm8.txt",15575ms,93605
+"./RoadNetworks/osm9.txt",34139ms,189198
+"./RoadNetworks/osm10.txt",94271ms,474703
+"./RoadNetworks/osm11.txt",202524ms,940156

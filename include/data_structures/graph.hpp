@@ -54,7 +54,7 @@ struct Graph
     // --- lookup helper ---
     inline size_t edge_index(NodeId src, NodeId dst) const {
         auto it = edge_pos.find(key_directed(src, dst));
-        if (it == edge_pos.end()) throw std::out_of_range("Edge not found");
+        if (it == edge_pos.end()) throw out_of_range("Edge not found");
         return it->second; // this is the index (and also the id in your scheme)
     }
 

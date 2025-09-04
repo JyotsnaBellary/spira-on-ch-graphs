@@ -16,8 +16,7 @@
 #include <filesystem>
 
 using namespace std;
-using namespace std::chrono;
-// using clock = std::chrono::steady_clock;
+using namespace chrono;
 
 struct QueryCHRow
 {
@@ -51,8 +50,8 @@ struct QueryCCHRow
 struct CCHRun {
     CCH_Result result;
     CCH        cch;
-    std::chrono::milliseconds sep_time;   // separator computation
-    std::chrono::milliseconds contract_time; // contraction + preprocessing
+    chrono::milliseconds sep_time;   // separator computation
+    chrono::milliseconds contract_time; // contraction + preprocessing
 };
 
 
@@ -61,7 +60,7 @@ class Benchmarks
 public:
     static void run_Dijkstra_benchmark()
     {
-        std::vector<std::string> filepaths = {
+        vector<string> filepaths = {
             "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             // "./RoadNetworks/osm1.txt",
@@ -84,28 +83,20 @@ public:
             cout << "---------------------><><-----------------------" << endl;
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
-            std::cout << "Loaded file:" << filepath << "\n";
-
-            // CH ch(graph);
-            // ch.preprocess();
-
-            // CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
-            // CH_Dijkstra chDijkstra(chGraph);
-                std::string line;
+            cout << "Loaded file:" << filepath << "\n";
+                string line;
             while (true) {
-                std::cout << "query> ";
-                if (!std::getline(std::cin, line)) return;          // EOF -> stop all
+                cout << "query> ";
+                if (!getline(cin, line)) return;          // EOF -> stop all
                 if (line.empty()) continue;
 
                  Dijkstra dijkstra(graph);
                 // NodeId src, dst;
 
                 
-                // parse "u v"
-                std::istringstream iss(line);
+                istringstream iss(line);
                 NodeId u, v;
                 iss >> u >> v;
-                    // std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
                 // cout << u << v;222 
                 auto c0 = high_resolution_clock::now();
                 DijkstraResult normal_result = dijkstra.compute_shortest_path(u, v);
@@ -129,7 +120,7 @@ public:
     {
         cout << "running CH_graph" << endl;
         // Add code to run CCH benchmark
-        std::vector<std::string> filepaths = {
+        vector<string> filepaths = {
             // "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             "./RoadNetworks/osm1.txt",
@@ -145,14 +136,14 @@ public:
             // "./RoadNetworks/osm11.txt",
         };
 
-        const std::string OUT_DIR = "output_files/1b";
+        const string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
             cout << "---------------------><><-----------------------" << endl;
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
-            std::cout << "Loaded file:" << filepath << "\n";
+            cout << "Loaded file:" << filepath << "\n";
 
             Dijkstra dijkstra(graph);
 
@@ -161,17 +152,16 @@ public:
 
             CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(chGraph);
-                std::string line;
+                string line;
             while (true) {
-                std::cout << "query> ";
-                if (!std::getline(std::cin, line)) return;          // EOF -> stop all
+                cout << "query> ";
+                if (!getline(cin, line)) return;          // EOF -> stop all
                 if (line.empty()) continue;
 
                 // parse "u v"
-                std::istringstream iss(line);
+                istringstream iss(line);
                 int u, v;
                 iss >> u >> v;
-                    // std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
 
                 auto c0 = high_resolution_clock::now();
                     CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
@@ -194,7 +184,7 @@ public:
     {
         cout << "running CCH_graph" << endl;
         // Add code to run CCH benchmark
-        std::vector<std::string> filepaths = {
+        vector<string> filepaths = {
             // "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             "./RoadNetworks/osm1.txt",
@@ -210,7 +200,7 @@ public:
             // "./RoadNetworks/osm11.txt",
         };
 
-        const std::string OUT_DIR = "output_files/1b";
+        const string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
@@ -218,7 +208,7 @@ public:
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
             cout << "Loaded files" << endl;
-            std::cout << "Loaded file:" << filepath << "\n";
+            cout << "Loaded file:" << filepath << "\n";
             cout << "Loaded files" << endl;
 
             CCH cch(graph);
@@ -236,25 +226,22 @@ public:
 
             // CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(cchGraph);
-            std::string line;
+            string line;
             while (true)
             {
-                std::cout << "query> ";
-                if (!std::getline(std::cin, line))
+                cout << "query> ";
+                if (!getline(cin, line))
                     return; // EOF -> stop all
                 if (line.empty())
                     continue;
 
                 // parse "u v"
-                std::istringstream iss(line);
+                istringstream iss(line);
                 int u, v;
                 iss >> u >> v;
-                // if (!(iss >> u >> v)) {
-                // std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
-                //     continue;
-                // }
+                
                 if (u < 0 || v < 0 || u >= (int)graph.num_nodes() || v >= (int)graph.num_nodes()) {
-                    std::cout << "IDs out of range. Valid: 0.." << (graph.num_nodes()-1) << "\n";
+                    cout << "IDs out of range. Valid: 0.." << (graph.num_nodes()-1) << "\n";
                     continue;
                 }
 
@@ -277,51 +264,15 @@ public:
         }
     }
 
-    // static void run_cch_benchmark()
-    // {
-    //     // Add code to run CCH benchmark
-    //     std::vector<std::string> filepaths = {
-    //         // "./RoadNetworks/test.txt",
-    //         // "./RoadNetworks/testcch.txt",
-    //         // "./RoadNetworks/osm1.txt",
-    //         // "./RoadNetworks/osm2.txt",
-    //         // "./RoadNetworks/osm3.txt",
-    //         // "./RoadNetworks/osm4.txt",
-    //         "./RoadNetworks/osm5.txt",
-    //         // "./RoadNetworks/osm6.txt",
-    //         // "./RoadNetworks/osm7.txt",
-    //         // "./RoadNetworks/osm8.txt",
-    //         // "./RoadNetworks/osm9.txt",
-    //         // "./RoadNetworks/osm10.txt",
-    //         // "./RoadNetworks/osm11.txt",
-    //     };
-
-    //     const std::string OUT_DIR = "output_files/1b";
-
-    //     for (const auto &filepath : filepaths)
-    //     {
-    //         cout << "--------------------------------------------" << endl;
-    //         FileHandler fh;
-    //         Graph graph = fh.read_file(filepath);
-    //         std::cout << "Loaded " << filepath << "\n";
-
-    //         CCH cch(graph);
-    //         CH_Graph cch_graph = cch.preprocess();
-
-    //         CH_Dijkstra ch_dijkstra(cch_graph);
-    //     }
-
-    // }
-
-    static inline bool file_exists_and_nonempty(const std::string &path)
+    static inline bool file_exists_and_nonempty(const string &path)
     {
         struct stat st{};
         return ::stat(path.c_str(), &st) == 0 && st.st_size > 0;
     }
 
-    static std::string format_hhmmss_mmm(std::chrono::milliseconds ms_total)
+    static string format_hhmmss_mmm(chrono::milliseconds ms_total)
     {
-        using namespace std::chrono;
+        using namespace chrono;
         auto h = duration_cast<hours>(ms_total);
         ms_total -= h;
         auto m = duration_cast<minutes>(ms_total);
@@ -330,19 +281,19 @@ public:
         ms_total -= s;
         auto ms = duration_cast<milliseconds>(ms_total);
 
-        std::ostringstream oss;
-        oss << std::setfill('0')
-            << std::setw(2) << h.count() << ":"
-            << std::setw(2) << m.count() << ":"
-            << std::setw(2) << s.count() << "."
-            << std::setw(3) << ms.count();
+        ostringstream oss;
+        oss << setfill('0')
+            << setw(2) << h.count() << ":"
+            << setw(2) << m.count() << ":"
+            << setw(2) << s.count() << "."
+            << setw(3) << ms.count();
         return oss.str();
     }
 
     // CSV-safe quoting (wrap in quotes; escape inner quotes by doubling)
-    static std::string csv_quote(std::string s)
+    static string csv_quote(string s)
     {
-        std::string out = "\"";
+        string out = "\"";
         for (char c : s)
         {
             if (c == '"')
@@ -354,13 +305,13 @@ public:
         return out;
     }
 
-    static void append_to_1a_csv(const std::string &csv_path,
-                                 const std::string &file_name,
-                                 std::chrono::milliseconds preprocess_time,
+    static void append_to_1a_csv(const string &csv_path,
+                                 const string &file_name,
+                                 chrono::milliseconds preprocess_time,
                                  int shortcuts_added)
     {
         const bool has_header = file_exists_and_nonempty(csv_path);
-        std::ofstream f(csv_path, std::ios::app);
+        ofstream f(csv_path, ios::app);
         if (!f)
             return;
 
@@ -376,16 +327,16 @@ public:
           << "\n";
     }
 
-    static void append_to_2a_csv(const std::string &csv_path,
-                                 const std::string &file_name,
-                                 std::chrono::milliseconds seperator_decomposition_time,
-                                 std::chrono::milliseconds preprocessing_time,
+    static void append_to_2a_csv(const string &csv_path,
+                                 const string &file_name,
+                                 chrono::milliseconds seperator_decomposition_time,
+                                 chrono::milliseconds preprocessing_time,
                                 int shortcuts,
                                 int avg_triangles,
                                 int max_triangles)
     {
         const bool has_header = file_exists_and_nonempty(csv_path);
-        std::ofstream f(csv_path, std::ios::app);
+        ofstream f(csv_path, ios::app);
         if (!f)
             return;
 
@@ -404,14 +355,14 @@ public:
           << "\n";
     }
 
-    static void append_to_2b_csv(const std::string &csv_path,
-                                 const std::string &file_name,
+    static void append_to_2b_csv(const string &csv_path,
+                                 const string &file_name,
                                  int count,
-                                 std::chrono::milliseconds customizationTime
+                                 chrono::milliseconds customizationTime
                                 )
     {
         const bool has_header = file_exists_and_nonempty(csv_path);
-        std::ofstream f(csv_path, std::ios::app);
+        ofstream f(csv_path, ios::app);
         if (!f)
             return;
 
@@ -437,17 +388,17 @@ public:
         return duration_cast<milliseconds>(stop - start).count();
     }
 
-    static inline std::vector<std::pair<int, int>>
+    static inline vector<pair<int, int>>
     make_unique_random_pairs(int n, size_t count, uint64_t seed)
     {
-        std::vector<std::pair<int, int>> pairs;
+        vector<pair<int, int>> pairs;
         pairs.reserve(count);
         if (n <= 1)
             return pairs;
 
-        std::mt19937_64 rng(seed);
-        std::uniform_int_distribution<int> pick(0, n - 1);
-        std::unordered_set<uint64_t> seen;
+        mt19937_64 rng(seed);
+        uniform_int_distribution<int> pick(0, n - 1);
+        unordered_set<uint64_t> seen;
         seen.reserve(count * 2 + 7);
 
         auto key = [](int a, int b) -> uint64_t
@@ -468,22 +419,22 @@ public:
         return pairs;
     }
 
-    static inline std::string basename_no_ext(const std::string &path)
+    static inline string basename_no_ext(const string &path)
     {
-        std::filesystem::path p(path);
+        filesystem::path p(path);
         return p.stem().string(); // e.g., "osm1"
     }
 
-    static inline void write_cch_csv(const std::string &out_dir,
-                                 const std::string &base_name,
-                                 const std::vector<QueryCCHRow> &rows)
+    static inline void write_cch_csv(const string &out_dir,
+                                 const string &base_name,
+                                 const vector<QueryCCHRow> &rows)
     {
-        std::filesystem::create_directories(out_dir);
-        std::string out_path = (std::filesystem::path(out_dir) / (base_name + ".csv")).string();
-        std::ofstream out(out_path, std::ios::trunc);
+        filesystem::create_directories(out_dir);
+        string out_path = (filesystem::path(out_dir) / (base_name + ".csv")).string();
+        ofstream out(out_path, ios::trunc);
         if (!out)
         {
-            std::cerr << "Failed to open " << out_path << " for writing\n";
+            cerr << "Failed to open " << out_path << " for writing\n";
             return;
         }
 
@@ -507,19 +458,19 @@ public:
                 << '\n';
         }
         out.close();
-        std::cout << "Wrote " << rows.size() << " rows to " << out_path << "\n";
+        cout << "Wrote " << rows.size() << " rows to " << out_path << "\n";
     }
 
-    static inline void write_csv(const std::string &out_dir,
-                                 const std::string &base_name,
-                                 const std::vector<QueryCHRow> &rows)
+    static inline void write_csv(const string &out_dir,
+                                 const string &base_name,
+                                 const vector<QueryCHRow> &rows)
     {
-        std::filesystem::create_directories(out_dir);
-        std::string out_path = (std::filesystem::path(out_dir) / (base_name + ".csv")).string();
-        std::ofstream out(out_path, std::ios::trunc);
+        filesystem::create_directories(out_dir);
+        string out_path = (filesystem::path(out_dir) / (base_name + ".csv")).string();
+        ofstream out(out_path, ios::trunc);
         if (!out)
         {
-            std::cerr << "Failed to open " << out_path << " for writing\n";
+            cerr << "Failed to open " << out_path << " for writing\n";
             return;
         }
 
@@ -540,7 +491,7 @@ public:
                 << '\n';
         }
         out.close();
-        std::cout << "Wrote " << rows.size() << " rows to " << out_path << "\n";
+        cout << "Wrote " << rows.size() << " rows to " << out_path << "\n";
     }
 
     static pair<CH_Graph,int> run_ch_preprocessing(Graph graph)
@@ -558,12 +509,12 @@ public:
             const auto t0 = high_resolution_clock::now();
             cch.compute_contraction_order();
             const auto t1 = high_resolution_clock::now();
-            auto total_separartion = duration_cast<std::chrono::milliseconds>(t1 - t0);
+            auto total_separartion = duration_cast<chrono::milliseconds>(t1 - t0);
 
             const auto p0 = high_resolution_clock::now();
             CCH_Result cch_result = cch.preprocess(); // do the heavy work once
             const auto p1 = high_resolution_clock::now();
-            auto total_ms = duration_cast<std::chrono::milliseconds>(p1 - p0);
+            auto total_ms = duration_cast<chrono::milliseconds>(p1 - p0);
             // CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
 
             return {cch_result,cch, total_separartion, total_ms};
@@ -571,7 +522,7 @@ public:
 
     static void run_ch_benchmarks()
     {
-        std::vector<std::string> filepaths = {
+        vector<string> filepaths = {
             "./RoadNetworks/osm1.txt",
             "./RoadNetworks/osm2.txt",
             "./RoadNetworks/osm3.txt",
@@ -586,7 +537,7 @@ public:
         };
 
         constexpr size_t NUM_QUERIES = 100;
-        const std::string OUT_DIR = "output_files/1b";
+        const string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
@@ -596,10 +547,10 @@ public:
             const int n = graph.num_nodes();
             if (n <= 1)
             {
-                std::cerr << "Skipping " << filepath << " (n=" << n << ")\n";
+                cerr << "Skipping " << filepath << " (n=" << n << ")\n";
                 continue;
             }
-            std::cout << "Loaded " << filepath
+            cout << "Loaded " << filepath
                       << " with n=" << n << ", m=" << graph.num_edges() << "\n";
 
             // Baseline Dijkstra on original graph
@@ -611,12 +562,11 @@ public:
             auto  [chGraph, number_of_shortcuts]  = run_ch_preprocessing(graph);
            
             const auto t1 = high_resolution_clock::now();
-            auto total_ms = duration_cast<std::chrono::milliseconds>(t1 - t0);
+            auto total_ms = duration_cast<chrono::milliseconds>(t1 - t0);
 
             // Write the CSV line (append)
             append_to_1a_csv("output_files/1a.csv", /*file name*/ filepath, total_ms, number_of_shortcuts);
 
-            // std::cout << "CH preprocess took " << to_ms(t0, t1) << " ms\n";
 
             // Build CH graph view (once), and the query engine
             CH_Dijkstra chDijkstra(chGraph);
@@ -624,7 +574,7 @@ public:
             // Make unique queries in [0..n-1]
             auto pairs = make_unique_random_pairs(n, NUM_QUERIES, /*seed=*/0xC0FFEEULL);
 
-            std::vector<QueryCHRow> rows;
+            vector<QueryCHRow> rows;
             rows.reserve(pairs.size());
 
             // Run queries
@@ -657,7 +607,7 @@ public:
                 {
                     if (d_dist != c_dist)
                         // Optional debugging print
-                        std::cerr << "[DIFF]  " << src << "->" << dst
+                        cerr << "[DIFF]  " << src << "->" << dst
                                   << " dijkstra= " << d_dist
                                   << " ch= " << c_dist << "\n";
                 }
@@ -673,7 +623,7 @@ public:
 
     static void run_cch_benchmarks()
     {
-        std::vector<std::string> filepaths = {
+        vector<string> filepaths = {
             "./RoadNetworks/osm1.txt",
             "./RoadNetworks/osm2.txt",
             "./RoadNetworks/osm3.txt",
@@ -688,7 +638,7 @@ public:
         };
 
         constexpr size_t NUM_QUERIES = 100;
-        const std::string OUT_DIR = "output_files/2c";
+        const string OUT_DIR = "output_files/2c";
 
         for (const auto &filepath : filepaths)
         {
@@ -699,10 +649,10 @@ public:
             const int n = graph.num_nodes();
             if (n <= 1)
             {
-                std::cerr << "Skipping " << filepath << " (n=" << n << ")\n";
+                cerr << "Skipping " << filepath << " (n=" << n << ")\n";
                 continue;
             }
-            std::cout << "Loaded " << filepath
+            cout << "Loaded " << filepath
                       << " with n=" << n << ", m=" << graph.num_edges() << "\n";
 
             // Baseline Dijkstra on original graph
@@ -712,40 +662,31 @@ public:
             // ==========================================================================================================
 
             // Build CH once per graph
-            // const auto t0 = high_resolution_clock::now();
             auto  [chGraph, number_of_shortcuts]  = run_ch_preprocessing(graph);
            
-            // const auto t1 = high_resolution_clock::now();
-            // auto total_ms = duration_cast<std::chrono::milliseconds>(t1 - t0);
-
-            // Write the CSV line (append)
-            // append_to_1a_csv("output_files/1a.csv", /*file name*/ filepath, total_ms, number_of_shortcuts);
-
             // Build CH graph view (once), and the query engine
             CH_Dijkstra chDijkstra(chGraph);
 
             // ==========================================================================================================
             
             // Build CCH once per graph
-            // const auto t0 = high_resolution_clock::now();
-            // CCHRun cchrun  = run_cch_preprocessing(graph);
             CCH cch(graph);
 
             const auto t0 = high_resolution_clock::now();
             cch.compute_contraction_order();
             const auto t1 = high_resolution_clock::now();
-            auto total_separartion = duration_cast<std::chrono::milliseconds>(t1 - t0);
+            auto total_separartion = duration_cast<chrono::milliseconds>(t1 - t0);
 
             const auto p0 = high_resolution_clock::now();
             CCH_Result cch_result = cch.preprocess(); // do the heavy work once
             const auto p1 = high_resolution_clock::now();
-            auto total_ms = duration_cast<std::chrono::milliseconds>(p1 - p0);
+            auto total_ms = duration_cast<chrono::milliseconds>(p1 - p0);
 
             // CCH cch = cchrun.cch;
             const auto org_cust0 = high_resolution_clock::now();
             cch.customization();
             const auto org_cust1 = high_resolution_clock::now();
-            auto total_cust_ms = duration_cast<std::chrono::milliseconds>(org_cust1 - org_cust0);
+            auto total_cust_ms = duration_cast<chrono::milliseconds>(org_cust1 - org_cust0);
 
             CH_Graph cch_graph(cch.get_graph().get_all_nodes(), cch.get_graph().get_all_edges(), cch.get_ranks());
             append_to_2a_csv("output_files/2a.csv", /*file name*/ filepath, total_separartion, total_ms, cch_result.shortcuts, cch_result.avg_lower_triangles_per_edge, cch_result.maximum_triangles_edge);
@@ -760,7 +701,7 @@ public:
                 bool reassign_weights = true;
                 cch.customization(false, true);
                 const auto re_cust1 = high_resolution_clock::now();
-                auto customizationtime = duration_cast<std::chrono::milliseconds>(re_cust1 - re_cust0);
+                auto customizationtime = duration_cast<chrono::milliseconds>(re_cust1 - re_cust0);
 
                 append_to_2b_csv("output_files/2b.csv", filepath, i + 1, customizationtime);
             }
@@ -778,7 +719,7 @@ public:
             // Make unique queries in [0..n-1]
             auto pairs = make_unique_random_pairs(n, NUM_QUERIES, /*seed=*/0xC0FFEEULL);
 
-            std::vector<QueryCCHRow> rows;
+            vector<QueryCCHRow> rows;
             rows.reserve(pairs.size());
 
             // Run queries
@@ -821,13 +762,13 @@ public:
                 {
                     if (d_dist != c_dist)
                         // Optional debugging print
-                        std::cerr << "[DIFF]  " << src << "->" << dst
+                        cerr << "[DIFF]  " << src << "->" << dst
                                   << " dijkstra= " << d_dist
                                   << " ch= " << c_dist << "\n";
                     
                     if (d_dist != cc_dist)
                         // Optional debugging print
-                        std::cerr << "[DIFF]  " << src << "->" << dst
+                        cerr << "[DIFF]  " << src << "->" << dst
                                   << " dijkstra= " << d_dist
                                   << " cch= " << c_dist << "\n";
                                

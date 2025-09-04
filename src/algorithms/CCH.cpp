@@ -3,7 +3,7 @@
 #include <utils/kahip_runner.hpp>
 #include <random>
 
-using namespace std::chrono;
+using namespace chrono;
 
 CCH::CCH(Graph &graph) : graph(graph) {}
 
@@ -22,7 +22,7 @@ void CCH::reset_customization_update_weights(bool assign_random_weights,
 {
     mt19937_64 gen(seed);
     // Approximate open interval (0,1): avoid exact 0; 1 is already excluded by default.
-    uniform_real_distribution<double> U(std::nextafter(0.0, 1.0), 1.0);
+    uniform_real_distribution<double> U(nextafter(0.0, 1.0), 1.0);
     // Iterate all upward edges (your shortcutsCache is the upward edge set)
     for (size_t i = 0; i < shortcutsCache.size(); ++i)
     {
@@ -49,13 +49,7 @@ void CCH::reset_customization_update_weights(bool assign_random_weights,
                 double r = U(gen);            // (0,1)
                 Dist w = from_unit_double(r); // or static_cast<Dist>(r) if Dist is double
                 edge.cost = rev_edge.cost = w;
-                // } else {
-                //     // edge.cost = rev_edge.cost = edge.original_cost;
             }
-            // edge.replaced = false;
-            // rev_edge.replaced = false;
-
-            // Optional: clear decomposition record
         }
     }
 }
@@ -124,7 +118,7 @@ CCH_Result CCH::preprocess()
     // vector<int> contraction_order = compute_contraction_order();
 
     compute_lower_triangles(contraction_order);
-    // std::cout << "Number of triangles to customize: " << shortcutsCache.size() << "\n";
+    // cout << "Number of triangles to customize: " << shortcutsCache.size() << "\n";
 
     set_shortcut_rank();
     // ---- compute stats ----
@@ -157,7 +151,7 @@ void CCH::print_shortcuts_by_trg_order() const
     {
         size_t idx = shortcut_of_rank_by_trg[r];
         const Edge &e = shortcutsCache[idx];
-        std::cout << "rank " << r
+        cout << "rank " << r
                   << " : shortcut (" << e.src << " -> " << e.trg << ")  v=" << e.trg << " r(v) = " << rank_of_node[e.trg]
                   << " | middles: [";
 
@@ -166,12 +160,12 @@ void CCH::print_shortcuts_by_trg_order() const
         for (size_t i = 0; i < mids.size(); ++i)
         {
             if (i)
-                std::cout << ", ";
+                cout << ", ";
             NodeId w = mids[i].middle;
-            std::cout << w << "(r=" << rank_of_node[w] << ")";
+            cout << w << "(r=" << rank_of_node[w] << ")";
         }
 
-        std::cout << "]\n";
+        cout << "]\n";
     }
 }
 void CCH::set_shortcut_rank()
@@ -187,16 +181,16 @@ void CCH::set_shortcut_rank()
         sig.reserve(mids.size());
         for (ShortcutInfo w : mids)
             sig.push_back(rank_of_node[w.middle]);
-        std::sort(sig.begin(), sig.end(), std::greater<int>());
+        sort(sig.begin(), sig.end(), greater<int>());
     }
 
     // 2) sort an index by (v asc), then lexicographic sig desc
     shortcut_of_rank_by_trg.resize(M);
-    std::iota(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(), 0);
+    iota(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(), 0);
 
-    auto lex_desc = [&](const std::vector<int> &A, const std::vector<int> &B)
+    auto lex_desc = [&](const vector<int> &A, const vector<int> &B)
     {
-        const size_t L = std::min(A.size(), B.size());
+        const size_t L = min(A.size(), B.size());
         for (size_t i = 0; i < L; ++i)
         {
             if (A[i] != B[i])
@@ -208,7 +202,7 @@ void CCH::set_shortcut_rank()
         return false; // equal
     };
 
-    std::stable_sort(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(),
+    stable_sort(shortcut_of_rank_by_trg.begin(), shortcut_of_rank_by_trg.end(),
                      [&](size_t ia, size_t ib)
                      {
                          const Edge &ea = shortcutsCache[ia];
@@ -328,9 +322,9 @@ void CCH::compute_contraction_order()
     {
         output_file_path = run_kahip_on_test_graph("level2");
     }
-    catch (const std::exception &e)
+    catch (const exception &e)
     {
-        std::cerr << "Error: " << e.what() << "\n";
+        cerr << "Error: " << e.what() << "\n";
         return;
     }
 

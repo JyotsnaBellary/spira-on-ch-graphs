@@ -16,27 +16,12 @@
 #include <filesystem>
 
 using namespace std;
-using namespace std::chrono;
-// using clock = std::chrono::steady_clock;
+using namespace chrono;
 
-struct QueryResult
-{
-    vector<NodeId> path;
-    int cost;
-};
 
-struct CHQueryResult
-{
-    QueryResult ch_query;
-    QueryResult djikstra_result;
-};
 
-struct CCHQueryResult
-{
-    QueryResult cch_query;
-    QueryResult djikstra_result;
-};
 
+// This class has been introduced to support the web application with Querying the required paths with the three algorithms
 class WebAPP
 {
 public:
@@ -62,13 +47,13 @@ public:
         auto it = path_map.find(map);
         if (it == path_map.end())
         {
-            std::cerr << "Unknown map choice: " << map << std::endl; // stderr
+            cerr << "Unknown map choice: " << map << endl; // stderr
             return;                                                  // non-zero = error
         }
 
-        const std::string filepath = it->second;
-        std::cerr << "Running Dijkstra on " << filepath
-                  << " src=" << src << " dst=" << dst << std::endl;
+        const string filepath = it->second;
+        cerr << "Running Dijkstra on " << filepath
+                  << " src=" << src << " dst=" << dst << endl;
 
         FileHandler fh;
         Graph graph = fh.read_file(filepath);
@@ -79,14 +64,14 @@ public:
         const auto &path = result.path;
 
         // ---- STRICT JSON output to stdout ----
-        std::cout << "{\"algo\":\"djk\",\"path\":[";
+        cout << "{\"algo\":\"djk\",\"path\":[";
         for (size_t i = 0; i < path.size(); ++i)
         {
             if (i)
-                std::cout << ",";
-            std::cout << path[i];
+                cout << ",";
+            cout << path[i];
         }
-        std::cout << "],\"cost\":" << result.total_cost << "}" << std::endl;
+        cout << "],\"cost\":" << result.total_cost << "}" << endl;
         return;
     }
     // print or use result
@@ -113,13 +98,13 @@ public:
         auto it = path_map.find(map);
         if (it == path_map.end())
         {
-            std::cerr << "Unknown map choice: " << map << std::endl; // stderr
+            cerr << "Unknown map choice: " << map << endl; // stderr
             return 2;                                                // non-zero = error
         }
 
-        const std::string filepath = it->second;
-        std::cerr << "Running Dijkstra on " << filepath
-                  << " src=" << src << " dst=" << dst << std::endl;
+        const string filepath = it->second;
+        cerr << "Running Dijkstra on " << filepath
+                  << " src=" << src << " dst=" << dst << endl;
 
         FileHandler fh;
         Graph graph = fh.read_file(filepath);
@@ -134,33 +119,33 @@ public:
         result = chGraph.unpack_shortcuts(result);
         // Assume result.path is vector<NodeId>. Adjust to your actual type.
         // Your result fields — adjust names if your struct differs:
-        const std::vector<NodeId> &actual_path = result.path;      // full expanded path
-        const std::vector<NodeId> &shortcut_path = result.ch_path; // upward/downward CH hops
+        const vector<NodeId> &actual_path = result.path;      // full expanded path
+        const vector<NodeId> &shortcut_path = result.ch_path; // upward/downward CH hops
         const double cost = result.total_cost;                     // total cost (distance/time)
 
         // Basic sanity: if there is clearly no path, return non-zero (so server 500s)
         if (actual_path.empty())
         {
-            std::cerr << "CH: no path found.\n";
+            cerr << "CH: no path found.\n";
             return 3;
         }
 
         // --- JSON to stdout ONLY ---
-        std::cout << "{\"algo\":\"ch\",\"actual_path\":[";
+        cout << "{\"algo\":\"ch\",\"actual_path\":[";
         for (size_t i = 0; i < actual_path.size(); ++i)
         {
             if (i)
-                std::cout << ',';
-            std::cout << actual_path[i];
+                cout << ',';
+            cout << actual_path[i];
         }
-        std::cout << "],\"shortcut_path\":[";
+        cout << "],\"shortcut_path\":[";
         for (size_t i = 0; i < shortcut_path.size(); ++i)
         {
             if (i)
-                std::cout << ',';
-            std::cout << shortcut_path[i];
+                cout << ',';
+            cout << shortcut_path[i];
         }
-        std::cout << "],\"cost\":" << cost << "}\n";
+        cout << "],\"cost\":" << cost << "}\n";
 
         return 0;
     }
@@ -188,13 +173,13 @@ public:
         auto it = path_map.find(map);
         if (it == path_map.end())
         {
-            std::cerr << "Unknown map choice: " << map << std::endl; // stderr
+            cerr << "Unknown map choice: " << map << endl; // stderr
             return 2;                                                // non-zero = error
         }
 
-        const std::string filepath = it->second;
-        std::cerr << "Running Dijkstra on " << filepath
-                  << " src=" << src << " dst=" << dst << std::endl;
+        const string filepath = it->second;
+        cerr << "Running Dijkstra on " << filepath
+                  << " src=" << src << " dst=" << dst << endl;
 
         FileHandler fh;
         Graph graph = fh.read_file(filepath);
@@ -209,33 +194,33 @@ public:
         CH_DijkstraResult result = chDijkstra.compute_shortest_path(src, dst);
         result = cchGraph.unpack_shortcuts(result);
         // Assume result.path is vector<NodeId>. Adjust to your actual type.
-        const std::vector<NodeId> &actual_path = result.path;      // full expanded path
-        const std::vector<NodeId> &shortcut_path = result.ch_path; // upward/downward CH hops
+        const vector<NodeId> &actual_path = result.path;      // full expanded path
+        const vector<NodeId> &shortcut_path = result.ch_path; // upward/downward CH hops
         const double cost = result.total_cost;                     // total cost (distance/time)
 
         // Basic sanity: if there is clearly no path, return non-zero (so server 500s)
         if (actual_path.empty())
         {
-            std::cerr << "CH: no path found.\n";
+            cerr << "CH: no path found.\n";
             return 3;
         }
 
         // --- JSON to stdout ONLY ---
-        std::cout << "{\"algo\":\"ch\",\"actual_path\":[";
+        cout << "{\"algo\":\"ch\",\"actual_path\":[";
         for (size_t i = 0; i < actual_path.size(); ++i)
         {
             if (i)
-                std::cout << ',';
-            std::cout << actual_path[i];
+                cout << ',';
+            cout << actual_path[i];
         }
-        std::cout << "],\"shortcut_path\":[";
+        cout << "],\"shortcut_path\":[";
         for (size_t i = 0; i < shortcut_path.size(); ++i)
         {
             if (i)
-                std::cout << ',';
-            std::cout << shortcut_path[i];
+                cout << ',';
+            cout << shortcut_path[i];
         }
-        std::cout << "],\"cost\":" << cost << "}\n";
+        cout << "],\"cost\":" << cost << "}\n";
 
         return 0;
     }
@@ -245,7 +230,7 @@ public:
     {
         cout << "running CH_graph" << endl;
         // Add code to run CCH benchmark
-        std::vector<std::string> filepaths = {
+        vector<string> filepaths = {
             "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             // "./RoadNetworks/osm1.txt",
@@ -261,34 +246,34 @@ public:
             // "./RoadNetworks/osm11.txt",
         };
 
-        const std::string OUT_DIR = "output_files/1b";
+        const string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
             cout << "---------------------><><-----------------------" << endl;
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
-            std::cout << "Loaded file:" << filepath << "\n";
+            cout << "Loaded file:" << filepath << "\n";
 
             CH ch(graph);
             ch.preprocess();
 
             CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(chGraph);
-            std::string line;
+            string line;
             while (true)
             {
-                std::cout << "query> ";
-                if (!std::getline(std::cin, line))
+                cout << "query> ";
+                if (!getline(cin, line))
                     return; // EOF -> stop all
                 if (line.empty())
                     continue;
 
                 // parse "u v"
-                std::istringstream iss(line);
+                istringstream iss(line);
                 int u, v;
                 iss >> u >> v;
-                // std::cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
+                // cout << "Please enter: <src> <dst> (integers), or 'next', or 'q'\n";
 
                 auto c0 = high_resolution_clock::now();
                 CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
@@ -298,4 +283,90 @@ public:
             }
         }
     }
+
+    static void run_ch_And_Dijkstra_Query(const string &map, NodeId src, NodeId dst)
+    {
+        // Map short names to actual file paths
+        static const unordered_map<string, string> path_map = {
+            {"test", "./RoadNetworks/test.txt"},
+            {"testcch", "./RoadNetworks/testcch.txt"},
+            {"osm1", "./RoadNetworks/osm1.txt"},
+            {"osm2", "./RoadNetworks/osm2.txt"},
+            {"osm3", "./RoadNetworks/osm3.txt"},
+            {"osm4", "./RoadNetworks/osm4.txt"},
+            {"osm5", "./RoadNetworks/osm5.txt"},
+            {"osm6", "./RoadNetworks/osm6.txt"},
+            {"osm7", "./RoadNetworks/osm7.txt"},
+            {"osm8", "./RoadNetworks/osm8.txt"},
+            {"osm9", "./RoadNetworks/osm9.txt"},
+            {"osm10", "./RoadNetworks/osm10.txt"},
+            {"osm11", "./RoadNetworks/osm11.txt"},
+        };
+
+        auto it = path_map.find(map);
+        if (it == path_map.end())
+        {
+            cerr << "Unknown map choice: " << map << endl; // stderr
+            return;                                                  // non-zero = error
+        }
+
+        const string filepath = it->second;
+        cerr << "Running Dijkstra on " << filepath
+                  << " src=" << src << " dst=" << dst << endl;
+
+        FileHandler fh;
+        Graph graph = fh.read_file(filepath);
+
+        Dijkstra dijkstra(graph);
+        auto result = dijkstra.compute_shortest_path(src, dst);
+        // Assume result.path is vector<NodeId>. Adjust to your actual type.
+        const auto &path = result.path;
+
+        CH ch(graph);
+        ch.preprocess();
+
+        CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
+        CH_Dijkstra chDijkstra(chGraph);
+
+        CH_DijkstraResult ch_result = chDijkstra.compute_shortest_path(src, dst);
+        ch_result = chGraph.unpack_shortcuts(ch_result);
+        // Assume result.path is vector<NodeId>. Adjust to your actual type.
+        // Your result fields — adjust names if your struct differs:
+        const vector<NodeId> &actual_path = ch_result.path;      // full expanded path
+        const vector<NodeId> &shortcut_path = ch_result.ch_path; // upward/downward CH hops
+        const double cost = ch_result.total_cost;      
+
+        // ---- STRICT JSON output to stdout ----
+        cout << "{";
+
+// --- Dijkstra section ---
+cout << "\"djk\":{";
+cout << "\"algo\":\"djk\",\"path\":[";
+for (size_t i = 0; i < path.size(); i++) {
+    if (i) cout << ",";
+    cout << path[i];
+}
+cout << "]";
+cout << ",\"cost\":" << result.total_cost; // adjust if your Dijkstra result has a cost
+cout << "}";
+
+// --- CH section ---
+cout << ",\"ch\":{";
+cout << "\"algo\":\"ch\",\"actual_path\":[";
+for (size_t i = 0; i < actual_path.size(); i++) {
+    if (i) cout << ",";
+    cout << actual_path[i];
+}
+cout << "],\"shortcut_path\":[";
+for (size_t i = 0; i < shortcut_path.size(); i++) {
+    if (i) cout << ",";
+    cout << shortcut_path[i];
+}
+cout << "],\"cost\":" << cost;
+cout << "}";
+
+cout << "}" << endl; // close outer object
+    }
+    // print or use result
+
 };

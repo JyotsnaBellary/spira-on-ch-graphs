@@ -1,8 +1,6 @@
 #pragma once
 #include "data_structures/graph.hpp"
 
-// the witness search needed for finiding where the shortcuts are needed. 
-
 struct DijkstraResult {
     vector<NodeId> path;
     Dist total_cost;
@@ -10,15 +8,15 @@ struct DijkstraResult {
     int number_of_pops;
 };
 
+//Dijkstra Class for shortest path computation
 class Dijkstra {
     Graph& graph;
-    // vector<Dist> dist_;      // reused distances
-    // vector<NodeId> touched_; // nodes we set in this run
 
     public:
         explicit Dijkstra(Graph& graph);
+        //Computes shortest path between src and dst
         DijkstraResult compute_shortest_path(NodeId src, NodeId dst);
-        // pair<bool, ShortcutOpType> shortcut_search(NodeId src, NodeId dst, NodeId bannedNode, Dist distanceCap);
+        //builds result path
         static DijkstraResult build_path(const vector<int>& prev, const vector<Dist>& dist, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops);
 
 };

@@ -3,8 +3,8 @@
 #include <climits>
 
 int Utils::compute_active_median(const Graph& g,
-                          const std::vector<int>& score,
-                          std::vector<int>& scratch) {
+                          const vector<int>& score,
+                          vector<int>& scratch) {
     scratch.clear();
     if (scratch.capacity() < (size_t)g.num_nodes())
         scratch.reserve(g.num_nodes());
@@ -16,18 +16,18 @@ int Utils::compute_active_median(const Graph& g,
     }
     if (scratch.empty()) return INT_MAX;
     size_t k = scratch.size()/2;
-    std::nth_element(scratch.begin(), scratch.begin()+k, scratch.end());
+    nth_element(scratch.begin(), scratch.begin()+k, scratch.end());
     return scratch[k];
 }
 
 
 // return vector of boolean with independent nodes marked as true or 1
-std::vector<NodeId>
+vector<NodeId>
 Utils::independent_nodes(const Graph& graph, NodePQ& pq_in, int T_abs,
-                         const std::vector<int>& score)
+                         const vector<int>& score)
 {
 
-    static std::vector<int> blocked_stamp, chosen_stamp;
+    static vector<int> blocked_stamp, chosen_stamp;
     static int stamp = 1;
 
     const int n = graph.num_nodes();
@@ -36,8 +36,8 @@ Utils::independent_nodes(const Graph& graph, NodePQ& pq_in, int T_abs,
         chosen_stamp.resize(n, 0);
     }
     if (++stamp == INT_MAX) {                 // rare wraparound guard
-        std::fill(blocked_stamp.begin(), blocked_stamp.end(), 0);
-        std::fill(chosen_stamp.begin(),  chosen_stamp.end(), 0);
+        fill(blocked_stamp.begin(), blocked_stamp.end(), 0);
+        fill(chosen_stamp.begin(),  chosen_stamp.end(), 0);
         stamp = 1;
     }
 
@@ -46,8 +46,8 @@ Utils::independent_nodes(const Graph& graph, NodePQ& pq_in, int T_abs,
     auto is_chosen  = [&](NodeId v){ return chosen_stamp[v] == stamp; };
     auto set_chosen = [&](NodeId v){ chosen_stamp[v] = stamp; };
 
-    std::vector<NodeId> batch;
-    std::vector<std::pair<int, NodeId>> stash; // window to process
+    vector<NodeId> batch;
+    vector<pair<int, NodeId>> stash; // window to process
     stash.reserve(1024);
 
     // --- 1) find current min m (skip stale/inactive), keep it in the window
@@ -65,8 +65,8 @@ Utils::independent_nodes(const Graph& graph, NodePQ& pq_in, int T_abs,
 
     
     // --- 3) build MIS inside the window
-    // std::vector<char> blocked(graph.num_nodes(), 0); // only declare ONCE
-    // std::vector<char> chosen(graph.num_nodes(), 0);
+    // vector<char> blocked(graph.num_nodes(), 0); // only declare ONCE
+    // vector<char> chosen(graph.num_nodes(), 0);
     batch.reserve(stash.size());
     for (auto [ed, u] : stash) {
         if (is_chosen(u) || is_blocked(u)) continue;
@@ -100,7 +100,7 @@ Dist Utils::sat_add(Dist a, Dist b)
 }
 
 // Local-min test (optional but recommended)
-bool Utils::is_local_min(NodeId u, const Graph &g, const std::vector<int> &s)
+bool Utils::is_local_min(NodeId u, const Graph &g, const vector<int> &s)
 {
     const int su = s[u];
     for (const auto &[v, e] : g.neighbors(u))
@@ -117,24 +117,24 @@ bool Utils::is_local_min(NodeId u, const Graph &g, const std::vector<int> &s)
 filesystem::path Utils::run_kahip(const char *out_name)
 {
     // Ensure the Kahip executable is available
-    const std::string kahip_executable = "kaffpa"; // or "kahip" based on your installation
-    if (system((std::string("which ") + kahip_executable + " > /dev/null 2>&1").c_str()) != 0)
+    const string kahip_executable = "kaffpa"; // or "kahip" based on your installation
+    if (system((string("which ") + kahip_executable + " > /dev/null 2>&1").c_str()) != 0)
     {
-        throw std::runtime_error("Kahip executable not found. Please ensure Kahip is installed and in your PATH.");
+        throw runtime_error("Kahip executable not found. Please ensure Kahip is installed and in your PATH.");
     }
 
     // Construct the command to run Kahip
-    std::string command = kahip_executable;
+    string command = kahip_executable;
     command += " --preconfiguration=fast";
-    command += " --output_filename=" + std::string(out_name);
+    command += " --output_filename=" + string(out_name);
     command += " ./RoadNetworks/test.graph"; // Input graph file
 
     // Execute the command
     int ret = system(command.c_str());
     if (ret != 0)
     {
-        throw std::runtime_error("Error running Kahip. Command: " + command);
+        throw runtime_error("Error running Kahip. Command: " + command);
     }
 
-    return std::filesystem::path(out_name);
+    return filesystem::path(out_name);
 }

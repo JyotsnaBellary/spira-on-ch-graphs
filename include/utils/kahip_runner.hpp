@@ -7,4 +7,4 @@
 #include <stdexcept>
 #include <string>
 
-std::filesystem::path run_kahip_on_test_graph(const char* out_name = "nodeOrder");
+filesystem::path run_kahip_on_test_graph(const char* out_name = "nodeOrder");
