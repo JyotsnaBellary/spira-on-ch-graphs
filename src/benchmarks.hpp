@@ -61,28 +61,15 @@ public:
     static void run_Dijkstra_benchmark()
     {
         vector<string> filepaths = {
-            "./RoadNetworks/test.txt",
-            // "./RoadNetworks/testcch.txt",
-            // "./RoadNetworks/osm1.txt",
-            // "./RoadNetworks/osm2.txt",
-            // "./RoadNetworks/osm3.txt",
-            // "./RoadNetworks/osm4.txt",
-            // "./RoadNetworks/osm5.txt",
-            // "./RoadNetworks/osm6.txt",
-            // "./RoadNetworks/osm7.txt",
-            // "./RoadNetworks/osm8.txt",
-            // "./RoadNetworks/osm9.txt",
-            // "./RoadNetworks/osm10.txt",
-            // "./RoadNetworks/osm11.txt",
+            "./RoadNetworks/osm5.txt",
         };
-        // Add code to run Dijkstra benchmark
        
 
         for (const auto &filepath : filepaths)
         {
-            cout << "---------------------><><-----------------------" << endl;
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
+
             cout << "Loaded file:" << filepath << "\n";
                 string line;
             while (true) {
@@ -121,12 +108,10 @@ public:
         cout << "running CH_graph" << endl;
         // Add code to run CCH benchmark
         vector<string> filepaths = {
-            // "./RoadNetworks/test.txt",
-            // "./RoadNetworks/testcch.txt",
-            "./RoadNetworks/osm1.txt",
+            "./RoadNetworks/osm5.txt",
         };
 
-        const string OUT_DIR = "output_files/1b";
+        const string OUT_DIR = "output_files/";
 
         for (const auto &filepath : filepaths)
         {
@@ -138,7 +123,7 @@ public:
 
             CH ch(graph);
             ch.preprocess();
-
+            cout << "Finished Processing OSM5. Ready for Quering: " << endl;
             CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(chGraph);
                 string line;
@@ -156,13 +141,20 @@ public:
                     CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
                     cres = chGraph.unpack_shortcuts(cres);
                     auto c1 = high_resolution_clock::now();
-                    cout << "path" << endl;
-                    for (int i = 0; i < cres.edge_ids.size(); i++){
-                        cout << cres.edge_ids[i] << " " ;
+                    cout << "Number of PQ pops: " << cres.number_of_pops << endl;
+
+                    cout << "Shortcut Path: ";
+                    for (int i = 0; i < cres.ch_path.size(); i++){
+                        cout << cres.ch_path[i] << " " ;
+                    }
+                    cout << endl;
+                    cout << "Unpacked Path: ";
+                    for (int i = 0; i < cres.path.size(); i++){
+                        cout << cres.path[i] << " " ;
                     }
                     cout << endl;
 
-                    cout << "cost of ch: "<< cres.total_cost;
+                    cout << "Total cost of path: "<< cres.total_cost << endl;
 
 
             }
@@ -171,29 +163,25 @@ public:
 
     static void run_cch_benchmark()
     {
-        cout << "running CCH_graph" << endl;
+        cout << "Running CCH_graph" << endl;
         // Add code to run CCH benchmark
         
         vector<string> filepaths = {
-            // "./RoadNetworks/test.txt",
-            // "./RoadNetworks/testcch.txt",
-            "./RoadNetworks/osm1.txt",
+            "./RoadNetworks/osm5.txt",
         };
 
-        const string OUT_DIR = "output_files/1b";
+        const string OUT_DIR = "output_files/";
 
         for (const auto &filepath : filepaths)
         {
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
-            cout << "Loaded files" << endl;
             cout << "Loaded file:" << filepath << "\n";
-            cout << "Loaded files" << endl;
 
             // Call on seperator dissection first to obtain comutation order
             CCH cch(graph);
             cch.compute_contraction_order();
-
+            cout << "Computed Seperator Decomposition. Processing Graph now!" << endl;
             // Call preprocessing to identify and add all olower triangles
             CCH_Result cch_res = cch.preprocess();
 
@@ -207,7 +195,7 @@ public:
             // Apply customization with random edge weights
             cch.customization(false, assign_random_weights);
 
-            cout << cch_res.shortcuts << " shortcuts, " << cch_res.avg_lower_triangles_per_edge << " avg, " << cch_res.maximum_triangles_edge << " max." << endl; 
+            cout << cch_res.shortcuts << " shortcuts, " << cch_res.avg_lower_triangles_per_edge << " avg, maximum " << cch_res.maximum_triangles_edge << "  triangles per edge" << endl; 
             
             // CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(cchGraph);
@@ -239,13 +227,20 @@ public:
                 auto c0 = high_resolution_clock::now();
                 CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
                 cres = cchGraph.unpack_shortcuts(cres);
-                cout << "path" << endl;
-                    for (int i = 0; i < cres.edge_ids.size(); i++){
-                        cout << cres.edge_ids[i] << " " ;
+                cout << "Number of PQ pops: " << cres.number_of_pops << endl;
+                cout << "Shortcut Path: " << endl;
+                    for (int i = 0; i < cres.ch_path.size(); i++){
+                        cout << cres.ch_path[i] << " " ;
+                }
+                cout << endl;
+
+                cout << "Unpacked Node Path: " << endl;
+                    for (int i = 0; i < cres.path.size(); i++){
+                        cout << cres.path[i] << " " ;
                 }
                 auto c1 = high_resolution_clock::now();
 
-                cout << "cost: " << cres.total_cost;
+                cout << "Total cost of path: " << cres.total_cost << endl;
             }
         }
     }
@@ -255,26 +250,6 @@ public:
         struct stat st{};
         return ::stat(path.c_str(), &st) == 0 && st.st_size > 0;
     }
-
-    // static string format_hhmmss_mmm(chrono::milliseconds ms_total)
-    // {
-    //     using namespace chrono;
-    //     auto h = duration_cast<hours>(ms_total);
-    //     ms_total -= h;
-    //     auto m = duration_cast<minutes>(ms_total);
-    //     ms_total -= m;
-    //     auto s = duration_cast<seconds>(ms_total);
-    //     ms_total -= s;
-    //     auto ms = duration_cast<milliseconds>(ms_total);
-
-    //     ostringstream oss;
-    //     oss << setfill('0')
-    //         << setw(2) << h.count() << ":"
-    //         << setw(2) << m.count() << ":"
-    //         << setw(2) << s.count() << "."
-    //         << setw(3) << ms.count();
-    //     return oss.str();
-    // }
 
     // CSV-safe quoting (wrap in quotes; escape inner quotes by doubling)
     static string csv_quote(string s)
@@ -365,12 +340,6 @@ public:
           << count << ","
           << customizationTime << ","
           << "\n";
-    }
-
-
-    static void run_single_benchmark(const string &name)
-    {
-        // Add code to run a single benchmark by name
     }
 
     static inline long long to_ms(auto start, auto stop)
@@ -572,7 +541,7 @@ public:
 
             vector<QueryCHRow> rows;
             rows.reserve(pairs.size());
-
+            cout << "Querying among 100 random unique src, trg pairs" << endl;
             // Run queries
             for (auto [src, dst] : pairs)
             {
@@ -615,6 +584,8 @@ public:
             // Write CSV
             write_csv(OUT_DIR, basename_no_ext(filepath), rows);
         }
+
+        cout << "Finished running benchmark tests for CH. Files are available in output_files. " << endl;
     }
 
     // Run sall CCH BEnchmarks
@@ -670,8 +641,9 @@ public:
             const auto t1 = high_resolution_clock::now();
             auto total_separartion = duration_cast<chrono::milliseconds>(t1 - t0);
 
+            cout << "Separator decomposition obtained. Processing the graph" << endl;
             const auto p0 = high_resolution_clock::now();
-            CCH_Result cch_result = cch.preprocess(); // do the heavy work once
+            CCH_Result cch_result = cch.preprocess(); 
             const auto p1 = high_resolution_clock::now();
             auto total_ms = duration_cast<chrono::milliseconds>(p1 - p0);
 
@@ -683,12 +655,11 @@ public:
 
             CH_Graph cch_graph(cch.get_graph().get_all_nodes(), cch.get_graph().get_all_edges(), cch.get_ranks());
             append_to_2a_csv("output_files/2a.csv", /*file name*/ filepath, total_separartion, total_ms, cch_result.shortcuts, cch_result.avg_lower_triangles_per_edge, cch_result.maximum_triangles_edge);
-            // append_to_2a_csv("output_files/2a.csv", /*file name*/ filepath, cchrun.sep_time, cchrun.contract_time, cchrun.result.shortcuts, cchrun.result.avg_lower_triangles_per_edge, cchrun.result.maximum_triangles_edge);
 
             //  Note down Original Customization time
             append_to_2b_csv("output_files/2b.csv", filepath, -1, total_cust_ms);
 
-
+            cout << "Running Customization 5 times with random edge weights" << endl;
             //call customization 5 times 
             for (int i = 0; i < 5; i ++) {
                 const auto re_cust0 = high_resolution_clock::now();
@@ -712,6 +683,8 @@ public:
 
             vector<QueryCCHRow> rows;
             rows.reserve(pairs.size());
+
+            cout << "Querying among 100 random unique src, trg pairs" << endl;
 
             // Run queries
             for (auto [src, dst] : pairs)
@@ -772,6 +745,8 @@ public:
             // Write CSV
             write_cch_csv(OUT_DIR, basename_no_ext(filepath), rows);
         }
+        cout << "Finished running benchmark tests for CH. Files are available in output_files. " << endl;
+
     }
 
 

@@ -21,14 +21,14 @@ int main(int argc, char* argv[]) {
     if (arg == "cch_100") {
         Benchmarks::run_cch_benchmarks();
     }
-    
+
     else if (arg == "ch") {
         Benchmarks::run_ch_single_benchmark();
     }
     else if (arg == "cch") {
         Benchmarks::run_cch_benchmark();
     }
-    else if (arg == "dj") {
+    else if (arg == "dijkstra") {
         Benchmarks::run_Dijkstra_benchmark();
     }
     else if (arg == "appquerydjk") {
@@ -66,18 +66,6 @@ int main(int argc, char* argv[]) {
         NodeId dst = stoi(argv[4]);
 
         WebAPP::run_CCH_Dijkstra_Query(map, src, dst);
-    }
-    else if (arg == "appquerydjkch") {
-        if (argc < 5) {
-            cerr << "Usage: " << argv[0] << " appquery <map> <src> <dst>\n";
-            return 1;
-        }
-
-        string map = argv[2];
-        NodeId src = stoi(argv[3]);
-        NodeId dst = stoi(argv[4]);
-
-        WebAPP::run_ch_And_Dijkstra_Query(map, src, dst);
     }
     else {
         cerr << "Unknown benchmark: " << arg << "\n";
