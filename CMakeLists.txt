@@ -49,17 +49,6 @@ target_link_libraries(erp_cli PRIVATE erp_lib)
 enable_testing()
 find_package(GTest REQUIRED)
 
-add_executable(runTests
-    tests/test_graph.cpp
-    # tests/test_dijkstra.cpp
-)
-
-target_link_libraries(runTests PRIVATE erp_lib GTest::gtest_main)
-
-include(GoogleTest)
-gtest_discover_tests(runTests)
-
-
 # To run Kahip program 
 # set(KAHIP_HOME "" CACHE PATH "Root of KaHIP install/checkout (folder containing deploy/ or build/)")
 

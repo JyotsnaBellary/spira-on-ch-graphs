@@ -51,8 +51,7 @@ app.post('/api/route', (req, res) => {
   const args = [subcmd, name, String(src), String(dst)];
   console.log('[server] exec:', CPP_BIN, args.join(' '), 'cwd=', PROJECT_ROOT);
 
-  // Run your C++ CLI: erp_cli <src> <dst>
-  // Adjust args to match your program’s expected interface.
+  // Adjust args to match program’s expected interface.
   execFile(CPP_BIN, args, { cwd: PROJECT_ROOT, timeout: 20_000 }, (err, stdout, stderr) => {
     if (err) {
       console.error('C++ error:', err, stderr);
