@@ -27,6 +27,7 @@ map.addLayer(clusters);
 
 const statusEl = document.getElementById('status');
 const fileInput = document.getElementById('file-input');
+
 document.getElementById('toggle-shortcut').addEventListener('change', (e) => {
     if (e.target.checked) shortcutLayer.addTo(map);
     else map.removeLayer(shortcutLayer);
@@ -154,6 +155,7 @@ let selectedDst = null;
 
 // ---- plotting ----
 function plotGraph(nodes, edges) {
+    //clear layers
     clusters.clearLayers();
     routeLayer.clearLayers();
     //   edgesLayer.clearLayers();
@@ -238,9 +240,8 @@ function handleMarkerClick(nodeId, marker) {
     }
 }
 
-
+// Update the Graph Name in order to use some other map
 let GRAPH_NAME = 'osm1';
-
 let pending = false;
 
 // Fetch API
@@ -263,7 +264,7 @@ async function requestRoute(src, dst) {
     }
 }
 
-// Draw
+// Draw Route
 function drawRoute(result) {
     routeLayer.clearLayers();
     shortcutLayer.clearLayers();

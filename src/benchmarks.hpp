@@ -124,23 +124,12 @@ public:
             // "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             "./RoadNetworks/osm1.txt",
-            // "./RoadNetworks/osm2.txt",
-            // "./RoadNetworks/osm3.txt",
-            // "./RoadNetworks/osm4.txt",
-            // "./RoadNetworks/osm5.txt",
-            // "./RoadNetworks/osm6.txt",
-            // "./RoadNetworks/osm7.txt",
-            // "./RoadNetworks/osm8.txt",
-            // "./RoadNetworks/osm9.txt",
-            // "./RoadNetworks/osm10.txt",
-            // "./RoadNetworks/osm11.txt",
         };
 
         const string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
-            cout << "---------------------><><-----------------------" << endl;
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
             cout << "Loaded file:" << filepath << "\n";
@@ -184,46 +173,42 @@ public:
     {
         cout << "running CCH_graph" << endl;
         // Add code to run CCH benchmark
+        
         vector<string> filepaths = {
             // "./RoadNetworks/test.txt",
             // "./RoadNetworks/testcch.txt",
             "./RoadNetworks/osm1.txt",
-            // "./RoadNetworks/osm2.txt",
-            // "./RoadNetworks/osm3.txt",
-            // "./RoadNetworks/osm4.txt",
-            // "./RoadNetworks/osm5.txt",
-            // "./RoadNetworks/osm6.txt",
-            // "./RoadNetworks/osm7.txt",
-            // "./RoadNetworks/osm8.txt",
-            // "./RoadNetworks/osm9.txt",
-            // "./RoadNetworks/osm10.txt",
-            // "./RoadNetworks/osm11.txt",
         };
 
         const string OUT_DIR = "output_files/1b";
 
         for (const auto &filepath : filepaths)
         {
-            cout << "---------------------><><-----------------------" << endl;
             FileHandler fh;
             Graph graph = fh.read_file(filepath);
             cout << "Loaded files" << endl;
             cout << "Loaded file:" << filepath << "\n";
             cout << "Loaded files" << endl;
 
+            // Call on seperator dissection first to obtain comutation order
             CCH cch(graph);
             cch.compute_contraction_order();
+
+            // Call preprocessing to identify and add all olower triangles
             CCH_Result cch_res = cch.preprocess();
+
+            // Assign weight of shortcuts
             cch.customization();
 
             CH_Graph cchGraph(cch.get_graph().get_all_nodes(), cch.get_graph().get_all_edges(), cch.get_ranks());
             bool default_setting = false;
             bool assign_random_weights = true;
+    
+            // Apply customization with random edge weights
             cch.customization(false, assign_random_weights);
 
             cout << cch_res.shortcuts << " shortcuts, " << cch_res.avg_lower_triangles_per_edge << " avg, " << cch_res.maximum_triangles_edge << " max." << endl; 
             
-
             // CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
             CH_Dijkstra chDijkstra(cchGraph);
             string line;
@@ -250,6 +235,7 @@ public:
                 // Adjust this call to match your CH_Dijkstra API:
                 // Option A: returns (distance, path)
 
+                // compute shortest paths 
                 auto c0 = high_resolution_clock::now();
                 CH_DijkstraResult cres = chDijkstra.compute_shortest_path(u, v);
                 cres = cchGraph.unpack_shortcuts(cres);
@@ -270,25 +256,25 @@ public:
         return ::stat(path.c_str(), &st) == 0 && st.st_size > 0;
     }
 
-    static string format_hhmmss_mmm(chrono::milliseconds ms_total)
-    {
-        using namespace chrono;
-        auto h = duration_cast<hours>(ms_total);
-        ms_total -= h;
-        auto m = duration_cast<minutes>(ms_total);
-        ms_total -= m;
-        auto s = duration_cast<seconds>(ms_total);
-        ms_total -= s;
-        auto ms = duration_cast<milliseconds>(ms_total);
+    // static string format_hhmmss_mmm(chrono::milliseconds ms_total)
+    // {
+    //     using namespace chrono;
+    //     auto h = duration_cast<hours>(ms_total);
+    //     ms_total -= h;
+    //     auto m = duration_cast<minutes>(ms_total);
+    //     ms_total -= m;
+    //     auto s = duration_cast<seconds>(ms_total);
+    //     ms_total -= s;
+    //     auto ms = duration_cast<milliseconds>(ms_total);
 
-        ostringstream oss;
-        oss << setfill('0')
-            << setw(2) << h.count() << ":"
-            << setw(2) << m.count() << ":"
-            << setw(2) << s.count() << "."
-            << setw(3) << ms.count();
-        return oss.str();
-    }
+    //     ostringstream oss;
+    //     oss << setfill('0')
+    //         << setw(2) << h.count() << ":"
+    //         << setw(2) << m.count() << ":"
+    //         << setw(2) << s.count() << "."
+    //         << setw(3) << ms.count();
+    //     return oss.str();
+    // }
 
     // CSV-safe quoting (wrap in quotes; escape inner quotes by doubling)
     static string csv_quote(string s)
@@ -305,6 +291,7 @@ public:
         return out;
     }
 
+    // csv helper
     static void append_to_1a_csv(const string &csv_path,
                                  const string &file_name,
                                  chrono::milliseconds preprocess_time,
@@ -327,6 +314,7 @@ public:
           << "\n";
     }
 
+    // csv helper
     static void append_to_2a_csv(const string &csv_path,
                                  const string &file_name,
                                  chrono::milliseconds seperator_decomposition_time,
@@ -355,6 +343,7 @@ public:
           << "\n";
     }
 
+    // csv helper
     static void append_to_2b_csv(const string &csv_path,
                                  const string &file_name,
                                  int count,
@@ -378,6 +367,7 @@ public:
           << "\n";
     }
 
+
     static void run_single_benchmark(const string &name)
     {
         // Add code to run a single benchmark by name
@@ -388,6 +378,7 @@ public:
         return duration_cast<milliseconds>(stop - start).count();
     }
 
+    // Helper to generate 100 random src, trg pairs
     static inline vector<pair<int, int>>
     make_unique_random_pairs(int n, size_t count, uint64_t seed)
     {
@@ -425,6 +416,7 @@ public:
         return p.stem().string(); // e.g., "osm1"
     }
 
+    // CSV helper function
     static inline void write_cch_csv(const string &out_dir,
                                  const string &base_name,
                                  const vector<QueryCCHRow> &rows)
@@ -461,6 +453,7 @@ public:
         cout << "Wrote " << rows.size() << " rows to " << out_path << "\n";
     }
 
+    // CSV Helper
     static inline void write_csv(const string &out_dir,
                                  const string &base_name,
                                  const vector<QueryCHRow> &rows)
@@ -494,6 +487,7 @@ public:
         cout << "Wrote " << rows.size() << " rows to " << out_path << "\n";
     }
 
+    //Run CH Preprocessing
     static pair<CH_Graph,int> run_ch_preprocessing(Graph graph)
     {
             CH ch(graph);
@@ -502,6 +496,7 @@ public:
             return pair(chGraph,number_of_shortcuts);
     }
 
+    // Run cch Preprocessing
     static CCHRun run_cch_preprocessing(Graph graph)
     {
             CCH cch(graph);
@@ -520,6 +515,7 @@ public:
             return {cch_result,cch, total_separartion, total_ms};
     }
 
+    // Run an dmeasure all CH Benchmarks
     static void run_ch_benchmarks()
     {
         vector<string> filepaths = {
@@ -621,6 +617,7 @@ public:
         }
     }
 
+    // Run sall CCH BEnchmarks
     static void run_cch_benchmarks()
     {
         vector<string> filepaths = {
@@ -659,16 +656,12 @@ public:
 
             Dijkstra dijkstra(graph);
 
-            // ==========================================================================================================
-
             // Build CH once per graph
             auto  [chGraph, number_of_shortcuts]  = run_ch_preprocessing(graph);
            
             // Build CH graph view (once), and the query engine
             CH_Dijkstra chDijkstra(chGraph);
 
-            // ==========================================================================================================
-            
             // Build CCH once per graph
             CCH cch(graph);
 
@@ -691,6 +684,8 @@ public:
             CH_Graph cch_graph(cch.get_graph().get_all_nodes(), cch.get_graph().get_all_edges(), cch.get_ranks());
             append_to_2a_csv("output_files/2a.csv", /*file name*/ filepath, total_separartion, total_ms, cch_result.shortcuts, cch_result.avg_lower_triangles_per_edge, cch_result.maximum_triangles_edge);
             // append_to_2a_csv("output_files/2a.csv", /*file name*/ filepath, cchrun.sep_time, cchrun.contract_time, cchrun.result.shortcuts, cchrun.result.avg_lower_triangles_per_edge, cchrun.result.maximum_triangles_edge);
+
+            //  Note down Original Customization time
             append_to_2b_csv("output_files/2b.csv", filepath, -1, total_cust_ms);
 
 
@@ -709,12 +704,8 @@ public:
             // setting back original weights
             cch.customization(true, false);
 
-
-            
             // Build CH graph view (once), and the query engine
             CH_Dijkstra cchDijkstra(cch_graph);
-
-            // ===================================================================================================================
 
             // Make unique queries in [0..n-1]
             auto pairs = make_unique_random_pairs(n, NUM_QUERIES, /*seed=*/0xC0FFEEULL);

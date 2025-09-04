@@ -65,12 +65,15 @@ void FileHandler::write_to_metis_format(const Graph &graph, const string &file_p
     //create a file in METIS format for processing Node Order
     for (int line = 1; line <= n; ++line)
     {
-        const int old_id = (line == n ? 0 : line); // remap last line to old 0
+        // remap last line to old 0
+        const int old_id = (line == n ? 0 : line); 
         const auto &adjacent_nodes = graph.neighbors(old_id);
         for (const auto &neighbor : adjacent_nodes)
         {
             int v_old = (int)neighbor.first;
-            int v_new = (v_old == 0 ? n : v_old); // remap neighbor 0 to n
+
+            // remap neighbor 0 to n
+            int v_new = (v_old == 0 ? n : v_old); 
             outputFile << v_new << ' ';
         }
         outputFile << '\n';

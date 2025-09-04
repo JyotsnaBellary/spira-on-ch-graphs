@@ -11,12 +11,17 @@ int main(int argc, char* argv[]) {
     }
 
     string arg = argv[1];
+
+    // Runs 100 CH Queries on all instances
     if (arg == "ch_100") {
         Benchmarks::run_ch_benchmarks();
     }
+
+    // Runs 100 CCH Quesries on all instances
     if (arg == "cch_100") {
         Benchmarks::run_cch_benchmarks();
     }
+    
     else if (arg == "ch") {
         Benchmarks::run_ch_single_benchmark();
     }

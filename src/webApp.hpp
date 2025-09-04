@@ -4,24 +4,18 @@
 #include <algorithms/CH.hpp>
 #include <data_structures/ch_graph.hpp>
 #include <algorithms/ch_dijkstra.hpp>
-#include <random>
-#include <unordered_set>
 #include <fstream>
 #include <algorithms/CCH.hpp>
 #include <string>
-#include <chrono>
-#include <iomanip>
-#include <sstream>
-#include <sys/stat.h> // for file size check (portable enough)
+#include <sys/stat.h> 
 #include <filesystem>
 
 using namespace std;
 using namespace chrono;
 
 
-
-
-// This class has been introduced to support the web application with Querying the required paths with the three algorithms
+// This class has been introduced to support the web application with Querying the 
+// required paths with the three algorithms.
 class WebAPP
 {
 public:

@@ -12,11 +12,10 @@ struct Edge {
     EdgeId rev_id = INVALID_EDGE;      // id of reverse edge (if any)
     NodeId src = INVALID_NODE;
     NodeId trg = INVALID_NODE;
-    Weight cost = 1;    // default per your format
+    Weight cost = 1;    // default as per format
     bool   shortcut = false;
     bool   active = true;
     ShortcutInfo sc;    // valid iff shortcut==true
-
 
     // optional lineage (debugging)
     EdgeId replaced    = false;  // direct edge this shortcut replaced

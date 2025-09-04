@@ -20,8 +20,6 @@ add_library(erp_lib
     src/algorithms/CH.cpp
     src/algorithms/CCH.cpp
     src/utils/utils.cpp
-    src/utils/helpers.cpp
-    # src/benchmarks.cpp
     src/utils/kahip_runner.cpp
 )
 

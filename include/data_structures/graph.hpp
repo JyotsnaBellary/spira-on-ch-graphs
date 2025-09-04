@@ -17,16 +17,13 @@ struct Graph
     vector<Edge> edges; // flat edge storage                    // 1=active, 0=inactive
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> adj;
     unordered_map<uint64_t, size_t> edge_pos;
-    static inline uint64_t key_directed(NodeId u, NodeId v) {
-        return (uint64_t)u << 32 | (uint32_t)v;
-    }
+
     Graph() = default;
 
     // resize nodes, edges, active and adj
     Graph(int number_of_nodes)
     {
         nodes.resize(number_of_nodes);
-        // edges.resize(number_of_edges*2); //will cause a problem when I add shortcuts
         active.resize(number_of_nodes, 1);
         adj.resize(number_of_nodes);
     }
@@ -41,46 +38,63 @@ struct Graph
         }
     }
 
-    // add getter and setters
+    // Node helper functions
+    inline int num_nodes() const { return static_cast<int>(nodes.size()); }
     inline const Node &get_node(NodeId id) const { return nodes[id]; }
     inline void set_node(NodeId id, const Node &node) { nodes[id] = node; }
     inline const vector<Node> &get_all_nodes() const { return nodes; }
-    inline const vector<NodeId> get_all_node_ids() {
+
+    inline const vector<NodeId> get_all_node_ids()
+    {
         vector<NodeId> nodes(num_nodes());
         iota(nodes.begin(), nodes.end(), 0);
         return nodes;
- 
     };
-    // --- lookup helper ---
-    inline size_t edge_index(NodeId src, NodeId dst) const {
-        auto it = edge_pos.find(key_directed(src, dst));
-        if (it == edge_pos.end()) throw out_of_range("Edge not found");
-        return it->second; // this is the index (and also the id in your scheme)
-    }
 
-    void print_adj() {
-        for (NodeId src = 0; src < adj.size(); src++) {
-            for (const auto& [trg, edgeInfo] : adj[src]) {
-                cout << "Upward Edge from " << src << " to " << trg << " (ID: " << edgeInfo.first << ", Cost: " << edgeInfo.second << ")\n";
-            }
+    NodeId get_any_active_node() const
+    {
+        for (NodeId u = 0; u < num_nodes(); ++u)
+        {
+            if (is_active(u))
+                return u;
         }
-        
+        return INVALID_NODE; // no active node found
     }
+
+    // Edge Helper Functions
+    static inline uint64_t key_directed(NodeId u, NodeId v)
+    {
+        return (uint64_t)u << 32 | (uint32_t)v;
+    }
+    // --- lookup helper ---
+    inline size_t edge_index(NodeId src, NodeId dst) const
+    {
+        auto it = edge_pos.find(key_directed(src, dst));
+        if (it == edge_pos.end())
+            throw out_of_range("Edge not found");
+        return it->second; 
+    }
+
     inline Edge &get_edge(EdgeId id) { return edges.at(id); }
-    
+
     // read-only
-    inline const Edge& get_edge(NodeId src, NodeId dst) const {
+    inline const Edge &get_edge(NodeId src, NodeId dst) const
+    {
         return edges[edge_index(src, dst)];
     }
 
-    inline bool edge_exists(NodeId src, NodeId dst) const {
-    return edge_pos.find(key_directed(src, dst)) != edge_pos.end();
-}
-
-    inline Edge& get_edge(NodeId src, NodeId dst) {
-        return edges[edge_index(src, dst)];
-
+    // returns true if edge exists
+    inline bool edge_exists(NodeId src, NodeId dst) const
+    {
+        return edge_pos.find(key_directed(src, dst)) != edge_pos.end();
     }
+
+    inline Edge &get_edge(NodeId src, NodeId dst)
+    {
+        return edges[edge_index(src, dst)];
+    }
+
+    // Query edge by src, dst
     inline const Edge &get_edge_by_src_dst(NodeId src, NodeId dst) const
     {
         auto it = adj[src].find(dst);
@@ -91,6 +105,8 @@ struct Graph
         throw runtime_error("Edge not found");
     }
     inline const vector<Edge> &get_all_edges() const { return edges; }
+
+    // Set Edge, Mainly used while creating shortcuts
     inline void set_edge(Edge &edge, Edge &rev_edge)
     {
         EdgeId eid = static_cast<EdgeId>(edges.size());
@@ -107,10 +123,11 @@ struct Graph
         add_edge_adj(eid + 1, rev_edge.src, rev_edge.trg, rev_edge.cost);
     }
 
-    inline int num_nodes() const { return static_cast<int>(nodes.size()); }
     inline int num_edges() const { return static_cast<int>(edges.size()); }
     inline bool is_active(NodeId v) const { return active[v] != 0; }
     inline void deactivate(NodeId v) { active[v] = 0; }
+
+    // Adjacency list helper functions
     int num_active_neighbors(NodeId u) const
     {
         int count = 0;
@@ -121,6 +138,7 @@ struct Graph
         }
         return count;
     }
+
     void build_adjacency_list(const vector<Edge> *customEdges = nullptr)
     {
         const auto &es = customEdges ? *customEdges : edges;
@@ -132,7 +150,18 @@ struct Graph
         }
     }
 
-    // add edge to adjacency list
+    void print_adj()
+    {
+        for (NodeId src = 0; src < adj.size(); src++)
+        {
+            for (const auto &[trg, edgeInfo] : adj[src])
+            {
+                cout << "Upward Edge from " << src << " to " << trg << " (ID: " << edgeInfo.first << ", Cost: " << edgeInfo.second << ")\n";
+            }
+        }
+    }
+
+    // add individual edge to adjacency list
     EdgeId add_edge_adj(EdgeId edge_id, NodeId u, NodeId v, Weight w)
     {
         adj[u][v] = {edge_id, w};
@@ -144,24 +173,30 @@ struct Graph
         return adj[u];
     }
 
-vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank) const {
-    // Basic sanity checks
-    vector<NodeId> up_neighbors;
-    up_neighbors.reserve(adj[nodeId].size());
+    // Get sorted list of upper neighor node ids
+    vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int> &node_rank) const
+    {
+        vector<NodeId> up_neighbors;
+        up_neighbors.reserve(adj[nodeId].size());
 
-    // Iterate the adjacency map directly; neighbors(v) is fine too.
-    for (const auto& [neighbor_id, _] : adj[nodeId]) {
-        // Guard against corrupted keys
-        if (neighbor_id < 0 || static_cast<size_t>(neighbor_id) >= node_rank.size()) continue;
-        if (node_rank[neighbor_id] > node_rank[nodeId]) up_neighbors.push_back(neighbor_id);
+        // Iterate the adjacency map directly;.
+        for (const auto &[neighbor_id, _] : adj[nodeId])
+        {
+            // Guard against corrupted keys
+            if (neighbor_id < 0 || static_cast<size_t>(neighbor_id) >= node_rank.size())
+                continue;
+            if (node_rank[neighbor_id] > node_rank[nodeId])
+                up_neighbors.push_back(neighbor_id);
+        }
+
+        sort(up_neighbors.begin(), up_neighbors.end(),
+             [&](NodeId a, NodeId b)
+             { return node_rank[a] < node_rank[b]; });
+
+        return up_neighbors;
     }
 
-    sort(up_neighbors.begin(), up_neighbors.end(),
-              [&](NodeId a, NodeId b){ return node_rank[a] < node_rank[b]; });
-
-    return up_neighbors;
-}
-
+    // Function to add shortcuts to the graph
     int add_shortcuts(vector<pair<Shortcut, ShortcutOpType>> &shortcuts)
     {
         // Add shortcuts for the given node
@@ -184,7 +219,6 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                     edge1.sc.e_vw = get_edge_by_src_dst(shortcut.v, shortcut.w).id,
 
                 };
-                // set_edge();
 
                 Edge edge2;
                 edge2.src = shortcut.w;
@@ -197,11 +231,12 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
                     edge2.sc.e_vw = get_edge_by_src_dst(shortcut.v, shortcut.u).id,
 
                 };
-                
+
                 set_edge(edge1, edge2);
 
                 count += 1;
             }
+            //If the shortcut is replacing an original edge
             else if (shortcutOpType == ShortcutOpType::REPLACE)
             {
                 // Find and update the existing edge. but uw and wu
@@ -240,19 +275,11 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
         return count;
     }
 
-    NodeId get_any_active_node() const
+    // Update shortcut Information before storing in cache
+    void update_shortcut_info(EdgeId edgeId, EdgeId rev_edgeId, ShortcutInfo shortcutInfo, Weight cost, bool is_shortcut)
     {
-        for (NodeId u = 0; u < num_nodes(); ++u)
+        if (is_shortcut && edges[edgeId].replaced == false)
         {
-            if (is_active(u))
-                return u;
-        }
-        return INVALID_NODE; // no active node found
-    }
-
-    void update_shortcut_info(EdgeId edgeId, EdgeId rev_edgeId, ShortcutInfo shortcutInfo, Weight cost, bool is_shortcut){
-        // Edge edge = get_edge(edgeId);
-        if (is_shortcut && edges[edgeId].replaced == false) {
             edges[edgeId].replaced = true;
             edges[edgeId].shortcut = true;
             edges[edgeId].original_cost = edges[edgeId].cost;
@@ -266,7 +293,8 @@ vector<NodeId> get_sorted_higher_neighbors(NodeId nodeId, vector<int>& node_rank
         edges[edgeId].sc.middle = shortcutInfo.middle;
         edges[edgeId].cost = cost;
 
-        edges[rev_edgeId].sc.e_uv = get_edge(shortcutInfo.e_vw).rev_id; 
+        // Update Reverse Edge
+        edges[rev_edgeId].sc.e_uv = get_edge(shortcutInfo.e_vw).rev_id;
         edges[rev_edgeId].sc.e_vw = get_edge(shortcutInfo.e_uv).rev_id;
         edges[rev_edgeId].sc.middle = shortcutInfo.middle;
         edges[rev_edgeId].cost = cost;

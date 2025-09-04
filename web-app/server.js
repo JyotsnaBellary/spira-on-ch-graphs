@@ -8,10 +8,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const CPP_BIN = path.resolve(__dirname, '/home/gio-lab/Jyotsna/efficient-routes/build/Debug/erp_cli');
+//Add Path to CLI 
+const CPP_BIN = path.resolve(__dirname, '.../build/Debug/erp_cli');
 
-// 2) Where your graph files live on the server
-//    Put your file at: web-map/data/webmap.txt   (name="webmap")
 const GRAPH_DIR = path.resolve(__dirname, 'data');
 
 // simple guard
@@ -23,12 +22,12 @@ function toInt(x) {
 console.log('[server] pid=', process.pid, 'dir=', __dirname);
 
 // Log every request so you can see if /api/health hits this server
-app.use((req,res,next) => { console.log('[req]', req.method, req.url); next(); });
+app.use((req, res, next) => { console.log('[req]', req.method, req.url); next(); });
 
 // Health route
-app.get('/api/health', (req,res) => res.json({ ok: true }));
+app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.post('/api/route', (req, res) => {
-  const name = String(req.body?.name || '').trim(); 
+  const name = String(req.body?.name || '').trim();
   const src = Number(req.body?.src);
   const dst = Number(req.body?.dst);
   const algo = String(req.body?.algo || 'djk').trim();
@@ -44,13 +43,13 @@ app.post('/api/route', (req, res) => {
     ch: 'appquerych',
     cch: 'appquerycch',
   };
-const subcmd = cmdByAlgo[algo];
+  const subcmd = cmdByAlgo[algo];
   if (!subcmd) return res.status(400).json({ error: `unknown algo '${algo}'` });
 
 
-const PROJECT_ROOT = path.resolve(__dirname, '..');
+  const PROJECT_ROOT = path.resolve(__dirname, '..');
   const args = [subcmd, name, String(src), String(dst)];
-console.log('[server] exec:', CPP_BIN, args.join(' '), 'cwd=', PROJECT_ROOT);
+  console.log('[server] exec:', CPP_BIN, args.join(' '), 'cwd=', PROJECT_ROOT);
 
   // Run your C++ CLI: erp_cli <src> <dst>
   // Adjust args to match your program’s expected interface.
@@ -63,18 +62,18 @@ console.log('[server] exec:', CPP_BIN, args.join(' '), 'cwd=', PROJECT_ROOT);
     const out = stdout.trim();
 
     try {
-  const parsed = JSON.parse(out);
-  // Accept any of the supported shapes:
-  if (
-    (parsed.path && Array.isArray(parsed.path)) ||
-    (parsed.actual_path && Array.isArray(parsed.actual_path)) ||
-    (parsed.shortcut_path && Array.isArray(parsed.shortcut_path))
-  ) {
-    return res.json(parsed);
-  }
-} catch (_) {
-  /* not JSON, fall back */
-}
+      const parsed = JSON.parse(out);
+      // Accept any of the supported shapes:
+      if (
+        (parsed.path && Array.isArray(parsed.path)) ||
+        (parsed.actual_path && Array.isArray(parsed.actual_path)) ||
+        (parsed.shortcut_path && Array.isArray(parsed.shortcut_path))
+      ) {
+        return res.json(parsed);
+      }
+    } catch (_) {
+      /* not JSON, fall back */
+    }
 
     // ---- Parse stdout from your program ----
     // Expect something like: "0 2 5 7" or "PATH: 0 2 5 7"

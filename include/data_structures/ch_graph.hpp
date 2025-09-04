@@ -18,10 +18,14 @@ struct CH_DijkstraResult
     int number_of_pops;
 };
 
+// This is a common struct is used to store with upper edges 
+// It is used for CH and CCH for query Processing
 struct CH_Graph
 {
-    vector<Node> nodes; // size n, nodes[i].id == i
-    vector<Edge> edges; // flat edge storage                    
+    // Graph Utils
+    CH_Graph() = default;
+    vector<Node> nodes; 
+    vector<Edge> edges;                     
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> adj;
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> upward_edges_adj;
     vector<unordered_map<NodeId, pair<EdgeId, Weight>>> downward_edges_adj;
@@ -29,8 +33,6 @@ struct CH_Graph
     vector<bool> is_shortcut;
     int shortcuts = 0;
 
-    CH_Graph() = default;
-    inline const vector<Edge> &get_all_edges() const { return edges; }
 
     // resize nodes, edges, active and adj
     CH_Graph(vector<Node> number_of_nodes, vector<Edge> number_of_edges, vector<int> rank_order)
@@ -48,8 +50,10 @@ struct CH_Graph
 
     int num_nodes() const { return static_cast<int>(nodes.size()); }
     inline const Edge &get_edge(EdgeId id) const { return edges.at(id); }
+    inline const vector<Edge> &get_all_edges() const { return edges; }
     inline const int &get_number_of_shortcuts() const { return shortcuts; }
 
+    // To query only for upper ranked neighbors
     const unordered_map<NodeId, pair<EdgeId, Weight>> &up_neighbors(NodeId node) const
     {
         if (node < 0 || node >= static_cast<int>(upward_edges_adj.size()))
@@ -59,6 +63,7 @@ struct CH_Graph
         return upward_edges_adj[node];
     }
 
+    // Build adjacency list with only upward edges
     void build_upward_adj_Lists(vector<int> rank_order)
     {
         for (const auto &edge : edges)
@@ -86,10 +91,7 @@ struct CH_Graph
         }
     }
 
-    // Assumptions:
-    // - get_edge(EdgeId) -> const Edge&
-    // - Edge has: EdgeId id; bool shortcut; struct { EdgeId e_uv, e_vw; } sc;
-
+    // helper for recursive unpacking of edges after CH and CCh Query
     inline void append_unpacked(EdgeId eid,
                                 vector<EdgeId> &edge_out,
                                 vector<NodeId> &node_out,
@@ -111,6 +113,7 @@ struct CH_Graph
         }
     }
 
+    // Main function to unpack path returned by Ch Dijkstra
     CH_DijkstraResult unpack_shortcuts(CH_DijkstraResult ch_dijkstraResult)
     {
         vector<EdgeId> edge_out;
