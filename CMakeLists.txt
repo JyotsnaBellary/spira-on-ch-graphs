@@ -12,9 +12,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(sssp_lib
     Algorithms/dijkstra.cpp
     Algorithms/spira.cpp
+    Algorithms/new_variant.cpp
     Graph/graph.cpp
     Utils/file_handler.cpp
-    
+    Evaluations/basic_test.cpp
 )
 
 # Use C++20; set per-target (best practice)
@@ -26,6 +27,7 @@ target_include_directories(sssp_lib PUBLIC
     ${CMAKE_SOURCE_DIR}/Algorithms
     ${CMAKE_SOURCE_DIR}/Include  
     ${CMAKE_SOURCE_DIR}/Utils   
+    ${CMAKE_SOURCE_DIR}/Evaluations   
 )
 
 # CLI app

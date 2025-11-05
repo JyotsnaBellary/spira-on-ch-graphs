@@ -39,12 +39,13 @@ Graph FileHandler::read_file(const string &filePath)
         Edge reverse_edge;
 
         inputFile >> edge.src >> edge.trg;
-        edge.cost = wdist(gen);
+        edge.cost = 1;
+        // edge.cost = wdist(gen);
         // edge.shortcut = false;
 
         reverse_edge.src = edge.trg;
         reverse_edge.trg = edge.src;
-        reverse_edge.cost = 1;
+        reverse_edge.cost = edge.cost;
         // reverse_edge.shortcut = false;
         // cout << edge.src << edge.trg << edge.cost;
         graph.set_edge(edge, reverse_edge);

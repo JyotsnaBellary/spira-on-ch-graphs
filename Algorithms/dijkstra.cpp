@@ -12,6 +12,7 @@ Dijkstra::Dijkstra(Graph &graph) : graph(graph) {}
 // }
 
 
+
 DijkstraResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
 {
     int num_nodes = graph.number_of_nodes();
@@ -62,9 +63,9 @@ DijkstraResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
         };
 
         // Explore neighbors
-        for (EdgeId edgeId : graph.get_neighbors(node))
+        for (EdgeId edgeId : graph.get_out_neighbors(node))
         {
-            const Edge& edge = graph.edges[edgeId];
+            const Edge& edge = graph.get_edge(edgeId);
             NodeId adjacent_node = edge.trg;
             Cost new_dist = dist[node] + edge.cost;
             if (new_dist < dist[adjacent_node])

@@ -3,8 +3,8 @@
 #include <iostream>
 
 Spira::Spira(Graph &graph) : graph(graph), 
-                             next_index(graph.number_of_nodes(), 0), 
-                             is_sorted(graph.number_of_nodes(), false) {}
+                             next_index(graph.number_of_nodes(), 0) {}
+                            //  is_sorted(graph.number_of_nodes(), false) {}
 
 void Spira::reset() {
     next_index.assign(graph.number_of_nodes(), 0);
@@ -14,12 +14,12 @@ EdgeId Spira::next(NodeId nodeId) {
     if (nodeId < 0 || nodeId >= graph.number_of_nodes()) return INVALID_EDGE;
 
     // lazy sort: only if we have not exposed any edge of nodeId yet
-    if (!is_sorted[nodeId] && next_index[nodeId] == 0) {
-        graph.sort_neighbors(nodeId);     // function provided below
-        is_sorted[nodeId] = true;
-    }
+    // if (!is_sorted[nodeId] && next_index[nodeId] == 0) {
+    //     graph.sort_neighbors(nodeId);     // function provided below
+    //     is_sorted[nodeId] = true;
+    // }
 
-    const vector<EdgeId>& adjacent_neighbor_edges = graph.get_neighbors(nodeId);
+    const vector<EdgeId>& adjacent_neighbor_edges = graph.get_out_neighbors(nodeId);
 
     if (next_index[nodeId] < (int)adjacent_neighbor_edges.size()) {
         return adjacent_neighbor_edges[next_index[nodeId]++]; // return current, then advance
@@ -27,10 +27,10 @@ EdgeId Spira::next(NodeId nodeId) {
     return INVALID_EDGE;
 }
 
-void Spira::forward_out(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
+void Spira::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
     EdgeId edgeId = next(nodeId);
     if (edgeId != INVALID_EDGE) {
-        const auto& edge = graph.edges[edgeId]; // (u,v)
+        const auto& edge = graph.get_edge(edgeId); // (u,v)
         pq.emplace(cost[edge.src] + edge.cost, edgeId);
     }
 }
@@ -67,7 +67,7 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
     reset();
     cost[src] = 0;
     in_S[src] = true;
-    forward_out(src, cost, pq);
+    forward(src, cost, pq);
     int settled = 1;
 
     // While the queue is not empty:
@@ -77,7 +77,7 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
         auto [curr_cost, edgeId] = pq.top();
         pq.pop();
         num_of_pops += 1;
-        Edge& edge = graph.edges[edgeId];
+        const Edge& edge = graph.get_edge(edgeId);
         NodeId node = edge.src;
 
         // Is this check needed?
@@ -91,7 +91,7 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
         // };
 
         //call forward(u)
-        forward_out(node, cost, pq);
+        forward(node, cost, pq);
 
         // if v ∉ S
         NodeId trg = edge.trg;
@@ -106,7 +106,7 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
             if (trg == dst)
                 return build_path(prev, cost, via_edge, dst, num_of_pops);
 
-            forward_out(trg, cost, pq);
+            forward(trg, cost, pq);
         }
         
     }
