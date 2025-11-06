@@ -46,7 +46,7 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
            can_scan_out[nodeId] = false; 
        } else if (edgeId != INVALID_EDGE) {
             const Edge& edge = graph.get_edge(edgeId);
-            if (median_distance == INF_COST || edge.cost > 2 * (median_distance - cost[edge.src])) {
+            if (edge.cost > 2 * (median_distance - cost[edge.src])) {
                 can_scan_out[nodeId] = false; 
             }
        }
@@ -70,7 +70,9 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
         pq.emplace(cost[edge.src] + edge.cost, edgeId);
 
     }
-    // EdgeId edgeId = next(nodeId);
+
+    // why was this here?
+    // edgeId = next(next_index_request, nodeId, get_requested_neighbors(nodeId));
     // if (edgeId != INVALID_EDGE) {
     //     const auto& edge = graph.get_edge(edgeId); // (u,v)
     //     pq.emplace(cost[edge.src] + edge.cost, edgeId);
@@ -78,6 +80,7 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
 }
 
 void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
+    //make sure v is not in S.
     EdgeId edgeId = next(next_index_in_adj, nodeId, graph.get_in_neighbors(nodeId));
     if (edgeId != INVALID_EDGE) {
         const Edge& edge = graph.get_edge(edgeId); // (u,v)
@@ -86,7 +89,6 @@ void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vect
 }
 
 void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
-
     bool index_past_end = next_index_request[nodeId] >= req[nodeId].size();
     req[nodeId].push_back(edgeId);
 
@@ -118,6 +120,7 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
     
     // Initialise the threshold 
     median_distance = INF_COST;
+    // median_distance = -1;
 
     // Check for trivial case
     if (src == dst)
@@ -184,7 +187,7 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 
             if (settled == number_of_nodes / 2){
                 median_distance = cost[trg];
-
+                // cout << "Median Distance: " << median_distance << endl;
                 // backward scan the first incoming edge of each vertex not yet in S
                 // and insert it into the priority queue Q
                 for (const Node& node : graph.get_nodes()) {
@@ -197,7 +200,13 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         }
 
         // Find more in-pertinent edges
-        while (Q.size() > 0 && Q.top().first < 2 * (P.top().first - median_distance)) {
+        while (Q.size() > 0 ) {
+            Cost minP = (P.empty()) ? INF_COST : P.top().first;
+
+            if (Q.top().first >= 2 * (minP - median_distance)) {
+                break; // condition no longer holds
+            }
+
             auto [in_cost, in_edgeId] = Q.top();
             Q.pop();
 
@@ -213,6 +222,13 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         
     }
 
+    cout << Q.size() << endl;
+    for (int i = 0; i < 10 && Q.size() > 0; ++i) {
+        auto [in_cost, in_edgeId] = Q.top();
+        Q.pop();
+        const Edge& edge = graph.get_edge(in_edgeId);
+        cout << "Remaining in Q: edge " << in_edgeId << " from " << edge.src << " to " << edge.trg << " cost " << edge.cost << endl;
+    }
     // No path is found.
     return DijkstraResult{{}, -1, {}, num_of_pops};
 }

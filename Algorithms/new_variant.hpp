@@ -9,7 +9,8 @@ class NewVariant
         Graph& graph;
 
         // Initialise the threshold 
-        int median_distance;
+        // int median_distance;
+        Cost median_distance;
 
         // adjacency pointers
         vector<int> next_index_out_adj;
