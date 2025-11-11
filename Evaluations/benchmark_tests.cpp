@@ -67,6 +67,10 @@ void run_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
         long long d_time_us = chrono::duration_cast<chrono::microseconds>(d_end - d_start).count();
         Cost dc = rd.total_cost;
         // cout << "Dijkstra done." << endl;
+        // for(auto i = 0; i < rd.path.size(); i++){
+        //     cout << rd.path[i] << " ";
+        // }
+        // cout << endl;
 
         auto s_start = chrono::high_resolution_clock::now();
         DijkstraResult rs = spira.compute_shortest_path(src, dst);
@@ -87,6 +91,12 @@ void run_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
         };
         bool matched = same_cost(dc, sc) && same_cost(dc, nc);
 
+        if (!matched) {
+            cout << "Warning: cost mismatch for src=" << src << ", dst=" << dst << "\n";
+            for(auto i = 0; i < rn.path.size(); i++){
+                cout << rn.path[i] << " ";
+            }
+        }
         out << src << ',' << dst << ','
             << d_time_us << ',' << dc << ','
             << s_time_us << ',' << sc << ','
@@ -97,9 +107,9 @@ void run_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
 }
 
 // ---- Wrapper to read and run ----
-void process_sparse_graph_file(const string& filepath, bool uniform_weights, const string& output_dir) {
+void process_sparse_graph_file(const string& filepath, bool use_random_weights, const string& output_dir) {
     FileHandler fh;
-    Graph graph = fh.read_sparse_graph_file(filepath, uniform_weights);
+    Graph graph = fh.read_sparse_graph_file(filepath, use_random_weights);
     graph.sort_all_neighbors();
 
     create_directories(output_dir); // make sure directory exists
@@ -112,9 +122,9 @@ void process_sparse_graph_file(const string& filepath, bool uniform_weights, con
 }
 
 // ---- Wrapper to read and run ----
-void process_dense_graph_file(const string& filepath, bool uniform_weights, const string& output_dir) {
+void process_dense_graph_file(const string& filepath, bool use_random_weights, bool use_uniform_weights, const string& output_dir) {
     FileHandler fh;
-    Graph graph = fh.read_dense_graph_file(filepath, uniform_weights);
+    Graph graph = fh.read_dense_graph_file(filepath, use_random_weights, use_uniform_weights);
     graph.sort_all_neighbors();
 
     create_directories(output_dir); // make sure directory exists
@@ -127,9 +137,10 @@ void process_dense_graph_file(const string& filepath, bool uniform_weights, cons
 }
 
 int run_benchmark_on_sparse_graphs() {
-    string input_dir = "./RoadNetworks";
+    string input_dir = "./Input_Data/SparseRoadNetworks";
     string output_dir_random = "output/sparse_networks/random_weights";
-    string output_dir_original = "output/sparse_networks/original_weights";
+    // string output_dir_original = "output/sparse_networks/original_weights";
+    string output_dir_uniform = "output/sparse_networks/uniform_weights";
 
     for (const auto& entry : directory_iterator(input_dir)) {
         if (entry.path().extension() == ".txt") {
@@ -139,7 +150,7 @@ int run_benchmark_on_sparse_graphs() {
             process_sparse_graph_file(filepath, true, output_dir_random);
 
             // Case 2: random weights (false), default is uniform weights
-            process_sparse_graph_file(filepath, false, output_dir_original);
+            process_sparse_graph_file(filepath, false, output_dir_uniform);
         }
     }
 
@@ -149,21 +160,71 @@ int run_benchmark_on_sparse_graphs() {
 
 int run_benchmark_on_dense_graphs() {
     string input_dir = "./Input_Data/DenseNetworks";
-    string output_dir_random = "output/dense_networks/random_weights";
-    string output_dir_uniform = "output/dense_networks/weight_one";
+    string output_dir_random = "output/DenseNetworks/random_weights";
+    string output_dir_original = "output/DenseNetworks/original_weights";
+    string output_dir_uniform = "output/DenseNetworks/uniform_weights";
 
     for (const auto& entry : directory_iterator(input_dir)) {
         if (entry.path().extension() == ".tsp") {
             string filepath = entry.path().string();
 
-            // Case 1: random weights (true)
-            process_dense_graph_file(filepath, false, output_dir_uniform);
-            
-            // Case 2: random weights (false), default is uniform weights
-            process_dense_graph_file(filepath, true, output_dir_random);
+            // Case 1: random weights (false), default is original weights
+            process_dense_graph_file(filepath, false, false, output_dir_original);
+
+            // Case 2: random weights (true), 
+            process_dense_graph_file(filepath, true, false, output_dir_random);
+
+            // Case 3: uniform weights (true), 
+            process_dense_graph_file(filepath, false, true, output_dir_uniform);
         }
     }
 
     cout << "Benchmarking completed for all sparse graphs with uniform and random weights.\n";
+    return 0;
+}
+
+int run_benchmark_on_exponential_size_sweep(int min_n = 100,
+                                            int max_n = 1000,
+                                            int num_sizes = 10,
+                                            double lambda = 1.0,
+                                            uint64_t base_seed = 4242,
+                                            const std::string& base_output_dir = "output/exp_complete",
+                                            bool symmetric_bidirectional = false)
+{
+    using namespace std;
+
+    if (num_sizes <= 1) { cerr << "num_sizes must be >= 2\n"; return -1; }
+    if (min_n <= 0 || max_n < min_n) { cerr << "invalid n range\n"; return -1; }
+
+    int step = (max_n - min_n) / (num_sizes - 1);
+    if (step <= 0) step = 1;
+
+    create_directories(base_output_dir);
+
+    FileHandler fh;
+
+    for (int k = 0; k < num_sizes; ++k) {
+        int n = min_n + k * step;
+        if (n > max_n) n = max_n;
+
+        uint64_t seed = base_seed + static_cast<uint64_t>(n) * 1000003ULL;
+
+        cout << "\n=== Generating exponential graph: n=" << n
+             << " (" << (k + 1) << "/" << num_sizes << ") ===\n";
+
+        Graph graph = fh.generate_complete_exponential_graph(n, lambda, seed, symmetric_bidirectional);
+        graph.sort_all_neighbors();
+
+        // Save CSV directly in base_output_dir
+        ostringstream fname;
+        fname << base_output_dir << "/n" << n << ".csv";
+
+        cout << "Running benchmark -> " << fname.str() << endl;
+
+        run_benchmark_on_graph(graph, fname.str());
+    }
+
+    cout << "\nCompleted exponential size sweep: "
+         << num_sizes << " graphs (" << min_n << "–" << max_n << " nodes)\n";
     return 0;
 }

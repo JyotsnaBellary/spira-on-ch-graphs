@@ -51,7 +51,8 @@ struct Graph
     const vector<EdgeId> &get_in_neighbors(NodeId nodeId) const;
 
     // Sort neighbors of a node by edge cost
-    void sort_neighbors(NodeId nodeId);
+    void sort_out_neighbors(NodeId nodeId);
+    void sort_in_neighbors(NodeId nodeId);
    
     // sort neighbors of all nodes
     void sort_all_neighbors();

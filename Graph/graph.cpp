@@ -140,7 +140,7 @@ const vector<EdgeId> &Graph::get_in_neighbors(NodeId nodeId) const {
 //     int number_of_nodes() const { return (int)nodes.size(); }
 //     const vector<EdgeId> &get_neighbors(NodeId nodeId) const { return adjacency_list[nodeId]; }
 
-void Graph::sort_neighbors(NodeId nodeId)
+void Graph::sort_out_neighbors(NodeId nodeId)
 {
     if (nodeId < 0 || nodeId >= number_of_nodes())
         return;
@@ -152,9 +152,24 @@ void Graph::sort_neighbors(NodeId nodeId)
             });
 }
 
+void Graph::sort_in_neighbors(NodeId nodeId)
+{
+    if (nodeId < 0 || nodeId >= number_of_nodes())
+        return;
+    auto &neighbor_list = in_adjacency_list[nodeId];
+    sort(neighbor_list.begin(), neighbor_list.end(),
+            [&](EdgeId a, EdgeId b)
+            {
+                return edges[a].cost < edges[b].cost; // optional tiebreak
+            });
+}
+
 void Graph::sort_all_neighbors()
 {
-    for (NodeId nodeId = 0; nodeId < number_of_nodes(); nodeId++) sort_neighbors(nodeId);
+    for (NodeId nodeId = 0; nodeId < number_of_nodes(); nodeId++){
+        sort_out_neighbors(nodeId);
+        sort_in_neighbors(nodeId);
+    }
 }
 
 void Graph::print_adj_simple()
@@ -173,4 +188,3 @@ void Graph::print_adj_simple()
         cout << "]\n";
     }
 }
-// };

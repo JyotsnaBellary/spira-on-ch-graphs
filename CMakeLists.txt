@@ -16,6 +16,8 @@ add_library(sssp_lib
     Graph/graph.cpp
     Utils/file_handler.cpp
     Evaluations/basic_test.cpp
+    Evaluations/benchmark_tests.cpp
+
 )
 
 # Use C++20; set per-target (best practice)
