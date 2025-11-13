@@ -4,11 +4,13 @@
 #include <iostream>
 #include <random>
 
-Graph FileHandler::read_sparse_graph_file(const string &filePath, bool use_random_weights)
+Graph FileHandler::read_sparse_graph_file(const string &filePath, WeightMode weight_mode)
 {
     random_device rd;
     mt19937 gen(rd());
-    uniform_real_distribution<Cost> wdist(0.0, 1.0); // inclusive [0,1]
+    uniform_real_distribution<Cost> uniform_dist(0.0, 1.0); // inclusive [0,1]
+    exponential_distribution<Cost> exp_dist(1.0); // λ = 1.0 (mean = 1)
+
 
     ifstream inputFile(filePath);
 
@@ -39,11 +41,21 @@ Graph FileHandler::read_sparse_graph_file(const string &filePath, bool use_rando
         Edge reverse_edge;
 
         inputFile >> edge.src >> edge.trg;
-        edge.cost = 1;
-        if (use_random_weights) {
-            edge.cost = wdist(gen);
+        switch (weight_mode)
+        {
+            case WeightMode::Original:
+                edge.cost = 1.0; // or read from file if costs exist
+                break;
+            case WeightMode::UniformRandomDistribution:
+                edge.cost = uniform_dist(gen);
+                break;
+            case WeightMode::Exponential:
+                edge.cost = exp_dist(gen);
+                break;
+            default:
+                edge.cost = 1.0;
+                break;
         }
-        // edge.shortcut = false;
 
         reverse_edge.src = edge.trg;
         reverse_edge.trg = edge.src;
@@ -58,11 +70,12 @@ Graph FileHandler::read_sparse_graph_file(const string &filePath, bool use_rando
     return graph;
 }
 
-Graph FileHandler::read_dense_graph_file(const string &filePath, bool use_random_weights, bool use_uniform_weights)
+Graph FileHandler::read_dense_graph_file(const string &filePath, WeightMode weight_mode)
 {
     random_device rd;
     mt19937 gen(rd());
-    uniform_real_distribution<Cost> wdist(0.0, 1.0); // inclusive [0,1]
+    uniform_real_distribution<Cost> uniform_dist(0.0, 1.0); // inclusive [0,1]
+    exponential_distribution<Cost> exp_dist(1.0); // λ = 1.0 (mean = 1)
 
     ifstream inputFile(filePath);
     if (!inputFile.is_open()) {
@@ -115,12 +128,26 @@ Graph FileHandler::read_dense_graph_file(const string &filePath, bool use_random
             double dy = nodes[i].longitude - nodes[j].longitude;
             double dist = sqrt(dx * dx + dy * dy);
 
-            edge.cost = use_random_weights ? wdist(gen) 
-                                           : static_cast<Cost>(dist);
-
-            if (use_uniform_weights) {
-                edge.cost = 1;
+            switch (weight_mode)
+            {
+                case WeightMode::Original:
+                    edge.cost = static_cast<Cost>(dist);
+                    break;
+                case WeightMode::UniformRandomDistribution:
+                    edge.cost = uniform_dist(gen);
+                    break;
+                case WeightMode::Exponential:
+                    edge.cost = exp_dist(gen);
+                    break;
+                case WeightMode::Uniform:
+                    edge.cost = 1;
+                    break;
+                default:
+                    edge.cost = static_cast<Cost>(dist);
+                    break;
             }
+
+            
             Edge reverse_edge;
             reverse_edge.src = edge.trg;
             reverse_edge.trg = edge.src;

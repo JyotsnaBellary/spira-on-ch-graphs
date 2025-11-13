@@ -8,13 +8,10 @@ class Spira
     private:
         Graph& graph;
 
-        // adjacency pointers
         vector<int> next_index;
-        // vector<char> is_sorted;
 
     public:
         Spira(Graph& graph);
-        // ~Dijks2tra();
 
         void forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq);
         
@@ -22,9 +19,9 @@ class Spira
         EdgeId next(NodeId nodeId);
 
         //Computes shortest path between src and dst
-        DijkstraResult compute_shortest_path(NodeId src, NodeId dst);
+        SsspResult compute_shortest_path(NodeId src, NodeId dst);
         
         //builds result path
-        DijkstraResult build_path(const vector<int>& prev, const vector<Cost>& cost, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops);
+        SsspResult build_path(const vector<int>& prev, const vector<Cost>& cost, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops);
 };
 

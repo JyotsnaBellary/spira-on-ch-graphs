@@ -32,7 +32,6 @@ EdgeId NewVariant::next(vector<int> &next_index, NodeId &nodeId, const vector<Ed
     return INVALID_EDGE;
 }
 
-// need to change this
 void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
     EdgeId edgeId = INVALID_EDGE;
 
@@ -55,16 +54,7 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
 
     // if no out-pertinent edges to scan, check requested in-pertinent edges
     if (!can_scan_out[nodeId]) {
-        if (nodeId == 361) {
-            // cout << "361 checking requested edges" << endl;
-            // cout << "cost " << cost[361] << endl;
-        }
         edgeId = next(next_index_request, nodeId, get_requested_neighbors(nodeId));
-        if (edgeId != INVALID_EDGE && nodeId == 361) {
-
-        // cout << "Requested edgeId: " << edgeId << endl;
-        // cout << "src: " << graph.get_edge(edgeId).src << ", trg: " << graph.get_edge(edgeId).trg << endl;
-    }
     }
 
     if (edgeId != INVALID_EDGE) {
@@ -79,18 +69,9 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
        const Edge& edge = graph.get_edge(edgeId);
        if (isfinite(cost[edge.src])) {
         pq.emplace(cost[edge.src] + edge.cost, edgeId);
-        // cout << "Inserted edge into P " << edgeId << " with cost " << cost[edge.src] + edge.cost << " into P" << endl;
-        // cout << "src: " << edge.src << ", trg: " << edge.trg << endl;
        }
 
     }
-
-    // why was this here?
-    // edgeId = next(next_index_request, nodeId, get_requested_neighbors(nodeId));
-    // if (edgeId != INVALID_EDGE) {
-    //     const auto& edge = graph.get_edge(edgeId); // (u,v)
-    //     pq.emplace(cost[edge.src] + edge.cost, edgeId);
-    // }
 }
 
 void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
@@ -99,8 +80,6 @@ void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vect
     if (edgeId != INVALID_EDGE) {
         const Edge& edge = graph.get_edge(edgeId); // (u,v)
         pq.emplace(edge.cost, edgeId);
-        // cout << "Inserted in-pertinent edge " << edgeId << " with cost " << edge.cost << " into Q" << endl;
-        // cout << "src: " << edge.src << ", trg: " << edge.trg << endl;
     }
 }
 
@@ -108,16 +87,10 @@ void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost>& c
     bool index_past_end = next_index_request[nodeId] >= req[nodeId].size();
     req[nodeId].push_back(edgeId);
 
-    //Is this necessary?
-    // auto it = lower_bound(req[nodeId].begin(), req[nodeId].end(), graph.get_edge(edgeId).cost,
-    //     [&](EdgeId a, Cost w){ return graph.get_edge(a).cost < w; });
-    // size_t pos = it - req[nodeId].begin();
-    // req[nodeId].insert(it, edgeId);
-
-    for (EdgeId eid : req[nodeId]) {
-        const auto& edge = graph.get_edge(eid);
+    // for (EdgeId eid : req[nodeId]) {
+    //     const auto& edge = graph.get_edge(eid);
         // cout << "edge.trg: " << edge.trg << endl;
-    }
+    // }
 
     if (index_past_end) {
         next_index_request[nodeId] = req[nodeId].size() - 1;
@@ -125,15 +98,12 @@ void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost>& c
 
     //urgent request
     if (in_S[nodeId] && !active[nodeId]) {
-        if (nodeId == 361) {
-            // cout << "361 urgent request appended" << endl;
-        }
         forward(nodeId, cost , pq);
     }
 }
 
 //count edge relaxation in dijkstra.
-DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
+SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 {
     int number_of_nodes = graph.number_of_nodes();
     int num_of_pops = 0;
@@ -157,11 +127,18 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
     if (src == dst)
     {
         cost[src] = 0;
-        return DijkstraResult{.path = {src}, .total_cost = 0, .edge_ids = {}, .number_of_pops = num_of_pops};
+        return SsspResult{
+            .path = {src},
+            .total_cost = 0,
+            .edge_ids = {},
+            .redundant_pops = 0,
+            .avg_pops_per_node = 0.0,
+            .number_of_pops = num_of_pops
+        };
     }
 
     // Check for valid node IDs
-    if (src < 0 || src >= number_of_nodes || dst < 0 || dst >= number_of_nodes)
+    if (src < 0 || src >= number_of_nodes || dst >= number_of_nodes)
     {
         cerr << "Error: invalid source/destination node\n";
         exit(EXIT_FAILURE); // exit(1) also fine
@@ -191,9 +168,6 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         P.pop();
         num_of_pops += 1;
 
-        // cout << "Popped edge " << edgeId << " with cost " << curr_cost << endl;
-        // cout << "src: " << graph.get_edge(edgeId).src << ", trg: " << graph.get_edge(edgeId).trg << endl;
-
         const Edge& edge = graph.get_edge(edgeId);
         NodeId node = edge.src;
 
@@ -220,14 +194,13 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             ++settled;
 
             // Early exit when destination finalized
-            if (trg == dst)
+            if (dst >= 0 && trg == dst)
                 return build_path(prev, cost, via_edge, dst, num_of_pops);
 
             forward(trg, cost, P);
 
             if (settled == (number_of_nodes + 1) / 2){
                 median_distance = cost[trg];
-                // cout << "Median Distance: " << median_distance << endl;
                 // backward scan the first incoming edge of each vertex not yet in S
                 // and insert it into the priority queue Q
                 for (const Node& node : graph.get_nodes()) {
@@ -244,9 +217,6 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             Cost minP = (P.empty()) ? INF_COST : (P.top().first);
 
             if (minP != INF_COST && Q.top().first >= 2 * (minP - median_distance)) {
-                // cout << "Breaking out of while loop in Q" << endl;
-                // cout << "Pertinence value = " << 2 * (minP - median_distance) << ", top of Q = " << Q.top().first << endl;
-                // cout << "Median Distance :" << median_distance << endl;
                 break; // condition no longer holds
             }
 
@@ -259,41 +229,53 @@ DijkstraResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             if (!in_S[edge.trg]) {
                 backward(edge.trg, Q);
                 append_to_request(edge.src, in_edgeId, cost, P);
-                if (edge.src == 361) {
-                    // cout << "361 appended requested" << endl;
-                    // cout << "Edge trg: " << edge.trg << endl;
-                }
             }  // already in S
             
         }
         
     }
 
-    // // cout << Q.size() << endl;
-    // for (int i = 0; i < 10 && Q.size() > 0; ++i) {
-    // auto [in_cost, in_edgeId] = Q.top();
-    // Q.pop();
-    // const Edge& edge = graph.get_edge(in_edgeId);
-    // // cout << "Remaining in Q: edge " << in_edgeId << " from " << edge.src << " to " << edge.trg << " cost " << edge.cost << endl;
-    // }
+     // If dst == -1, build full shortest path tree
+    if (dst == -1) {
+        return build_path(prev, cost, via_edge, dst, num_of_pops);
+    }
+
     // No path is found.
-    if (cost[dst] < INF_COST)
+    else if (cost[dst] < INF_COST)
         return build_path(prev, cost, via_edge, dst, num_of_pops);
     else
-    return DijkstraResult{{}, -1, {}, num_of_pops};
+        return SsspResult{{}, -1, {}, {}};
 }
 
-DijkstraResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops)
+SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops)
 {
-    DijkstraResult result;
+    SsspResult result;
     result.number_of_pops = num_of_pops;
 
-    if (dst < 0 || dst >= (int)prev.size() || cost[dst] >= (long long)(numeric_limits<long long>::max() / 8))
+    result.avg_pops_per_node =
+                static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_edges());
+
+    if (dst < 0 || dst >= (int)prev.size() || cost[dst] == INF_COST)
     {
         result.total_cost = -1; // unreachable
         return result;
     }
 
+    if (dst < 0) {
+        // For SPT, we don't fill single-path fields
+        result.total_cost = 0;
+        result.path = {};
+        result.edge_ids = {};
+
+        // Fill SPT fields
+        result.parent = prev;
+        result.distance = cost;
+        result.via_edge = viaEdge;
+
+        return result;
+    }
+
+    
     // Reconstruct nodes (backwards)
     vector<int> rev_nodes;
     vector<EdgeId> rev_edges;
@@ -314,6 +296,5 @@ DijkstraResult NewVariant::build_path(const vector<int> &prev, const vector<Cost
     result.edge_ids = move(rev_edges);
     result.total_cost = cost[dst]; // keep Dist in the struct
 
-    
     return result;
 }

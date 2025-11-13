@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <set>
 #include <random>
+#include <unordered_set>
 #include <file_handler.hpp>
 #include <dijkstra.hpp>
 #include <spira.hpp>
@@ -47,7 +48,7 @@ vector<pair<int,int>> generate_query_pairs(int n) {
 }
 
 // ---- Benchmark helper ----
-void run_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
+void run_src_dst_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
     const int n = graph.number_of_nodes();
     vector<pair<int, int>> query_pairs = generate_query_pairs(n);
 
@@ -57,38 +58,36 @@ void run_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
 
     ofstream out(output_csv_path);
     out << boolalpha;
-    out << "src,dst,d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,matched\n";
+    out << "src,dst,d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,"
+        << "d_pops,s_pops,nv_pops,"
+        << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,matched\n";
 
+    cout << "Running 100 src-dst queries..." << endl;
+    int mismatch = 0;
     for (auto [src, dst] : query_pairs) {
-        // cout << "Running src=" << src << ", dst=" << dst << endl;
         auto d_start = chrono::high_resolution_clock::now();
-        DijkstraResult rd = dijkstra.compute_shortest_path(src, dst);
+        SsspResult rd = dijkstra.compute_shortest_path(src, dst);
         auto d_end = chrono::high_resolution_clock::now();
         long long d_time_us = chrono::duration_cast<chrono::microseconds>(d_end - d_start).count();
         Cost dc = rd.total_cost;
-        // cout << "Dijkstra done." << endl;
-        // for(auto i = 0; i < rd.path.size(); i++){
-        //     cout << rd.path[i] << " ";
-        // }
-        // cout << endl;
 
         auto s_start = chrono::high_resolution_clock::now();
-        DijkstraResult rs = spira.compute_shortest_path(src, dst);
+        SsspResult rs = spira.compute_shortest_path(src, dst);
         auto s_end = chrono::high_resolution_clock::now();
         long long s_time_us = chrono::duration_cast<chrono::microseconds>(s_end - s_start).count();
         Cost sc = rs.total_cost;
-// cout << "Spira done." << endl;
+
         auto n_start = chrono::high_resolution_clock::now();
-        DijkstraResult rn = new_variant.compute_shortest_path(src, dst);
+        SsspResult rn = new_variant.compute_shortest_path(src, dst);
         auto n_end = chrono::high_resolution_clock::now();
         long long n_time_us = chrono::duration_cast<chrono::microseconds>(n_end - n_start).count();
         Cost nc = rn.total_cost;
-        // cout << "NewVariant done." << endl;
-        // cout << "Completed src=" << src << ", dst=" << dst << endl;
+
         auto same_cost = [](Cost a, Cost b) {
             if (a < 0 || b < 0) return a == b;
             return fabs(a - b) <= 1e-9;
         };
+
         bool matched = same_cost(dc, sc) && same_cost(dc, nc);
 
         if (!matched) {
@@ -96,65 +95,226 @@ void run_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
             for(auto i = 0; i < rn.path.size(); i++){
                 cout << rn.path[i] << " ";
             }
+            mismatch++;
         }
+
         out << src << ',' << dst << ','
-            << d_time_us << ',' << dc << ','
-            << s_time_us << ',' << sc << ','
-            << n_time_us << ',' << nc << ','
+            << d_time_us << ',' << dc << ',' << s_time_us << ',' << sc << ',' << n_time_us << ',' << nc << ','
+            << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
+            << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
             << matched << '\n';
     }
+    cout << "Number of Mismatched Queries: " << mismatch << endl;
     out.close();
 }
 
-// ---- Wrapper to read and run ----
-void process_sparse_graph_file(const string& filepath, bool use_random_weights, const string& output_dir) {
-    FileHandler fh;
-    Graph graph = fh.read_sparse_graph_file(filepath, use_random_weights);
-    graph.sort_all_neighbors();
+// ---- Helper: Count node-wise mismatches between two SPTs ----
+static int count_distance_mismatches(const std::vector<Cost>& a,
+                                     const std::vector<Cost>& b)
+{
+    int mismatches = 0;
+    for (size_t i = 0; i < a.size(); ++i) {
+        if (std::fabs(a[i] - b[i]) > 1e-9) // tolerance for floating-point comparison
+            mismatches++;
+    }
+    return mismatches;
+}
 
-    create_directories(output_dir); // make sure directory exists
+// ---- Helper: Compare SPT equality ----
+static bool compare_spt_results(const SsspResult& a,
+                                const SsspResult& b,
+                                const std::string& nameA,
+                                const std::string& nameB)
+{
+    if (a.distance.size() != b.distance.size())
+        return false;
 
-    string filename = path(filepath).stem().string(); // "osm5" from "osm5.txt"
-    string output_csv = output_dir + "/" + filename + ".csv";
+    for (size_t i = 0; i < a.distance.size(); ++i) {
+        Cost da = a.distance[i];
+        Cost db = b.distance[i];
+        if ((da < INF_COST && db < INF_COST && std::fabs(da - db) > 1e-9) ||
+            (da == INF_COST && db != INF_COST) ||
+            (db == INF_COST && da != INF_COST))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
-    cout << "Running on " << filepath << " -> " << output_csv << endl;
-    run_benchmark_on_graph(graph, output_csv);
+// ---- Main Benchmark ----
+void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path)
+{
+    const int n = graph.number_of_nodes();
+    const int num_sources = std::min(n, 100);
+
+    // --- Select 100 unique random sources ---
+    std::vector<int> sources;
+    sources.reserve(num_sources);
+
+    std::mt19937 rng(42); // fixed seed for reproducibility
+    std::uniform_int_distribution<int> dist(0, n - 1);
+
+    std::unordered_set<int> used;
+    while (sources.size() < num_sources) {
+        int src = dist(rng);
+        if (used.insert(src).second)
+            sources.push_back(src);
+    }
+
+    Dijkstra dijkstra(graph);
+    Spira spira(graph);
+    NewVariant new_variant(graph);
+
+    std::ofstream out(output_csv_path);
+    out << "src,"
+        << "d_time_us,s_time_us,nv_time_us,"
+        << "d_pops,s_pops,nv_pops,"
+        << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
+        << "mismatch_count_ds,mismatch_count_dn,"
+        << "mismatches\n";
+
+    int mismatch_runs = 0;
+
+    std::cout << "Running " << num_sources << " SPT queries..." << std::endl;
+
+    for (int src : sources) {
+        // === Dijkstra ===
+        auto d_start = std::chrono::high_resolution_clock::now();
+        SsspResult rd = dijkstra.compute_shortest_path(src, -1);
+        auto d_end = std::chrono::high_resolution_clock::now();
+        long long d_time_us =
+            std::chrono::duration_cast<std::chrono::microseconds>(d_end - d_start).count();
+
+        // === Spira ===
+        auto s_start = std::chrono::high_resolution_clock::now();
+        SsspResult rs = spira.compute_shortest_path(src, -1);
+        auto s_end = std::chrono::high_resolution_clock::now();
+        long long s_time_us =
+            std::chrono::duration_cast<std::chrono::microseconds>(s_end - s_start).count();
+
+        // === New Variant ===
+        auto n_start = std::chrono::high_resolution_clock::now();
+        SsspResult rn = new_variant.compute_shortest_path(src, -1);
+        auto n_end = std::chrono::high_resolution_clock::now();
+        long long n_time_us =
+            std::chrono::duration_cast<std::chrono::microseconds>(n_end - n_start).count();
+
+        // === Compare distances ===
+        bool match_ds = compare_spt_results(rd, rs, "Dijkstra", "Spira");
+        bool match_dn = compare_spt_results(rd, rn, "Dijkstra", "NewVariant");
+
+        int mismatch_count_ds = count_distance_mismatches(rd.distance, rs.distance);
+        int mismatch_count_dn = count_distance_mismatches(rd.distance, rn.distance);
+
+        bool mismatches = !(match_ds && match_dn);
+        if (mismatches)
+            mismatch_runs++;
+
+        // === Write one CSV row ===
+        out << src << ','
+            << d_time_us << ',' << s_time_us << ',' << n_time_us << ','
+            << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
+            << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
+            << mismatch_count_ds << ',' << mismatch_count_dn << ','
+            << std::boolalpha << mismatches << '\n';
+    }
+
+    out.close();
+
+    // std::cout << "Benchmark complete.\n";
+    std::cout << "Mismatches in " << mismatch_runs << " / " << num_sources << " runs.\n";
+    // std::cout << "Results saved to " << output_csv_path << std::endl;
+    std::cout << std::endl;
 }
 
 // ---- Wrapper to read and run ----
-void process_dense_graph_file(const string& filepath, bool use_random_weights, bool use_uniform_weights, const string& output_dir) {
+void process_sparse_graph_file(const string& filepath, WeightMode weight_mode, string& output_dir) {
     FileHandler fh;
-    Graph graph = fh.read_dense_graph_file(filepath, use_random_weights, use_uniform_weights);
+    Graph graph = fh.read_sparse_graph_file(filepath, weight_mode);
     graph.sort_all_neighbors();
-
-    create_directories(output_dir); // make sure directory exists
+    
+    string output_dir1 = output_dir + "/src_dst_benchmark";
+    create_directories(output_dir1); // make sure directory exists
 
     string filename = path(filepath).stem().string(); // "osm5" from "osm5.txt"
-    string output_csv = output_dir + "/" + filename + ".csv";
+    string output_csv = output_dir1 + "/" + filename + ".csv";
+    // cout << "Running on " << filepath << " -> " << output_csv << endl;
+    cout << "Running src-dst benchmark -> " << output_csv << endl;
+    run_src_dst_benchmark_on_graph(graph, output_csv);
 
-    cout << "Running on " << filepath << " -> " << output_csv << endl;
-    run_benchmark_on_graph(graph, output_csv);
+    string output_dir2 = output_dir + "/spt_benchmark";
+    create_directories(output_dir2); // make sure directory exists
+    cout << endl;
+    filename = path(filepath).stem().string(); // "osm5" from "osm5.txt"
+    output_csv = output_dir2 + "/" + filename + ".csv";
+    cout << "Running spt benchmark -> " << output_csv << endl;
+    run_spt_benchmark_on_graph(graph, output_csv);
+
+    // cout << endl;
+}
+
+// ---- Wrapper to read and run ----
+void process_dense_graph_file(const string& filepath, WeightMode weight_mode, string& output_dir) {
+    FileHandler fh;
+    Graph graph = fh.read_dense_graph_file(filepath, weight_mode);
+    graph.sort_all_neighbors();
+
+    string output_dir1 = output_dir + "/src_dst_benchmark";
+    create_directories(output_dir1); // make sure directory exists
+
+    string filename = path(filepath).stem().string(); // "osm5" from "osm5.txt"
+    string output_csv = output_dir1 + "/" + filename + ".csv";
+
+    // cout << "Running on " << filepath << " -> " << output_csv << endl;
+    cout << "Running src-dst benchmark -> " << output_csv << endl;
+    run_src_dst_benchmark_on_graph(graph, output_csv);
+
+    string output_dir2 = output_dir + "/spt_benchmark";
+    create_directories(output_dir2); // make sure directory exists
+
+    filename = path(filepath).stem().string(); // "osm5" from "osm5.txt"
+    output_csv = output_dir2 + "/" + filename + ".csv";
+    cout << endl;
+    cout << "Running spt benchmark -> " << output_csv << endl;
+    run_spt_benchmark_on_graph(graph, output_csv);
 }
 
 int run_benchmark_on_sparse_graphs() {
     string input_dir = "./Input_Data/SparseRoadNetworks";
     string output_dir_random = "output/sparse_networks/random_weights";
-    // string output_dir_original = "output/sparse_networks/original_weights";
-    string output_dir_uniform = "output/sparse_networks/uniform_weights";
+    string output_dir_exponential = "output/sparse_networks/exponential_weights";
+    string output_dir_original = "output/sparse_networks/original_weights";
 
+    cout << "starting benchmark on sparse graphs...\n";
+    cout << endl;
+    cout << endl;
     for (const auto& entry : directory_iterator(input_dir)) {
         if (entry.path().extension() == ".txt") {
             string filepath = entry.path().string();
-
+            cout << "Processing file: " << filepath << endl;
+            cout << endl;
+            cout << "Processing with random weights: " << endl;
             // Case 1: random weights (true)
-            process_sparse_graph_file(filepath, true, output_dir_random);
+            process_sparse_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
 
-            // Case 2: random weights (false), default is uniform weights
-            process_sparse_graph_file(filepath, false, output_dir_uniform);
+            cout << "Processing with exponential weights: " << endl;
+            // Case 2: exponential weights
+            process_sparse_graph_file(filepath, WeightMode::Exponential, output_dir_exponential);
+
+            cout << "Processing with original weights: " << endl;
+            // Case 3: original weights 
+            process_sparse_graph_file(filepath, WeightMode::Original, output_dir_original);
         }
     }
 
-    cout << "Benchmarking completed for all sparse graphs with uniform and random weights.\n";
+    cout << "Benchmarking completed for all sparse graphs with original, exponential and uniformly random weights.\n";
+    cout << endl;
+
+    cout << "==============================================================================================================================" << endl;
+
+    cout << endl;
+
     return 0;
 }
 
@@ -162,33 +322,52 @@ int run_benchmark_on_dense_graphs() {
     string input_dir = "./Input_Data/DenseNetworks";
     string output_dir_random = "output/DenseNetworks/random_weights";
     string output_dir_original = "output/DenseNetworks/original_weights";
-    string output_dir_uniform = "output/DenseNetworks/uniform_weights";
+    string output_dir_exponential = "output/DenseNetworks/exponential_weights";
+    string output_dir_uniform = "output/DenseNetworks/uniform_random_weights";
+
+    cout << "starting benchmark on dense graphs...\n";
+    cout << endl;
+    cout << endl;
 
     for (const auto& entry : directory_iterator(input_dir)) {
         if (entry.path().extension() == ".tsp") {
             string filepath = entry.path().string();
+            cout << "Processing file: " << filepath << endl;
+            cout << endl;
 
+            cout << "Processing with original weights: " << endl;
             // Case 1: random weights (false), default is original weights
-            process_dense_graph_file(filepath, false, false, output_dir_original);
+            process_dense_graph_file(filepath, WeightMode::Original, output_dir_original);
 
+            cout << "Processing with random weights: " << endl;
             // Case 2: random weights (true), 
-            process_dense_graph_file(filepath, true, false, output_dir_random);
+            process_dense_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
 
+            cout << "Processing with uniform weights: " << endl;
             // Case 3: uniform weights (true), 
-            process_dense_graph_file(filepath, false, true, output_dir_uniform);
+            process_dense_graph_file(filepath, WeightMode::Uniform, output_dir_uniform);
+
+            cout << "Processing with exponential weights: " << endl;
+            // Case : Exponential weights (true), 
+            process_dense_graph_file(filepath, WeightMode::Exponential, output_dir_exponential);
         }
     }
 
-    cout << "Benchmarking completed for all sparse graphs with uniform and random weights.\n";
+     cout << "Benchmarking completed for all dense graphs with original, uniform, exponential and uniformly random weights.\n";
+    cout << endl;
+
+    cout << "==============================================================================================================================" << endl;
+    cout << endl;
+    
     return 0;
 }
 
 int run_benchmark_on_exponential_size_sweep(int min_n = 100,
-                                            int max_n = 1000,
+                                            int max_n = 2000,
                                             int num_sizes = 10,
                                             double lambda = 1.0,
                                             uint64_t base_seed = 4242,
-                                            const std::string& base_output_dir = "output/exp_complete",
+                                            string base_output_dir = "output/exp_complete",
                                             bool symmetric_bidirectional = false)
 {
     using namespace std;
@@ -199,7 +378,11 @@ int run_benchmark_on_exponential_size_sweep(int min_n = 100,
     int step = (max_n - min_n) / (num_sizes - 1);
     if (step <= 0) step = 1;
 
-    create_directories(base_output_dir);
+    string base_output_dir1 = base_output_dir + "/src_dst_benchmark";
+    create_directories(base_output_dir1);
+
+    string base_output_dir2 = base_output_dir + "/spt_benchmark";
+    create_directories(base_output_dir2);
 
     FileHandler fh;
 
@@ -212,19 +395,31 @@ int run_benchmark_on_exponential_size_sweep(int min_n = 100,
         cout << "\n=== Generating exponential graph: n=" << n
              << " (" << (k + 1) << "/" << num_sizes << ") ===\n";
 
+        cout << endl;
         Graph graph = fh.generate_complete_exponential_graph(n, lambda, seed, symmetric_bidirectional);
         graph.sort_all_neighbors();
 
         // Save CSV directly in base_output_dir
         ostringstream fname;
-        fname << base_output_dir << "/n" << n << ".csv";
+        fname << base_output_dir1 << "/n" << n << ".csv";
 
-        cout << "Running benchmark -> " << fname.str() << endl;
+        // for spt
+        ostringstream fname2;
+        fname2 << base_output_dir2 << "/n" << n << ".csv";
 
-        run_benchmark_on_graph(graph, fname.str());
+        // cout << "Running benchmark -> " << fname.str() << endl;
+        cout << "Running src-dst benchmark -> " << fname.str() << endl;
+        run_src_dst_benchmark_on_graph(graph, fname.str());
+        cout << endl;
+        cout << "Running spt benchmark -> " << fname2.str() << endl;
+        run_spt_benchmark_on_graph(graph, fname2.str());
     }
 
     cout << "\nCompleted exponential size sweep: "
          << num_sizes << " graphs (" << min_n << "–" << max_n << " nodes)\n";
+    cout << endl;
+    cout << "==============================================================================================================================" << endl;
+    cout << endl;
+
     return 0;
 }

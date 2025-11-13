@@ -13,12 +13,6 @@ void Spira::reset() {
 EdgeId Spira::next(NodeId nodeId) {
     if (nodeId < 0 || nodeId >= graph.number_of_nodes()) return INVALID_EDGE;
 
-    // lazy sort: only if we have not exposed any edge of nodeId yet
-    // if (!is_sorted[nodeId] && next_index[nodeId] == 0) {
-    //     graph.sort_neighbors(nodeId);     // function provided below
-    //     is_sorted[nodeId] = true;
-    // }
-
     const vector<EdgeId>& adjacent_neighbor_edges = graph.get_out_neighbors(nodeId);
 
     if (next_index[nodeId] < (int)adjacent_neighbor_edges.size()) {
@@ -35,7 +29,7 @@ void Spira::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost,
     }
 }
 
-DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
+SsspResult Spira::compute_shortest_path(NodeId src, NodeId dst)
 {
     int number_of_nodes = graph.number_of_nodes();
     int num_of_pops = 0;
@@ -47,14 +41,14 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
     vector<bool> in_S(number_of_nodes, false);
 
     // Check for trivial case
-    if (src == dst)
+    if (src == dst && dst > 0)
     {
         cost[src] = 0;
-        return DijkstraResult{.path = {src}, .total_cost = 0, .edge_ids = {}, .number_of_pops = num_of_pops};
+        return SsspResult{.path = {src}, .total_cost = 0, .edge_ids = {}, .number_of_pops = num_of_pops};
     }
 
     // Check for valid node IDs
-    if (src < 0 || src >= number_of_nodes || dst < 0 || dst >= number_of_nodes)
+    if (src < 0 || src >= number_of_nodes || dst >= number_of_nodes)
     {
         cerr << "Error: invalid source/destination node\n";
         exit(EXIT_FAILURE); // exit(1) also fine
@@ -84,12 +78,6 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
         if (curr_cost !=  cost[node] + edge.cost)
             continue;
 
-        // If we reached the destination, reconstruct the path.
-        // if (node == dst)
-        // {
-        //     return build_path(prev, cost, via_edge, dst, num_of_pops);
-        // };
-
         //call forward(u)
         forward(node, cost, pq);
 
@@ -110,19 +98,41 @@ DijkstraResult Spira::compute_shortest_path(NodeId src, NodeId dst)
         }
         
     }
+    // If dst == -1, build full shortest path tree
+    if (dst == -1) {
+        return build_path(prev, cost, via_edge, dst, num_of_pops);
+    }
 
     // No path is found.
-    return DijkstraResult{{}, -1, {}, num_of_pops};
+    return SsspResult{{}, -1, {}, {}, {}, {}, num_of_pops, 0, 0};
 }
 
-DijkstraResult Spira::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops)
+SsspResult Spira::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops)
 {
-    DijkstraResult result;
+    SsspResult result;
     result.number_of_pops = num_of_pops;
+    result.number_of_pops = num_of_pops;
+
+    result.avg_pops_per_node =
+                static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_edges());
 
     if (dst < 0 || dst >= (int)prev.size() || cost[dst] >= (long long)(numeric_limits<long long>::max() / 8))
     {
         result.total_cost = -1; // unreachable
+        return result;
+    }
+
+    if (dst < 0) {
+        // For SPT, we don't fill single-path fields
+        result.total_cost = 0;
+        result.path = {};
+        result.edge_ids = {};
+
+        // Fill SPT fields
+        result.parent = prev;
+        result.distance = cost;
+        result.via_edge = viaEdge;
+
         return result;
     }
 

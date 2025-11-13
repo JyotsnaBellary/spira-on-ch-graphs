@@ -5,18 +5,14 @@
 
 Dijkstra::Dijkstra(Graph &graph) : graph(graph) {}
 
-
-// what kind of function is this?
-// Dijkstra::~Dijkstra()
-// {
-// }
-
-
-
-DijkstraResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
+SsspResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
 {
     int num_nodes = graph.number_of_nodes();
     int num_of_pops = 0;
+    int redundant_pops = 0;
+
+    // Track how many times each node is popped
+    std::vector<int> pops_per_node(num_nodes, 0);
 
     // 1. Initialize distances and priority queue.
     vector<Cost> dist(num_nodes, INF_COST);
@@ -30,11 +26,18 @@ DijkstraResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
     if (src == dst)
     {
         dist[src] = 0;
-        return DijkstraResult{.path = {src}, .total_cost = 0, .edge_ids = {}, .number_of_pops = num_of_pops};
+        return SsspResult{
+            .path = {src},
+            .total_cost = 0,
+            .edge_ids = {},
+            .redundant_pops = 0,
+            .avg_pops_per_node = 0.0,
+            .number_of_pops = num_of_pops
+        };
     }
 
     // Check for valid node IDs
-    if (src < 0 || src >= num_nodes || dst < 0 || dst >= num_nodes)
+    if (src < 0 || src >= num_nodes || dst >= num_nodes)
     {
         cerr << "Error: invalid source/destination node\n";
         exit(EXIT_FAILURE); // exit(1) also fine
@@ -50,16 +53,19 @@ DijkstraResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
         // Extract the node with the smallest distance.
         auto [curr_dist, node] = pq.top();
         pq.pop();
-        num_of_pops += 1;
+        num_of_pops++;
+        pops_per_node[node]++;
 
         // If we have already found a better path, skip this one.
-        if (curr_dist != dist[node])
+        if (curr_dist != dist[node]){
+            redundant_pops++;
             continue;
+        }
 
         // If we reached the destination, reconstruct the path.
-        if (node == dst)
+        if (node == dst && dst != -1)
         {
-            return build_path(prev, dist, viaEdge, dst, num_of_pops);
+            return build_path(prev, dist, viaEdge, dst, num_of_pops, pops_per_node, redundant_pops);
         };
 
         // Explore neighbors
@@ -78,14 +84,25 @@ DijkstraResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
         }
     }
 
+    // If dst == -1, build full shortest path tree
+    if (dst == -1) {
+        return build_path(prev, dist, viaEdge, dst, num_of_pops, pops_per_node, redundant_pops);
+    }
+
     // No path is found.
-    return DijkstraResult{{}, -1, {}, num_of_pops};
+    return SsspResult{{}, -1, {}, {}, {}, {}, redundant_pops,
+                      static_cast<double>(num_of_pops) / num_nodes, num_of_pops};
 }
 
-DijkstraResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops)
+SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops, const vector<int> &pops_per_node, int redundant_pops)
 {
-    DijkstraResult result;
+    SsspResult result;
+
     result.number_of_pops = num_of_pops;
+
+    result.redundant_pops = redundant_pops;
+    result.avg_pops_per_node =
+                static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_nodes());
 
     if (dst < 0 || dst >= (int)prev.size() || cost[dst] == INF_COST)
     {
@@ -93,6 +110,20 @@ DijkstraResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> 
         return result;
     }
 
+    if (dst < 0) {
+        // For SPT, we don't fill single-path fields
+        result.total_cost = 0;
+        result.path = {};
+        result.edge_ids = {};
+
+        // Fill SPT fields
+        result.parent = prev;
+        result.distance = cost;
+        result.via_edge = viaEdge;
+
+        return result;
+    }
+    
     // Reconstruct nodes (backwards)
     vector<int> rev_nodes;
     vector<EdgeId> rev_edges;
