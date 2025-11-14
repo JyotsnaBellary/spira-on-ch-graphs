@@ -1,6 +1,6 @@
 /build/
 compile_commands.json
 .vscode/
-/output/
+# /output/
 /output - old/
-# /Input_Data/
+/Input_Data/

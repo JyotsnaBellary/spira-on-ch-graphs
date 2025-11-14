@@ -363,7 +363,7 @@ int run_benchmark_on_dense_graphs() {
 }
 
 int run_benchmark_on_exponential_size_sweep(int min_n = 100,
-                                            int max_n = 2000,
+                                            int max_n = 3000,
                                             int num_sizes = 10,
                                             double lambda = 1.0,
                                             uint64_t base_seed = 4242,
