@@ -1,0 +1,21 @@
+starting benchmark on sparse graphs...
+
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm11.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm11.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm11.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm11.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm11.csv
+Running 100 SPT queries...

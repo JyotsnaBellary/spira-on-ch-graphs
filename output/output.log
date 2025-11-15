@@ -1,0 +1,685 @@
+
+=== Generating exponential graph: n=100 (1/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n100.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n100.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=422 (2/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n422.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n422.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=744 (3/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n744.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n744.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=1066 (4/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n1066.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n1066.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=1388 (5/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n1388.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n1388.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=1710 (6/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n1710.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n1710.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=2032 (7/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n2032.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n2032.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=2354 (8/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n2354.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n2354.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=2676 (9/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n2676.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n2676.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+=== Generating exponential graph: n=2998 (10/10) ===
+
+Running src-dst benchmark -> output/exp_complete/src_dst_benchmark/n2998.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/exp_complete/spt_benchmark/n2998.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+
+Completed exponential size sweep: 10 graphs (100–3000 nodes)
+
+==============================================================================================================================
+
+starting benchmark on dense graphs...
+
+
+Processing file: ./Input_Data/DenseNetworks/zi929.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/zi929.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/zi929.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/zi929.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/zi929.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/zi929.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/zi929.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/zi929.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/zi929.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/DenseNetworks/uy734.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/uy734.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/uy734.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/uy734.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/uy734.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/uy734.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/uy734.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/uy734.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/uy734.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/DenseNetworks/rw1621.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/rw1621.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/rw1621.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/rw1621.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/rw1621.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/rw1621.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/rw1621.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/rw1621.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/rw1621.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/DenseNetworks/lu980.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/lu980.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/lu980.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/lu980.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/lu980.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/lu980.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/lu980.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/lu980.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/lu980.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/DenseNetworks/mu1979.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/mu1979.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/mu1979.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/mu1979.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/mu1979.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/mu1979.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/mu1979.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/mu1979.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/mu1979.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/DenseNetworks/qa194.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/qa194.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/qa194.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/qa194.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/qa194.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/qa194.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/qa194.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/qa194.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/qa194.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/DenseNetworks/dj38.tsp
+
+Processing with original weights: 
+Running src-dst benchmark -> output/DenseNetworks/original_weights/src_dst_benchmark/dj38.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/original_weights/spt_benchmark/dj38.csv
+Running 38 SPT queries...
+Mismatches in 0 / 38 runs.
+
+Processing with random weights: 
+Running src-dst benchmark -> output/DenseNetworks/random_weights/src_dst_benchmark/dj38.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/random_weights/spt_benchmark/dj38.csv
+Running 38 SPT queries...
+Mismatches in 0 / 38 runs.
+
+Processing with uniform weights: 
+Running src-dst benchmark -> output/DenseNetworks/uniform_random_weights/src_dst_benchmark/dj38.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/uniform_random_weights/spt_benchmark/dj38.csv
+Running 38 SPT queries...
+Mismatches in 0 / 38 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/DenseNetworks/exponential_weights/src_dst_benchmark/dj38.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/DenseNetworks/exponential_weights/spt_benchmark/dj38.csv
+Running 38 SPT queries...
+Mismatches in 0 / 38 runs.
+
+Benchmarking completed for all dense graphs with original, uniform, exponential and uniformly random weights.
+
+==============================================================================================================================
+
+starting benchmark on sparse graphs...
+
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm6.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm6.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm6.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm6.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm6.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm6.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm6.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm4.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm4.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm4.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm4.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm4.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm4.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm4.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm3.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm3.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm3.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm3.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm3.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm3.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm3.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm5.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm5.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm5.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm5.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm5.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm5.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm5.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm2.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm2.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm2.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm2.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm2.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm2.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm2.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm9.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm9.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm9.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm9.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm9.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm9.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm9.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm10.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm10.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm10.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm10.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm10.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm10.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm10.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm8.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm8.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm8.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm8.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm8.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm8.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm8.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm1.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm1.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm1.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm1.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm1.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm1.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm1.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing file: ./Input_Data/SparseRoadNetworks/osm7.txt
+
+Processing with random weights: 
+Running src-dst benchmark -> output/sparse_networks/random_weights/src_dst_benchmark/osm7.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/random_weights/spt_benchmark/osm7.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with exponential weights: 
+Running src-dst benchmark -> output/sparse_networks/exponential_weights/src_dst_benchmark/osm7.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/exponential_weights/spt_benchmark/osm7.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Processing with original weights: 
+Running src-dst benchmark -> output/sparse_networks/original_weights/src_dst_benchmark/osm7.csv
+Running 100 src-dst queries...
+Number of Mismatched Queries: 0
+
+Running spt benchmark -> output/sparse_networks/original_weights/spt_benchmark/osm7.csv
+Running 100 SPT queries...
+Mismatches in 0 / 100 runs.
+
+Benchmarking completed for all sparse graphs with original, exponential and uniformly random weights.
+
+==============================================================================================================================
+

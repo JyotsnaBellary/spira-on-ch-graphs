@@ -296,7 +296,7 @@ int run_benchmark_on_sparse_graphs() {
             cout << endl;
             cout << "Processing with random weights: " << endl;
             // Case 1: random weights (true)
-            process_sparse_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
+            // process_sparse_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
 
             cout << "Processing with exponential weights: " << endl;
             // Case 2: exponential weights
