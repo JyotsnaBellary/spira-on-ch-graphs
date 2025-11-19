@@ -17,6 +17,10 @@ struct SsspResult {
     double avg_pops_per_node = 0.0;    // average number of pops per reached node
     int number_of_pops = 0;
 
+    vector<bool> out_pertinent_edges;
+    vector<bool> in_pertinent_edges;
+    vector<bool> in_pertinent_edges_extracted_in_forward_phase;
+
 };
 
 class Dijkstra

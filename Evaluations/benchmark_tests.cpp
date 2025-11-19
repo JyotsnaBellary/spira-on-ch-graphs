@@ -60,7 +60,8 @@ void run_src_dst_benchmark_on_graph(Graph& graph, const string& output_csv_path)
     out << boolalpha;
     out << "src,dst,d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,"
         << "d_pops,s_pops,nv_pops,"
-        << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,matched\n";
+        << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
+        << "in_pert,in_pert_trans,out_pert,pert,matched\n";
 
     cout << "Running 100 src-dst queries..." << endl;
     int mismatch = 0;
@@ -98,10 +99,28 @@ void run_src_dst_benchmark_on_graph(Graph& graph, const string& output_csv_path)
             mismatch++;
         }
 
+        int in_pertinent_edges = 0;
+        int in_pertinent_edges_transferred = 0;
+        int out_pertinent_edges = 0;
+
+        for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid) {
+        if (rn.in_pertinent_edges[eid]) {
+            in_pertinent_edges += 1;
+            if(rn.in_pertinent_edges_extracted_in_forward_phase[eid]){
+                in_pertinent_edges_transferred += 1;
+            } 
+        }
+        else if (rn.out_pertinent_edges[eid]) {
+            out_pertinent_edges += 1;
+        }
+    }
+    int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
+    
         out << src << ',' << dst << ','
             << d_time_us << ',' << dc << ',' << s_time_us << ',' << sc << ',' << n_time_us << ',' << nc << ','
             << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
             << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
+            << in_pertinent_edges << ',' << in_pertinent_edges_transferred << ',' << out_pertinent_edges << ',' << total_pertinent_edges << ','
             << matched << '\n';
     }
     cout << "Number of Mismatched Queries: " << mismatch << endl;
@@ -136,6 +155,9 @@ static bool compare_spt_results(const SsspResult& a,
             (da == INF_COST && db != INF_COST) ||
             (db == INF_COST && da != INF_COST))
         {
+            cout << "Distance mismatch at node " << i << ": "
+                 << nameA << " has " << da << ", "
+                 << nameB << " has " << db << "\n";
             return false;
         }
     }
@@ -171,7 +193,8 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
         << "d_time_us,s_time_us,nv_time_us,"
         << "d_pops,s_pops,nv_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
-        << "mismatch_count_ds,mismatch_count_dn,"
+        << "in_pert,in_pert_trans,out_pert,pert,"
+        << "mismatch_count_djk_spi,mismatch_count_djk_new,"
         << "mismatches\n";
 
     int mismatch_runs = 0;
@@ -200,6 +223,23 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
         long long n_time_us =
             std::chrono::duration_cast<std::chrono::microseconds>(n_end - n_start).count();
 
+        int in_pertinent_edges = 0;
+        int out_pertinent_edges = 0;
+        int in_pertinent_edges_transferred = 0;
+
+        // cout << "in_pertinent_edges: " << rn.in_pertinent_edges.size() << endl;
+        for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid) {
+        if (rn.in_pertinent_edges[eid]) {
+            in_pertinent_edges += 1;
+            if(rn.in_pertinent_edges_extracted_in_forward_phase[eid]){
+                in_pertinent_edges_transferred += 1;
+            }
+        }
+        else if (rn.out_pertinent_edges[eid]) {
+            out_pertinent_edges += 1;
+        }
+    }
+    int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
         // === Compare distances ===
         bool match_ds = compare_spt_results(rd, rs, "Dijkstra", "Spira");
         bool match_dn = compare_spt_results(rd, rn, "Dijkstra", "NewVariant");
@@ -216,6 +256,7 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
             << d_time_us << ',' << s_time_us << ',' << n_time_us << ','
             << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
             << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
+            << in_pertinent_edges << ',' << in_pertinent_edges_transferred << ',' << out_pertinent_edges << ',' << total_pertinent_edges << ','
             << mismatch_count_ds << ',' << mismatch_count_dn << ','
             << std::boolalpha << mismatches << '\n';
     }
@@ -296,7 +337,7 @@ int run_benchmark_on_sparse_graphs() {
             cout << endl;
             cout << "Processing with random weights: " << endl;
             // Case 1: random weights (true)
-            // process_sparse_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
+            process_sparse_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
 
             cout << "Processing with exponential weights: " << endl;
             // Case 2: exponential weights
@@ -343,9 +384,9 @@ int run_benchmark_on_dense_graphs() {
             // Case 2: random weights (true), 
             process_dense_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
 
-            cout << "Processing with uniform weights: " << endl;
-            // Case 3: uniform weights (true), 
-            process_dense_graph_file(filepath, WeightMode::Uniform, output_dir_uniform);
+            // cout << "Processing with uniform weights: " << endl;
+            // // Case 3: uniform weights (true), 
+            // process_dense_graph_file(filepath, WeightMode::Uniform, output_dir_uniform);
 
             cout << "Processing with exponential weights: " << endl;
             // Case : Exponential weights (true), 

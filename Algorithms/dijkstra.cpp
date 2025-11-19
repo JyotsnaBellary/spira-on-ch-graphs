@@ -104,12 +104,6 @@ SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cos
     result.avg_pops_per_node =
                 static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_nodes());
 
-    if (dst < 0 || dst >= (int)prev.size() || cost[dst] == INF_COST)
-    {
-        result.total_cost = -1; // unreachable
-        return result;
-    }
-
     if (dst < 0) {
         // For SPT, we don't fill single-path fields
         result.total_cost = 0;
@@ -123,6 +117,14 @@ SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cos
 
         return result;
     }
+    
+    if (dst >= (int)prev.size() || cost[dst] == INF_COST)
+    {
+        result.total_cost = -1; // unreachable
+        return result;
+    }
+
+    
     
     // Reconstruct nodes (backwards)
     vector<int> rev_nodes;

@@ -20,6 +20,7 @@ class NewVariant
         // vector<char> is_sorted;
         vector<bool> in_pertinent_edges;
         vector<bool> out_pertinent_edges;
+        vector<bool> in_pertinent_edges_extracted_in_forward_phase;
 
         // Req[u] contains in-pertinent edges whose scan was specifically requested
         vector<vector<EdgeId>> req;

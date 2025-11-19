@@ -9,6 +9,7 @@ NewVariant::NewVariant(Graph &graph) : graph(graph),
                              next_index_request(graph.number_of_nodes(),0),
                              in_pertinent_edges(graph.number_of_edges(), false),
                              out_pertinent_edges(graph.number_of_edges(), false),
+                             in_pertinent_edges_extracted_in_forward_phase(graph.number_of_edges(), false),
                              req(graph.number_of_nodes()),
                              active(graph.number_of_nodes(), false),
                              in_S(graph.number_of_nodes(), false),
@@ -44,9 +45,12 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
        } else if (edgeId != INVALID_EDGE) {
             const Edge& edge = graph.get_edge(edgeId);
             if (isfinite(median_distance) && isfinite(cost[edge.src])) {
-
+                // not a pertinent edge
              if (edge.cost > 2 * (median_distance - cost[edge.src])) {
                 can_scan_out[nodeId] = false; 
+            } 
+            else {
+                out_pertinent_edges[edgeId] = true;
             }
         }
        }
@@ -55,6 +59,9 @@ void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<
     // if no out-pertinent edges to scan, check requested in-pertinent edges
     if (!can_scan_out[nodeId]) {
         edgeId = next(next_index_request, nodeId, get_requested_neighbors(nodeId));
+        if (edgeId != INVALID_EDGE) {
+            in_pertinent_edges_extracted_in_forward_phase[edgeId] = true;
+        }
     }
 
     if (edgeId != INVALID_EDGE) {
@@ -133,7 +140,9 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             .edge_ids = {},
             .redundant_pops = 0,
             .avg_pops_per_node = 0.0,
-            .number_of_pops = num_of_pops
+            .number_of_pops = num_of_pops,
+            .out_pertinent_edges = out_pertinent_edges,
+            .in_pertinent_edges = in_pertinent_edges
         };
     }
 
@@ -225,7 +234,10 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 
             
             const Edge& edge = graph.get_edge(in_edgeId);
-            
+
+            //counting all edges to be in-pertinent edges
+            in_pertinent_edges[in_edgeId] = true;
+
             if (!in_S[edge.trg]) {
                 backward(edge.trg, Q);
                 append_to_request(edge.src, in_edgeId, cost, P);
@@ -249,19 +261,18 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 
 SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops)
 {
+
     SsspResult result;
     result.number_of_pops = num_of_pops;
 
     result.avg_pops_per_node =
                 static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_edges());
-
-    if (dst < 0 || dst >= (int)prev.size() || cost[dst] == INF_COST)
-    {
-        result.total_cost = -1; // unreachable
-        return result;
-    }
+  result.in_pertinent_edges = in_pertinent_edges;
+    result.in_pertinent_edges_extracted_in_forward_phase = in_pertinent_edges_extracted_in_forward_phase;
+    result.out_pertinent_edges = out_pertinent_edges;
 
     if (dst < 0) {
+
         // For SPT, we don't fill single-path fields
         result.total_cost = 0;
         result.path = {};
@@ -271,9 +282,17 @@ SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &c
         result.parent = prev;
         result.distance = cost;
         result.via_edge = viaEdge;
-
         return result;
     }
+
+    if (dst >= (int)prev.size() || cost[dst] == INF_COST)
+    {
+        result.total_cost = -1; // unreachable
+        return result;
+    }
+
+  
+    
 
     
     // Reconstruct nodes (backwards)
@@ -296,5 +315,6 @@ SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &c
     result.edge_ids = move(rev_edges);
     result.total_cost = cost[dst]; // keep Dist in the struct
 
+    
     return result;
 }

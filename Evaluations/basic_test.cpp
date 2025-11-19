@@ -32,7 +32,7 @@ static bool compare_and_print_spt_results(const SsspResult& a, const SsspResult&
 
 void run_all_algorithms_on_sparse() {
     FileHandler fh;
-    Graph graph = fh.read_sparse_graph_file("./RoadNetworks/rerun/osm1.txt", WeightMode::Original);
+    Graph graph = fh.read_sparse_graph_file("./Input_Data/SparseRoadNetworks/osm1.txt", WeightMode::Original);
 
     // graph.print_adj_simple();
 
@@ -49,7 +49,7 @@ void run_all_algorithms_on_sparse() {
 
     Dijkstra dijkstra(graph);
     int src = 244;
-    int trg = 447;
+    int trg = -1;
     // Dijkstra
     cout << "=== Dijkstra ===" << endl;
     auto [dijkstra_times, dijkstra_time] = time_algorithm([&]()
