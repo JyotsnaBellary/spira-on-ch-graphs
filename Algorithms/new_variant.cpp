@@ -3,117 +3,159 @@
 #include <iostream>
 #include <cmath>
 
-NewVariant::NewVariant(Graph &graph) : graph(graph), 
-                             next_index_out_adj(graph.number_of_nodes(), 0),
-                             next_index_in_adj(graph.number_of_nodes(), 0),
-                             next_index_request(graph.number_of_nodes(),0),
-                             in_pertinent_edges(graph.number_of_edges(), false),
-                             out_pertinent_edges(graph.number_of_edges(), false),
-                             in_pertinent_edges_extracted_in_forward_phase(graph.number_of_edges(), false),
-                             req(graph.number_of_nodes()),
-                             active(graph.number_of_nodes(), false),
-                             in_S(graph.number_of_nodes(), false),
-                             can_scan_out(graph.number_of_nodes(), true) {}
-                            //  is_sorted(graph.number_of_nodes(), false) {}
+NewVariant::NewVariant(Graph &graph) : graph(graph),
+                                       next_index_out_adj(graph.number_of_nodes(), 0),
+                                       next_index_in_adj(graph.number_of_nodes(), 0),
+                                       next_index_request(graph.number_of_nodes(), 0),
+                                       in_pertinent_edges(graph.number_of_edges(), false),
+                                       out_pertinent_edges(graph.number_of_edges(), false),
+                                       in_pertinent_edges_extracted_in_forward_phase(graph.number_of_edges(), false),
+                                       req(graph.number_of_nodes()),
+                                       active(graph.number_of_nodes(), false),
+                                       in_S(graph.number_of_nodes(), false),
+                                       can_scan_out(graph.number_of_nodes(), true) {}
+//  is_sorted(graph.number_of_nodes(), false) {}
 
-void NewVariant::reset(vector<int> &next_index) {
+void NewVariant::reset(vector<int> &next_index)
+{
     next_index.assign(graph.number_of_nodes(), 0);
 }
 
-const vector<EdgeId>& NewVariant::get_requested_neighbors(NodeId nodeId) const {
+const vector<EdgeId> &NewVariant::get_requested_neighbors(NodeId nodeId) const
+{
     return req[nodeId];
 }
 
-EdgeId NewVariant::next(vector<int> &next_index, NodeId &nodeId, const vector<EdgeId>& adjacent_neighbor_edges) {
-    if (nodeId < 0 || nodeId >= graph.number_of_nodes()) return INVALID_EDGE;
+EdgeId NewVariant::next(vector<int> &next_index, NodeId &nodeId, const vector<EdgeId> &adjacent_neighbor_edges)
+{
+    if (nodeId < 0 || nodeId >= graph.number_of_nodes())
+        return INVALID_EDGE;
 
-    if (next_index[nodeId] < (int)adjacent_neighbor_edges.size()) {
+    if (next_index[nodeId] < (int)adjacent_neighbor_edges.size())
+    {
         return adjacent_neighbor_edges[next_index[nodeId]++]; // return current, then advance
     }
     return INVALID_EDGE;
 }
 
-void NewVariant::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
+void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
+{
     EdgeId edgeId = INVALID_EDGE;
 
     // if there are still out-pertinent edges to scan
-    if (can_scan_out[nodeId]) {
-       edgeId = next(next_index_out_adj, nodeId, graph.get_out_neighbors(nodeId));
-       if (edgeId == INVALID_EDGE) {
-            // no more out-pertinent edges
-           can_scan_out[nodeId] = false; 
-       } else if (edgeId != INVALID_EDGE) {
-            const Edge& edge = graph.get_edge(edgeId);
-            if (isfinite(median_distance) && isfinite(cost[edge.src])) {
-                // not a pertinent edge
-             if (edge.cost > 2 * (median_distance - cost[edge.src])) {
-                can_scan_out[nodeId] = false; 
-            } 
-            else {
-                out_pertinent_edges[edgeId] = true;
+    if (can_scan_out[nodeId])
+    {
+        edgeId = next(next_index_out_adj, nodeId, graph.get_out_neighbors(nodeId));
+        if (edgeId == INVALID_EDGE)
+        {
+            // no more outgoing edges left to scan for this node
+            can_scan_out[nodeId] = false;
+        }
+        else if (edgeId != INVALID_EDGE)
+        {
+            const Edge &edge = graph.get_edge(edgeId);
+            // Though this edge is valid, it may or may not be out-perminent after the first stage
+            // The ones extracted are out pertinent and the remaining n/2 edges may or may not be pertinent,
+            // so do not classify as out-pertinent yet
+
+            // Check if we are in the 2nd stage of the algorithm
+            if (isfinite(median_distance) && isfinite(cost[edge.src]))
+            {
+                // Since Median is finite, we are in the 2nd stage of the algorithm
+                // Check if the edge is out-pertinent
+                if (edge.cost > 2 * (median_distance - cost[edge.src]))
+                {
+                    // if not, set to false as no more out-pertinent edges will be found
+                    can_scan_out[nodeId] = false;
+                }
+                else
+                {   
+                    // mark as out-pertinent edge
+                    out_pertinent_edges[edgeId] = true;
+                    
+                }
             }
         }
-       }
     }
 
     // if no out-pertinent edges to scan, check requested in-pertinent edges
-    if (!can_scan_out[nodeId]) {
+    if (!can_scan_out[nodeId])
+    {
         edgeId = next(next_index_request, nodeId, get_requested_neighbors(nodeId));
-        if (edgeId != INVALID_EDGE) {
+        if (edgeId != INVALID_EDGE)
+        {
+
+            // all requested edges are in-pertinent edges
+            if (out_pertinent_edges[edgeId])
+            {
+                // done so that an error is raised if an edge is marked both in and out. 
+                // if everything is marked right then no outpertinent edge will be re-marked inpertinent
+                in_pertinent_edges[edgeId] = true;
+            }
             in_pertinent_edges_extracted_in_forward_phase[edgeId] = true;
         }
     }
 
-    if (edgeId != INVALID_EDGE) {
+    if (edgeId != INVALID_EDGE)
+    {
         // if apprpriate edge is found
         active[nodeId] = true;
-    } else {
-        // if no appropriate edge is found 
+    }
+    else
+    {
+        // if no appropriate edge is found
         active[nodeId] = false;
     }
 
-    if (active[nodeId]) {
-       const Edge& edge = graph.get_edge(edgeId);
-       if (isfinite(cost[edge.src])) {
-        pq.emplace(cost[edge.src] + edge.cost, edgeId);
-       }
-
+    if (active[nodeId])
+    {
+        const Edge &edge = graph.get_edge(edgeId);
+        if (isfinite(cost[edge.src]))
+        {
+            pq.emplace(cost[edge.src] + edge.cost, edgeId);
+        }
     }
 }
 
-void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
-    //make sure v is not in S.
+void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
+{
+    // make sure v is not in S.
     EdgeId edgeId = next(next_index_in_adj, nodeId, graph.get_in_neighbors(nodeId));
-    if (edgeId != INVALID_EDGE) {
-        const Edge& edge = graph.get_edge(edgeId); // (u,v)
+    if (edgeId != INVALID_EDGE)
+    {
+        const Edge &edge = graph.get_edge(edgeId); // (u,v)
         pq.emplace(edge.cost, edgeId);
     }
 }
 
-void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
+void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost> &cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
+{
     bool index_past_end = next_index_request[nodeId] >= req[nodeId].size();
     req[nodeId].push_back(edgeId);
 
     // for (EdgeId eid : req[nodeId]) {
     //     const auto& edge = graph.get_edge(eid);
-        // cout << "edge.trg: " << edge.trg << endl;
+    // cout << "edge.trg: " << edge.trg << endl;
     // }
 
-    if (index_past_end) {
+    if (index_past_end)
+    {
         next_index_request[nodeId] = req[nodeId].size() - 1;
     }
 
-    //urgent request
-    if (in_S[nodeId] && !active[nodeId]) {
-        forward(nodeId, cost , pq);
+    // urgent request
+    if (in_S[nodeId] && !active[nodeId])
+    {
+        forward(nodeId, cost, pq);
     }
 }
 
-//count edge relaxation in dijkstra.
+// count edge relaxation in dijkstra.
 SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 {
     int number_of_nodes = graph.number_of_nodes();
     int num_of_pops = 0;
+    int number_of_unclassified_edges_set_to_out_pertinent = 0;
 
     // 1. Initialize distances and priority queue.
     vector<Cost> cost(number_of_nodes, INF_COST);
@@ -125,8 +167,8 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
     active.assign(graph.number_of_nodes(), false);
     in_S.assign(graph.number_of_nodes(), false);
     can_scan_out.assign(graph.number_of_nodes(), true);
-    
-    // Initialise the threshold 
+
+    // Initialise the threshold
     median_distance = INF_COST;
     // median_distance = -1;
 
@@ -142,8 +184,7 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             .avg_pops_per_node = 0.0,
             .number_of_pops = num_of_pops,
             .out_pertinent_edges = out_pertinent_edges,
-            .in_pertinent_edges = in_pertinent_edges
-        };
+            .in_pertinent_edges = in_pertinent_edges};
     }
 
     // Check for valid node IDs
@@ -155,7 +196,7 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 
     // priority queue P is analogous to the priority queue used by Spira’s algorithm
     priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> P;
-    
+
     //  second priority queue Q is used to identify in-pertinent edges
     priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> Q;
 
@@ -163,7 +204,7 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
     reset(next_index_out_adj);
     reset(next_index_in_adj);
     reset(next_index_request);
-    
+
     cost[src] = 0;
     in_S[src] = true;
     forward(src, cost, P);
@@ -177,25 +218,49 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         P.pop();
         num_of_pops += 1;
 
-        const Edge& edge = graph.get_edge(edgeId);
+        const Edge &edge = graph.get_edge(edgeId);
         NodeId node = edge.src;
 
-        // Is this check needed?
-        // if (curr_cost !=  cost[node] + edge.cost)
-        // continue;
 
-        const Cost EPS = (Cost)1e-9;  // use 1e-6 if weights ~1
+        // All extracted edges are definitely out-pertinent edges in the 1st stage.
+        // However at the end of first stage, the n/2 edges left in P may or may not be pertinent.
+        // Hence counting the out-pertinent edges here for 1st stage to avoid overcounting everything that is pushed into P.
+        // In the 2nd, the edge is marked out-pertinent only if it satisfies the condition for out-pertinence.
+        if (!isfinite(median_distance))
+        {
+            out_pertinent_edges[edgeId] = true;
+        }
+
+        if (isfinite(median_distance))
+        {
+            if (!out_pertinent_edges[edgeId] and !in_pertinent_edges[edgeId])
+            {
+                // Edge is one of the ones left in P after 1st stage that remains unclassified as out pertinent or not
+                // We are in the 2nd stage of the algorithm
+                // Check if the edge needs to be classified as an out-pertinent edge
+                if (edge.cost <= 2 * (median_distance - cost[edge.src]))
+                {
+                    number_of_unclassified_edges_set_to_out_pertinent++;
+                    out_pertinent_edges[edgeId] = true;
+                }
+            }
+        }
+
+        const Cost EPS = (Cost)1e-9; // use 1e-6 if weights ~1
         if (!std::isfinite(cost[node]) || !std::isfinite(curr_cost) ||
-            curr_cost > cost[node] + edge.cost + EPS) {
+            curr_cost > cost[node] + edge.cost + EPS)
+        {
             continue; // stale/invalid
         }
 
-        //call forward(u)
+        // call forward(u)
         forward(node, cost, P);
 
         // if v not in S
         NodeId trg = edge.trg;
-        if(!in_S[trg]) {
+        if (!in_S[trg])
+        {
+            
             cost[trg] = curr_cost;
             prev[trg] = node;
             via_edge[trg] = edgeId;
@@ -208,47 +273,55 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 
             forward(trg, cost, P);
 
-            if (settled == (number_of_nodes + 1) / 2){
+            if (settled == (number_of_nodes + 1) / 2)
+            {
                 median_distance = cost[trg];
                 // backward scan the first incoming edge of each vertex not yet in S
                 // and insert it into the priority queue Q
-                for (const Node& node : graph.get_nodes()) {
-                    if (!in_S[node.id]){
+                for (const Node &node : graph.get_nodes())
+                {
+                    if (!in_S[node.id])
+                    {
                         backward(node.id, Q);
                     }
-
                 }
             }
         }
 
         // Find more in-pertinent edges
-        while (Q.size() > 0 ) {
+        while (Q.size() > 0)
+        {
             Cost minP = (P.empty()) ? INF_COST : (P.top().first);
 
-            if (minP != INF_COST && Q.top().first >= 2 * (minP - median_distance)) {
+            if (minP != INF_COST && Q.top().first >= 2 * (minP - median_distance))
+            {
                 break; // condition no longer holds
             }
 
             auto [in_cost, in_edgeId] = Q.top();
             Q.pop();
 
+            const Edge &edge = graph.get_edge(in_edgeId);
+
             
-            const Edge& edge = graph.get_edge(in_edgeId);
 
-            //counting all edges to be in-pertinent edges
-            in_pertinent_edges[in_edgeId] = true;
+            if (!in_S[edge.trg])
+            {
+                // 
+                in_pertinent_edges[in_edgeId] = true;
 
-            if (!in_S[edge.trg]) {
                 backward(edge.trg, Q);
                 append_to_request(edge.src, in_edgeId, cost, P);
-            }  // already in S
-            
+
+            } // already in S
         }
-        
     }
 
-     // If dst == -1, build full shortest path tree
-    if (dst == -1) {
+    cout << "Number of unclassified edges set to out-pertinent in 2nd stage: " << number_of_unclassified_edges_set_to_out_pertinent << endl;
+
+    // If dst == -1, build full shortest path tree
+    if (dst == -1)
+    {
         return build_path(prev, cost, via_edge, dst, num_of_pops);
     }
 
@@ -266,12 +339,13 @@ SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &c
     result.number_of_pops = num_of_pops;
 
     result.avg_pops_per_node =
-                static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_edges());
-  result.in_pertinent_edges = in_pertinent_edges;
+        static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_edges());
+    result.in_pertinent_edges = in_pertinent_edges;
     result.in_pertinent_edges_extracted_in_forward_phase = in_pertinent_edges_extracted_in_forward_phase;
     result.out_pertinent_edges = out_pertinent_edges;
 
-    if (dst < 0) {
+    if (dst < 0)
+    {
 
         // For SPT, we don't fill single-path fields
         result.total_cost = 0;
@@ -291,10 +365,6 @@ SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &c
         return result;
     }
 
-  
-    
-
-    
     // Reconstruct nodes (backwards)
     vector<int> rev_nodes;
     vector<EdgeId> rev_edges;
@@ -315,6 +385,5 @@ SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &c
     result.edge_ids = move(rev_edges);
     result.total_cost = cost[dst]; // keep Dist in the struct
 
-    
     return result;
 }
