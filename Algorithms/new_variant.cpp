@@ -72,7 +72,6 @@ void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<
                 {   
                     // mark as out-pertinent edge
                     out_pertinent_edges[edgeId] = true;
-                    
                 }
             }
         }
@@ -88,9 +87,8 @@ void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<
             // all requested edges are in-pertinent edges
             if (out_pertinent_edges[edgeId])
             {
-                // done so that an error is raised if an edge is marked both in and out. 
-                // if everything is marked right then no outpertinent edge will be re-marked inpertinent
-                in_pertinent_edges[edgeId] = true;
+                cerr << "ERROR: edge " << edgeId
+                      << " appears in request list but is marked out-pertinent.\n";
             }
             in_pertinent_edges_extracted_in_forward_phase[edgeId] = true;
         }
@@ -131,6 +129,7 @@ void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vect
 void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost> &cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
 {
     bool index_past_end = next_index_request[nodeId] >= req[nodeId].size();
+    if (edgeId == INVALID_EDGE) return;
     req[nodeId].push_back(edgeId);
 
     // for (EdgeId eid : req[nodeId]) {
@@ -168,9 +167,13 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
     in_S.assign(graph.number_of_nodes(), false);
     can_scan_out.assign(graph.number_of_nodes(), true);
 
+    // reset pertinence state
+    out_pertinent_edges.assign(graph.number_of_edges(), false);
+    in_pertinent_edges.assign(graph.number_of_edges(), false);
+    in_pertinent_edges_extracted_in_forward_phase.assign(graph.number_of_edges(), false);
+
     // Initialise the threshold
     median_distance = INF_COST;
-    // median_distance = -1;
 
     // Check for trivial case
     if (src == dst)
@@ -222,29 +225,31 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         NodeId node = edge.src;
 
 
-        // All extracted edges are definitely out-pertinent edges in the 1st stage.
+        // Section 4
+        // In the 1st stage, All extracted edges are out-pertinent edges. 
         // However at the end of first stage, the n/2 edges left in P may or may not be pertinent.
-        // Hence counting the out-pertinent edges here for 1st stage to avoid overcounting everything that is pushed into P.
-        // In the 2nd, the edge is marked out-pertinent only if it satisfies the condition for out-pertinence.
         if (!isfinite(median_distance))
         {
             out_pertinent_edges[edgeId] = true;
         }
 
+        // If in 2nd stage, 
         if (isfinite(median_distance))
         {
+            // check if edge was one of the n/2 left in P that remained unclassified as out-pertinent.
             if (!out_pertinent_edges[edgeId] and !in_pertinent_edges[edgeId])
             {
-                // Edge is one of the ones left in P after 1st stage that remains unclassified as out pertinent or not
                 // We are in the 2nd stage of the algorithm
                 // Check if the edge needs to be classified as an out-pertinent edge
                 if (edge.cost <= 2 * (median_distance - cost[edge.src]))
                 {
+                    // Edge is one of the ones left in P after 1st stage that remains unclassified as out pertinent or not
                     number_of_unclassified_edges_set_to_out_pertinent++;
                     out_pertinent_edges[edgeId] = true;
                 }
             }
         }
+        
 
         const Cost EPS = (Cost)1e-9; // use 1e-6 if weights ~1
         if (!std::isfinite(cost[node]) || !std::isfinite(curr_cost) ||
@@ -260,7 +265,6 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         NodeId trg = edge.trg;
         if (!in_S[trg])
         {
-            
             cost[trg] = curr_cost;
             prev[trg] = node;
             via_edge[trg] = edgeId;
@@ -307,8 +311,15 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 
             if (!in_S[edge.trg])
             {
-                // 
-                in_pertinent_edges[in_edgeId] = true;
+                // All edges extracted from Q that are pushed to Request are in-pertinent edges
+                // in_pertinent_edges[in_edgeId] = true;
+                if (out_pertinent_edges[in_edgeId]) {
+                    cerr << "ERROR: edge " << in_edgeId
+                            << " discovered in Q but already out-pertinent.\n";
+                    // optional: std::abort();
+                } else {
+                    in_pertinent_edges[in_edgeId] = true;
+                }
 
                 backward(edge.trg, Q);
                 append_to_request(edge.src, in_edgeId, cost, P);
@@ -317,7 +328,6 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         }
     }
 
-    cout << "Number of unclassified edges set to out-pertinent in 2nd stage: " << number_of_unclassified_edges_set_to_out_pertinent << endl;
 
     // If dst == -1, build full shortest path tree
     if (dst == -1)

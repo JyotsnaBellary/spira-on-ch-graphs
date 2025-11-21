@@ -1,8 +1,8 @@
 // Test 1: as give in the paper using complete directed graphs. (they say with high probability, what does that even mean?)
-    // report results for SPT and for shortest path between src / trg pairs
-// Test 2: use sparse graphs. 
-    // report results for SPT and for shortest path between src / trg pairs
-// Test 3: Check other pace challenge instances to work with. 
+// report results for SPT and for shortest path between src / trg pairs
+// Test 2: use sparse graphs.
+// report results for SPT and for shortest path between src / trg pairs
+// Test 3: use TSP instances for dense graphs
 
 #include <string>
 #include <fstream>
@@ -19,27 +19,334 @@
 using namespace std;
 using namespace filesystem;
 
-vector<pair<int,int>> generate_query_pairs(int n) {
-    
-     // ----- Generate 100 unique (src, dst) pairs -----
+struct PertinenceStats
+{
+    // Pertinence counts
+    int total_pertinent_edges = 0;
+    int total_out_pertinent_edges = 0;
+    int total_in_pertinent_edges = 0;
+    int total_in_pertinent_extracted_in_forward = 0;
+    int conflict_both = 0;
+
+    // SPT and Path analysis
+    int total_spt_edges = 0;
+    int out_spt = 0;
+    int in_spt = 0;
+    int non_pertinent_edge_in_spt = 0;
+    bool spt_edges_incorrectly_classified = false;
+
+    // --- Ratios ---
+    double ratio_pert_m = 0.0;         // total_pertinent_edges / m
+    double ratio_pert_n = 0.0;         // total_pertinent_edges / n
+    double ratio_in_transferred = 0.0; // total_in_pertinent_extracted_in_forward / total_in_pertinent_edges
+    double ratio_spt_out = 0.0;        // out_spt / total_spt_edges
+    double ratio_spt_in = 0.0;         // in_spt / total_spt_edges
+    double ratio_pop_pert = 0.0;       // no_of_pops / total_pert_edges
+};
+
+struct AggregateStats
+{
+    string filepath;
+    int n = 0;
+    int m = 0;
+
+    int runs = 0;
+
+    // ---- Times ----
+    double avg_d_time = 0;
+    double avg_s_time = 0;
+    double avg_nv_time = 0;
+
+    // ---- Pops ----
+    double avg_d_pops = 0;
+    double avg_s_pops = 0;
+    double avg_nv_pops = 0;
+
+    // ---- Pertinence counts ----
+    double avg_in = 0;
+    double avg_in_trans = 0;
+    double avg_out = 0;
+    double avg_pert = 0;
+
+    // ---- Ratios ----
+    double avg_ratio_pert_m = 0;
+    double avg_ratio_pert_n = 0;
+    double avg_ratio_in_trans = 0;
+    double avg_ratio_spt_out = 0;
+    double avg_ratio_spt_in = 0;
+    double avg_ratio_pop_pert = 0;
+
+    // ---- Suspicious runs ----
+    int runs_with_conflict = 0;
+    int runs_with_misclassified_spt = 0;
+
+    // ---- Wrong results for shortest paths ----
+    int mismatches = 0;
+};
+
+void finalize_aggregate_stats(AggregateStats& agg) {
+    int R = agg.runs;
+    if (R <= 0) return;
+
+    // ---- Times ----
+    agg.avg_d_time  /= R;
+    agg.avg_s_time  /= R;
+    agg.avg_nv_time /= R;
+
+    // ---- Pops ----
+    agg.avg_d_pops  /= R;
+    agg.avg_s_pops  /= R;
+    agg.avg_nv_pops /= R;
+
+    // ---- Pertinence counts ----
+    agg.avg_in      /= R;
+    agg.avg_in_trans/= R;
+    agg.avg_out     /= R;
+    agg.avg_pert    /= R;
+
+    // ---- Ratios ----
+    agg.avg_ratio_pert_m    /= R;
+    agg.avg_ratio_pert_n    /= R;
+    agg.avg_ratio_in_trans  /= R;
+    agg.avg_ratio_spt_out   /= R;
+    agg.avg_ratio_spt_in    /= R;
+    agg.avg_ratio_pop_pert  /= R;
+}
+
+
+void append_average_summary(const AggregateStats& A, const string& output_csv_path) {
+    namespace fs = std::filesystem;
+
+    // Extract directory: e.g. ".../spt_benchmark/"
+    fs::path out_path(output_csv_path);
+    fs::path dir = out_path.parent_path(); 
+
+    // Build the final path: ".../spt_benchmark/average.csv"
+    fs::path avg_path = dir / "average.csv";
+    bool exists = fs::exists(avg_path);
+
+
+    ofstream out(avg_path, ios::app);
+
+
+    if (!exists) {
+        out << "filename,n,m,runs,"
+            << "avg_d_time,avg_s_time,avg_nv_time,"
+            << "avg_d_pops,avg_s_pops,avg_nv_pops,"
+            << "avg_in,avg_in_trans,avg_out,avg_pert,"
+            << "ratio_pert_m,ratio_pert_n,ratio_in_trans,ratio_spt_out,ratio_spt_in,ratio_pop_pert,"
+            << "runs_with_conflict,runs_with_misclassified_spt,mismatches\n";
+    }
+
+    // Extract only filename without extension
+    std::string filename = out_path.stem().string();  // "dj38"
+
+    out << filename << ","
+        << A.n << "," << A.m << "," << A.runs << ","
+        << A.avg_d_time << "," << A.avg_s_time << "," << A.avg_nv_time << ","
+        << A.avg_d_pops << "," << A.avg_s_pops << "," << A.avg_nv_pops << ","
+        << A.avg_in << "," << A.avg_in_trans << "," << A.avg_out << "," << A.avg_pert << ","
+        << A.avg_ratio_pert_m << "," << A.avg_ratio_pert_n << "," << A.avg_ratio_in_trans << ","
+        << A.avg_ratio_spt_out << "," << A.avg_ratio_spt_in << "," << A.avg_ratio_pop_pert << ","
+        << A.runs_with_conflict << "," << A.runs_with_misclassified_spt << "," << A.mismatches
+        << "\n";
+}
+
+
+
+PertinenceStats analyze_spt_pertinence(
+    const SsspResult &res,
+    const Graph &graph)
+{
+    PertinenceStats stats;
+
+    for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid)
+    {
+
+        if (res.in_pertinent_edges[eid] and res.out_pertinent_edges[eid])
+        {
+            cerr << "Warning: edge " << eid
+                 << " is marked both in-pertinent and out-pertinent.\n";
+            stats.conflict_both += 1;
+        }
+        else if (res.in_pertinent_edges[eid])
+        {
+            stats.total_in_pertinent_edges += 1;
+            if (res.in_pertinent_edges_extracted_in_forward_phase[eid])
+            {
+                stats.total_in_pertinent_extracted_in_forward += 1;
+            }
+        }
+        else if (res.out_pertinent_edges[eid])
+        {
+            stats.total_out_pertinent_edges += 1;
+        }
+    }
+
+    stats.total_pertinent_edges = stats.total_in_pertinent_edges + stats.total_out_pertinent_edges;
+    // cout << "Analyzing SPT edges for pertinence...\n";
+    for (NodeId u = 0; u < (NodeId)res.via_edge.size(); ++u)
+    {
+        EdgeId eid = res.via_edge[u];
+
+        // skip root or unreachable
+        if (eid == INVALID_EDGE || eid == -1)
+            continue;
+
+        stats.total_spt_edges++;
+
+        bool is_out = res.out_pertinent_edges[eid];
+        bool is_in = res.in_pertinent_edges[eid];
+
+        if (is_out)
+            stats.out_spt++;
+        if (is_in)
+            stats.in_spt++;
+
+        // ---------- WARNING 1: SPT edge is neither in nor out ----------
+        if (!is_out && !is_in)
+        {
+            cout << "WARNING: SPT edge " << eid
+                 << " (" << graph.get_edge(eid).src << " -> "
+                 << graph.get_edge(eid).trg
+                 << ") is NOT pertinent.\n";
+
+            stats.non_pertinent_edge_in_spt++;
+        }
+    }
+
+    stats.spt_edges_incorrectly_classified = (stats.non_pertinent_edge_in_spt > 0);
+
+    // ----- Ratios -----
+    if (graph.number_of_edges() > 0)
+    {
+        stats.ratio_pert_m = (double)stats.total_pertinent_edges / (double)graph.number_of_edges();
+    }
+    if (graph.number_of_nodes() > 0)
+    {
+        stats.ratio_pert_n = (double)stats.total_pertinent_edges / (double)graph.number_of_nodes();
+    }
+    if (stats.total_in_pertinent_edges > 0)
+    {
+        stats.ratio_in_transferred =
+            (double)stats.total_in_pertinent_extracted_in_forward /
+            (double)stats.total_in_pertinent_edges;
+    }
+    if (stats.total_spt_edges > 0)
+    {
+        stats.ratio_spt_out = (double)stats.out_spt / (double)stats.total_spt_edges;
+        stats.ratio_spt_in = (double)stats.in_spt / (double)stats.total_spt_edges;
+    }
+
+    return stats;
+}
+
+PertinenceStats analyze_path_pertinence(const SsspResult &res, const Graph &graph)
+{
+    PertinenceStats stats;
+
+    for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid)
+    {
+
+        if (res.in_pertinent_edges[eid] and res.out_pertinent_edges[eid])
+        {
+            cerr << "Warning: edge " << eid
+                 << " is marked both in-pertinent and out-pertinent.\n";
+            stats.conflict_both += 1;
+        }
+        else if (res.in_pertinent_edges[eid])
+        {
+            stats.total_in_pertinent_edges += 1;
+            if (res.in_pertinent_edges_extracted_in_forward_phase[eid])
+            {
+                stats.total_in_pertinent_extracted_in_forward += 1;
+            }
+        }
+        else if (res.out_pertinent_edges[eid])
+        {
+            stats.total_out_pertinent_edges += 1;
+        }
+    }
+
+    stats.total_pertinent_edges = stats.total_in_pertinent_edges + stats.total_out_pertinent_edges;
+
+    for (EdgeId eid : res.edge_ids)
+    {
+        bool is_out = res.out_pertinent_edges[eid];
+        bool is_in = res.in_pertinent_edges[eid];
+
+        // skip root or unreachable
+        if (eid == INVALID_EDGE)
+            continue;
+
+        stats.total_spt_edges++;
+        if (is_out)
+            stats.out_spt++;
+        if (is_in)
+            stats.in_spt++;
+
+        // ---------- WARNING 1: Path edge is neither in nor out ----------
+        if (!is_out && !is_in)
+        {
+            const Edge &e = graph.get_edge(eid);
+            cout << "WARNING: Path edge " << eid
+                 << " (" << e.src << " -> " << e.trg
+                 << ") is NOT pertinent.\n";
+            stats.non_pertinent_edge_in_spt++;
+        }
+    }
+
+    stats.spt_edges_incorrectly_classified = (stats.non_pertinent_edge_in_spt > 0);
+
+    // ----- Ratios -----
+    if (graph.number_of_edges() > 0)
+    {
+        stats.ratio_pert_m = (double)stats.total_pertinent_edges / (double)graph.number_of_edges();
+    }
+    if (graph.number_of_nodes() > 0)
+    {
+        stats.ratio_pert_n = (double)stats.total_pertinent_edges / (double)graph.number_of_nodes();
+    }
+    if (stats.total_in_pertinent_edges > 0)
+    {
+        stats.ratio_in_transferred =
+            (double)stats.total_in_pertinent_extracted_in_forward /
+            (double)stats.total_in_pertinent_edges;
+    }
+    if (stats.total_spt_edges > 0)
+    {
+        stats.ratio_spt_out = (double)stats.out_spt / (double)stats.total_spt_edges;
+        stats.ratio_spt_in = (double)stats.in_spt / (double)stats.total_spt_edges;
+    }
+
+    return stats;
+}
+
+vector<pair<int, int>> generate_query_pairs(int n)
+{
+
+    // ----- Generate 100 unique (src, dst) pairs -----
     mt19937 rng(62); // fixed seed for reproducibility
-    uniform_int_distribution<int> dist(0, n - n/10);
-    
-    vector<pair<int,int>> query_pairs;
+    uniform_int_distribution<int> dist(0, n - 1);
+
+    vector<pair<int, int>> query_pairs;
     query_pairs.reserve(100);
     set<long long> used; // encode (src,dst) as 64-bit to ensure uniqueness
 
-    auto encode = [](int s, int t) -> long long {
-        return (static_cast<long long>(static_cast<unsigned int>(s)) << 32)
-             | static_cast<unsigned int>(t);
+    auto encode = [](int s, int t) -> long long
+    {
+        return (static_cast<long long>(static_cast<unsigned int>(s)) << 32) | static_cast<unsigned int>(t);
     };
 
-    while (static_cast<int>(query_pairs.size()) < 100) {
+    while (static_cast<int>(query_pairs.size()) < 100)
+    {
         int s = dist(rng);
         int t = dist(rng);
-        if (s == t) continue;
+        if (s == t)
+            continue;
         long long key = encode(s, t);
-        if (used.insert(key).second) {
+        if (used.insert(key).second)
+        {
             query_pairs.emplace_back(s, t);
         }
     }
@@ -48,7 +355,8 @@ vector<pair<int,int>> generate_query_pairs(int n) {
 }
 
 // ---- Benchmark helper ----
-void run_src_dst_benchmark_on_graph(Graph& graph, const string& output_csv_path) {
+void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
+{
     const int n = graph.number_of_nodes();
     vector<pair<int, int>> query_pairs = generate_query_pairs(n);
 
@@ -61,11 +369,21 @@ void run_src_dst_benchmark_on_graph(Graph& graph, const string& output_csv_path)
     out << "src,dst,d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,"
         << "d_pops,s_pops,nv_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
-        << "in_pert,in_pert_trans,out_pert,pert,matched\n";
+        << "in_pert,in_pert_trans,out_pert,pert,pert_conflicts,"
+        << "out_spt,in_spt,non_pert_spt,total_spt,classified_incorrectly,"
+        << "ratio_pert_m,ratio_pert_n,ratio_in_transferred,ratio_spt_out,ratio_spt_in,ratio_pop_pert,"
+        << "matched\n";
+
+    AggregateStats agg;
+    agg.filepath = output_csv_path;
+    agg.n = graph.number_of_nodes();
+    agg.m = graph.number_of_edges();
+    agg.runs = query_pairs.size();
 
     cout << "Running 100 src-dst queries..." << endl;
     int mismatch = 0;
-    for (auto [src, dst] : query_pairs) {
+    for (auto [src, dst] : query_pairs)
+    {
         auto d_start = chrono::high_resolution_clock::now();
         SsspResult rd = dijkstra.compute_shortest_path(src, dst);
         auto d_end = chrono::high_resolution_clock::now();
@@ -84,55 +402,99 @@ void run_src_dst_benchmark_on_graph(Graph& graph, const string& output_csv_path)
         long long n_time_us = chrono::duration_cast<chrono::microseconds>(n_end - n_start).count();
         Cost nc = rn.total_cost;
 
-        auto same_cost = [](Cost a, Cost b) {
-            if (a < 0 || b < 0) return a == b;
+        auto same_cost = [](Cost a, Cost b)
+        {
+            if (a < 0 || b < 0)
+                return a == b;
             return fabs(a - b) <= 1e-9;
         };
 
         bool matched = same_cost(dc, sc) && same_cost(dc, nc);
 
-        if (!matched) {
+        if (!matched)
+        {
             cout << "Warning: cost mismatch for src=" << src << ", dst=" << dst << "\n";
-            for(auto i = 0; i < rn.path.size(); i++){
+            for (auto i = 0; i < rn.path.size(); i++)
+            {
                 cout << rn.path[i] << " ";
             }
             mismatch++;
         }
 
-        int in_pertinent_edges = 0;
-        int in_pertinent_edges_transferred = 0;
-        int out_pertinent_edges = 0;
+        // int in_pertinent_edges = 0;
+        // int in_pertinent_edges_transferred = 0;
+        // int out_pertinent_edges = 0;
 
-        for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid) {
-        if (rn.in_pertinent_edges[eid]) {
-            in_pertinent_edges += 1;
-            if(rn.in_pertinent_edges_extracted_in_forward_phase[eid]){
-                in_pertinent_edges_transferred += 1;
-            } 
+        // cout  << "finished run for src: " << src << " dst: " << dst << endl;
+        // cout << "analysis" << endl;
+        PertinenceStats stats = analyze_path_pertinence(rn, graph);
+        // int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
+
+        stats.ratio_pop_pert = (stats.total_pertinent_edges > 0) ? (double)(rn.number_of_pops) / (double)(stats.total_pertinent_edges) : 0.0;
+        if (stats.conflict_both != 0)
+        {
+            cout << "Conflicts in pertinence classification.\n";
         }
-        else if (rn.out_pertinent_edges[eid]) {
-            out_pertinent_edges += 1;
+        if (stats.spt_edges_incorrectly_classified)
+        {
+            cout << "SPT edges classified not classified correctly.\n";
         }
-    }
-    int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
-    
+
+        // aggregate stats
+        agg.avg_d_time += d_time_us;
+        agg.avg_s_time += s_time_us;
+        agg.avg_nv_time += n_time_us;
+
+        agg.avg_d_pops += rd.number_of_pops;
+        agg.avg_s_pops += rs.number_of_pops;
+        agg.avg_nv_pops += rn.number_of_pops;
+
+        agg.avg_in += stats.total_in_pertinent_edges;
+        agg.avg_in_trans += stats.total_in_pertinent_extracted_in_forward;
+        agg.avg_out += stats.total_out_pertinent_edges;
+        agg.avg_pert += stats.total_pertinent_edges;
+
+        agg.avg_ratio_pert_m += stats.ratio_pert_m;
+        agg.avg_ratio_pert_n += stats.ratio_pert_n;
+        agg.avg_ratio_in_trans += stats.ratio_in_transferred;
+        agg.avg_ratio_spt_out += stats.ratio_spt_out;
+        agg.avg_ratio_spt_in += stats.ratio_spt_in;
+        agg.avg_ratio_pop_pert += stats.ratio_pop_pert;
+
+        // suspicious runs
+        if (stats.conflict_both > 0)
+            agg.runs_with_conflict++;
+        if (stats.spt_edges_incorrectly_classified)
+            agg.runs_with_misclassified_spt++;
+
+        // mismatches
+        if (!matched)
+            agg.mismatches++;
+
+        // cout << "No pertinent edges found.\n";
         out << src << ',' << dst << ','
             << d_time_us << ',' << dc << ',' << s_time_us << ',' << sc << ',' << n_time_us << ',' << nc << ','
             << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
             << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
-            << in_pertinent_edges << ',' << in_pertinent_edges_transferred << ',' << out_pertinent_edges << ',' << total_pertinent_edges << ','
+            << stats.total_in_pertinent_edges << ',' << stats.total_in_pertinent_extracted_in_forward << ',' << stats.total_out_pertinent_edges << ',' << stats.total_pertinent_edges << ',' << stats.conflict_both << ','
+            << stats.out_spt << ',' << stats.in_spt << ',' << stats.non_pertinent_edge_in_spt << ',' << stats.total_spt_edges << ',' << stats.spt_edges_incorrectly_classified << ','
+            << stats.ratio_pert_m << ',' << stats.ratio_pert_n << ',' << stats.ratio_in_transferred << ',' << stats.ratio_spt_out << ',' << stats.ratio_spt_in << ',' << stats.ratio_pop_pert << ','
             << matched << '\n';
     }
     cout << "Number of Mismatched Queries: " << mismatch << endl;
     out.close();
+
+    finalize_aggregate_stats(agg);
+    append_average_summary(agg, output_csv_path);
 }
 
 // ---- Helper: Count node-wise mismatches between two SPTs ----
-static int count_distance_mismatches(const std::vector<Cost>& a,
-                                     const std::vector<Cost>& b)
+static int count_distance_mismatches(const std::vector<Cost> &a,
+                                     const std::vector<Cost> &b)
 {
     int mismatches = 0;
-    for (size_t i = 0; i < a.size(); ++i) {
+    for (size_t i = 0; i < a.size(); ++i)
+    {
         if (std::fabs(a[i] - b[i]) > 1e-9) // tolerance for floating-point comparison
             mismatches++;
     }
@@ -140,15 +502,16 @@ static int count_distance_mismatches(const std::vector<Cost>& a,
 }
 
 // ---- Helper: Compare SPT equality ----
-static bool compare_spt_results(const SsspResult& a,
-                                const SsspResult& b,
-                                const std::string& nameA,
-                                const std::string& nameB)
+static bool compare_spt_results(const SsspResult &a,
+                                const SsspResult &b,
+                                const std::string &nameA,
+                                const std::string &nameB)
 {
     if (a.distance.size() != b.distance.size())
         return false;
 
-    for (size_t i = 0; i < a.distance.size(); ++i) {
+    for (size_t i = 0; i < a.distance.size(); ++i)
+    {
         Cost da = a.distance[i];
         Cost db = b.distance[i];
         if ((da < INF_COST && db < INF_COST && std::fabs(da - db) > 1e-9) ||
@@ -165,7 +528,7 @@ static bool compare_spt_results(const SsspResult& a,
 }
 
 // ---- Main Benchmark ----
-void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path)
+void run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path)
 {
     const int n = graph.number_of_nodes();
     const int num_sources = std::min(n, 100);
@@ -178,7 +541,8 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
     std::uniform_int_distribution<int> dist(0, n - 1);
 
     std::unordered_set<int> used;
-    while (sources.size() < num_sources) {
+    while (sources.size() < num_sources)
+    {
         int src = dist(rng);
         if (used.insert(src).second)
             sources.push_back(src);
@@ -193,15 +557,24 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
         << "d_time_us,s_time_us,nv_time_us,"
         << "d_pops,s_pops,nv_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
-        << "in_pert,in_pert_trans,out_pert,pert,"
+        << "in_pert,in_pert_trans,out_pert,pert,pert_conflicts,"
+        << "out_spt,in_spt,non_pert_spt,total_spt,classified_incorrectly,"
+        << "ratio_pert_m,ratio_pert_n,ratio_in_transferred,ratio_spt_out,ratio_spt_in,ratio_pop_pert,"
         << "mismatch_count_djk_spi,mismatch_count_djk_new,"
         << "mismatches\n";
 
-    int mismatch_runs = 0;
+    AggregateStats agg;
+    agg.filepath = output_csv_path;
+    agg.n = graph.number_of_nodes();
+    agg.m = graph.number_of_edges();
+    agg.runs = sources.size();
+
 
     std::cout << "Running " << num_sources << " SPT queries..." << std::endl;
+    int mismatch_runs = 0;
 
-    for (int src : sources) {
+    for (int src : sources)
+    {
         // === Dijkstra ===
         auto d_start = std::chrono::high_resolution_clock::now();
         SsspResult rd = dijkstra.compute_shortest_path(src, -1);
@@ -223,23 +596,24 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
         long long n_time_us =
             std::chrono::duration_cast<std::chrono::microseconds>(n_end - n_start).count();
 
-        int in_pertinent_edges = 0;
-        int out_pertinent_edges = 0;
-        int in_pertinent_edges_transferred = 0;
+        // int in_pertinent_edges = 0;
+        // int out_pertinent_edges = 0;
+        // int in_pertinent_edges_transferred = 0;
 
         // cout << "in_pertinent_edges: " << rn.in_pertinent_edges.size() << endl;
-        for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid) {
-        if (rn.in_pertinent_edges[eid]) {
-            in_pertinent_edges += 1;
-            if(rn.in_pertinent_edges_extracted_in_forward_phase[eid]){
-                in_pertinent_edges_transferred += 1;
-            }
-        }
-        else if (rn.out_pertinent_edges[eid]) {
-            out_pertinent_edges += 1;
-        }
-    }
-    int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
+        //     for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid) {
+        //     if (rn.in_pertinent_edges[eid]) {
+        //         in_pertinent_edges += 1;
+        //         if(rn.in_pertinent_edges_extracted_in_forward_phase[eid]){
+        //             in_pertinent_edges_transferred += 1;
+        //         }
+        //     }
+        //     else if (rn.out_pertinent_edges[eid]) {
+        //         out_pertinent_edges += 1;
+        //     }
+        // }
+        // int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
+
         // === Compare distances ===
         bool match_ds = compare_spt_results(rd, rs, "Dijkstra", "Spira");
         bool match_dn = compare_spt_results(rd, rn, "Dijkstra", "NewVariant");
@@ -251,12 +625,59 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
         if (mismatches)
             mismatch_runs++;
 
+        // cout  << "finished run for src: " << src << endl;
+        // cout << "analysis" << endl;
+        PertinenceStats stats = analyze_spt_pertinence(rn, graph);
+
+        stats.ratio_pop_pert = (stats.total_pertinent_edges > 0) ? (double)(rn.number_of_pops) / (double)(stats.total_pertinent_edges) : 0.0;
+        if (stats.conflict_both != 0)
+        {
+            cout << "conflicts in pertinence classification.\n";
+        }
+        if (stats.spt_edges_incorrectly_classified)
+        {
+            cout << "SPT edges not classified correctly.\n";
+        }
+
+        // aggregate stats
+        agg.avg_d_time += d_time_us;
+        agg.avg_s_time += s_time_us;
+        agg.avg_nv_time += n_time_us;
+
+        agg.avg_d_pops += rd.number_of_pops;
+        agg.avg_s_pops += rs.number_of_pops;
+        agg.avg_nv_pops += rn.number_of_pops;
+
+        agg.avg_in += stats.total_in_pertinent_edges;
+        agg.avg_in_trans += stats.total_in_pertinent_extracted_in_forward;
+        agg.avg_out += stats.total_out_pertinent_edges;
+        agg.avg_pert += stats.total_pertinent_edges;
+
+        agg.avg_ratio_pert_m += stats.ratio_pert_m;
+        agg.avg_ratio_pert_n += stats.ratio_pert_n;
+        agg.avg_ratio_in_trans += stats.ratio_in_transferred;
+        agg.avg_ratio_spt_out += stats.ratio_spt_out;
+        agg.avg_ratio_spt_in += stats.ratio_spt_in;
+        agg.avg_ratio_pop_pert += stats.ratio_pop_pert;
+
+        // suspicious runs
+        if (stats.conflict_both > 0)
+            agg.runs_with_conflict++;
+        if (stats.spt_edges_incorrectly_classified)
+            agg.runs_with_misclassified_spt++;
+
+        // mismatches
+        if (mismatches)
+            agg.mismatches++;
+
         // === Write one CSV row ===
         out << src << ','
             << d_time_us << ',' << s_time_us << ',' << n_time_us << ','
             << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
             << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
-            << in_pertinent_edges << ',' << in_pertinent_edges_transferred << ',' << out_pertinent_edges << ',' << total_pertinent_edges << ','
+            << stats.total_in_pertinent_edges << ',' << stats.total_in_pertinent_extracted_in_forward << ',' << stats.total_out_pertinent_edges << ',' << stats.total_pertinent_edges << ',' << stats.conflict_both << ','
+            << stats.out_spt << ',' << stats.in_spt << ',' << stats.non_pertinent_edge_in_spt << ',' << stats.total_spt_edges << ',' << stats.spt_edges_incorrectly_classified << ','
+            << stats.ratio_pert_m << ',' << stats.ratio_pert_n << ',' << stats.ratio_in_transferred << ',' << stats.ratio_spt_out << ',' << stats.ratio_spt_in << ',' << stats.ratio_pop_pert << ','
             << mismatch_count_ds << ',' << mismatch_count_dn << ','
             << std::boolalpha << mismatches << '\n';
     }
@@ -267,14 +688,18 @@ void run_spt_benchmark_on_graph(Graph& graph, const std::string& output_csv_path
     std::cout << "Mismatches in " << mismatch_runs << " / " << num_sources << " runs.\n";
     // std::cout << "Results saved to " << output_csv_path << std::endl;
     std::cout << std::endl;
+
+    finalize_aggregate_stats(agg);
+    append_average_summary(agg, output_csv_path);
 }
 
 // ---- Wrapper to read and run ----
-void process_sparse_graph_file(const string& filepath, WeightMode weight_mode, string& output_dir) {
+void process_sparse_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
+{
     FileHandler fh;
     Graph graph = fh.read_sparse_graph_file(filepath, weight_mode);
     graph.sort_all_neighbors();
-    
+
     string output_dir1 = output_dir + "/src_dst_benchmark";
     create_directories(output_dir1); // make sure directory exists
 
@@ -296,7 +721,8 @@ void process_sparse_graph_file(const string& filepath, WeightMode weight_mode, s
 }
 
 // ---- Wrapper to read and run ----
-void process_dense_graph_file(const string& filepath, WeightMode weight_mode, string& output_dir) {
+void process_dense_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
+{
     FileHandler fh;
     Graph graph = fh.read_dense_graph_file(filepath, weight_mode);
     graph.sort_all_neighbors();
@@ -321,7 +747,8 @@ void process_dense_graph_file(const string& filepath, WeightMode weight_mode, st
     run_spt_benchmark_on_graph(graph, output_csv);
 }
 
-int run_benchmark_on_sparse_graphs() {
+int run_benchmark_on_sparse_graphs()
+{
     string input_dir = "./Input_Data/SparseRoadNetworks";
     string output_dir_random = "output/sparse_networks/random_weights";
     string output_dir_exponential = "output/sparse_networks/exponential_weights";
@@ -330,8 +757,10 @@ int run_benchmark_on_sparse_graphs() {
     cout << "starting benchmark on sparse graphs...\n";
     cout << endl;
     cout << endl;
-    for (const auto& entry : directory_iterator(input_dir)) {
-        if (entry.path().extension() == ".txt") {
+    for (const auto &entry : directory_iterator(input_dir))
+    {
+        if (entry.path().extension() == ".txt")
+        {
             string filepath = entry.path().string();
             cout << "Processing file: " << filepath << endl;
             cout << endl;
@@ -344,7 +773,7 @@ int run_benchmark_on_sparse_graphs() {
             process_sparse_graph_file(filepath, WeightMode::Exponential, output_dir_exponential);
 
             cout << "Processing with original weights: " << endl;
-            // Case 3: original weights 
+            // Case 3: original weights
             process_sparse_graph_file(filepath, WeightMode::Original, output_dir_original);
         }
     }
@@ -359,7 +788,8 @@ int run_benchmark_on_sparse_graphs() {
     return 0;
 }
 
-int run_benchmark_on_dense_graphs() {
+int run_benchmark_on_dense_graphs()
+{
     string input_dir = "./Input_Data/DenseNetworks";
     string output_dir_random = "output/DenseNetworks/random_weights";
     string output_dir_original = "output/DenseNetworks/original_weights";
@@ -370,8 +800,10 @@ int run_benchmark_on_dense_graphs() {
     cout << endl;
     cout << endl;
 
-    for (const auto& entry : directory_iterator(input_dir)) {
-        if (entry.path().extension() == ".tsp") {
+    for (const auto &entry : directory_iterator(input_dir))
+    {
+        if (entry.path().extension() == ".tsp")
+        {
             string filepath = entry.path().string();
             cout << "Processing file: " << filepath << endl;
             cout << endl;
@@ -381,25 +813,25 @@ int run_benchmark_on_dense_graphs() {
             process_dense_graph_file(filepath, WeightMode::Original, output_dir_original);
 
             cout << "Processing with random weights: " << endl;
-            // Case 2: random weights (true), 
+            // Case 2: random weights (true),
             process_dense_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
 
             // cout << "Processing with uniform weights: " << endl;
-            // // Case 3: uniform weights (true), 
+            // // Case 3: uniform weights (true),
             // process_dense_graph_file(filepath, WeightMode::Uniform, output_dir_uniform);
 
             cout << "Processing with exponential weights: " << endl;
-            // Case : Exponential weights (true), 
+            // Case : Exponential weights (true),
             process_dense_graph_file(filepath, WeightMode::Exponential, output_dir_exponential);
         }
     }
 
-     cout << "Benchmarking completed for all dense graphs with original, uniform, exponential and uniformly random weights.\n";
+    cout << "Benchmarking completed for all dense graphs with original, uniform, exponential and uniformly random weights.\n";
     cout << endl;
 
     cout << "==============================================================================================================================" << endl;
     cout << endl;
-    
+
     return 0;
 }
 
@@ -413,11 +845,20 @@ int run_benchmark_on_exponential_size_sweep(int min_n = 100,
 {
     using namespace std;
 
-    if (num_sizes <= 1) { cerr << "num_sizes must be >= 2\n"; return -1; }
-    if (min_n <= 0 || max_n < min_n) { cerr << "invalid n range\n"; return -1; }
+    if (num_sizes <= 1)
+    {
+        cerr << "num_sizes must be >= 2\n";
+        return -1;
+    }
+    if (min_n <= 0 || max_n < min_n)
+    {
+        cerr << "invalid n range\n";
+        return -1;
+    }
 
     int step = (max_n - min_n) / (num_sizes - 1);
-    if (step <= 0) step = 1;
+    if (step <= 0)
+        step = 1;
 
     string base_output_dir1 = base_output_dir + "/src_dst_benchmark";
     create_directories(base_output_dir1);
@@ -427,9 +868,11 @@ int run_benchmark_on_exponential_size_sweep(int min_n = 100,
 
     FileHandler fh;
 
-    for (int k = 0; k < num_sizes; ++k) {
+    for (int k = 0; k < num_sizes; ++k)
+    {
         int n = min_n + k * step;
-        if (n > max_n) n = max_n;
+        if (n > max_n)
+            n = max_n;
 
         uint64_t seed = base_seed + static_cast<uint64_t>(n) * 1000003ULL;
 
