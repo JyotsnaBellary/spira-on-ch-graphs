@@ -3,4 +3,6 @@ compile_commands.json
 .vscode/
 # /output/
 /output - old/
+/output - last/
 # /Input_Data/
+/shortest-path-visualizer/
