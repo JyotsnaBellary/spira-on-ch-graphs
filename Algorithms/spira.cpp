@@ -34,6 +34,8 @@ SsspResult Spira::compute_shortest_path(NodeId src, NodeId dst)
     int number_of_nodes = graph.number_of_nodes();
     int num_of_pops = 0;
 
+    // cout << "Starting Spira's algorithm from node " << src << " to node " << dst << endl;
+
     // 1. Initialize distances and priority queue.
     vector<Cost> cost(number_of_nodes, INF_COST);
     vector<NodeId> prev(number_of_nodes, -1);

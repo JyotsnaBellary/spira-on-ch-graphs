@@ -152,8 +152,6 @@ void append_average_summary(const AggregateStats& A, const string& output_csv_pa
         << "\n";
 }
 
-
-
 PertinenceStats analyze_spt_pertinence(
     const SsspResult &res,
     const Graph &graph)
@@ -162,24 +160,38 @@ PertinenceStats analyze_spt_pertinence(
 
     for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid)
     {
+        Edge edge = graph.get_edge(eid);
 
         if (res.in_pertinent_edges[eid] and res.out_pertinent_edges[eid])
         {
+            
             cerr << "Warning: edge " << eid
                  << " is marked both in-pertinent and out-pertinent.\n";
             stats.conflict_both += 1;
         }
         else if (res.in_pertinent_edges[eid])
         {
-            stats.total_in_pertinent_edges += 1;
-            if (res.in_pertinent_edges_extracted_in_forward_phase[eid])
-            {
-                stats.total_in_pertinent_extracted_in_forward += 1;
+            if (edge.cost < 2*(res.distance[edge.trg] - res.median)) {
+                stats.total_in_pertinent_edges += 1;
+                if (res.in_pertinent_edges_extracted_in_forward_phase[eid])
+                {
+                    stats.total_in_pertinent_extracted_in_forward += 1;
+                }
+
             }
+            else {
+                cout << "Edge incorrectly marked as in-pertinent" << endl;
+            }            
         }
         else if (res.out_pertinent_edges[eid])
         {
-            stats.total_out_pertinent_edges += 1;
+            if (edge.cost <= 2*(res.median - res.distance[edge.src])) {
+                stats.total_out_pertinent_edges += 1;
+            }
+            else {
+                cout << "Edge incorrectly marked as out-pertinent" << endl;
+            }
+
         }
     }
 
@@ -367,7 +379,7 @@ void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
     ofstream out(output_csv_path);
     out << boolalpha;
     out << "src,dst,d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,"
-        << "d_pops,s_pops,nv_pops,"
+        << "d_pops,s_pops,nv_pops,nv_q_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
         << "in_pert,in_pert_trans,out_pert,pert,pert_conflicts,"
         << "out_spt,in_spt,non_pert_spt,total_spt,classified_incorrectly,"
@@ -421,20 +433,14 @@ void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
             mismatch++;
         }
 
-        // int in_pertinent_edges = 0;
-        // int in_pertinent_edges_transferred = 0;
-        // int out_pertinent_edges = 0;
-
-        // cout  << "finished run for src: " << src << " dst: " << dst << endl;
-        // cout << "analysis" << endl;
         PertinenceStats stats = analyze_path_pertinence(rn, graph);
-        // int total_pertinent_edges = in_pertinent_edges + out_pertinent_edges;
-
+ 
         stats.ratio_pop_pert = (stats.total_pertinent_edges > 0) ? (double)(rn.number_of_pops) / (double)(stats.total_pertinent_edges) : 0.0;
         if (stats.conflict_both != 0)
         {
             cout << "Conflicts in pertinence classification.\n";
         }
+
         if (stats.spt_edges_incorrectly_classified)
         {
             cout << "SPT edges classified not classified correctly.\n";
@@ -474,7 +480,7 @@ void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
         // cout << "No pertinent edges found.\n";
         out << src << ',' << dst << ','
             << d_time_us << ',' << dc << ',' << s_time_us << ',' << sc << ',' << n_time_us << ',' << nc << ','
-            << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
+            << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ',' << rn.number_of_Q_pops << ','
             << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
             << stats.total_in_pertinent_edges << ',' << stats.total_in_pertinent_extracted_in_forward << ',' << stats.total_out_pertinent_edges << ',' << stats.total_pertinent_edges << ',' << stats.conflict_both << ','
             << stats.out_spt << ',' << stats.in_spt << ',' << stats.non_pertinent_edge_in_spt << ',' << stats.total_spt_edges << ',' << stats.spt_edges_incorrectly_classified << ','
@@ -555,7 +561,7 @@ void run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path
     std::ofstream out(output_csv_path);
     out << "src,"
         << "d_time_us,s_time_us,nv_time_us,"
-        << "d_pops,s_pops,nv_pops,"
+        << "d_pops,s_pops,nv_pops,nv_q_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
         << "in_pert,in_pert_trans,out_pert,pert,pert_conflicts,"
         << "out_spt,in_spt,non_pert_spt,total_spt,classified_incorrectly,"
@@ -673,7 +679,7 @@ void run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path
         // === Write one CSV row ===
         out << src << ','
             << d_time_us << ',' << s_time_us << ',' << n_time_us << ','
-            << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ','
+            << rd.number_of_pops << ',' << rs.number_of_pops << ',' << rn.number_of_pops << ',' << rn.number_of_Q_pops << ','
             << rd.avg_pops_per_node << ',' << rs.avg_pops_per_node << ',' << rn.avg_pops_per_node << ','
             << stats.total_in_pertinent_edges << ',' << stats.total_in_pertinent_extracted_in_forward << ',' << stats.total_out_pertinent_edges << ',' << stats.total_pertinent_edges << ',' << stats.conflict_both << ','
             << stats.out_spt << ',' << stats.in_spt << ',' << stats.non_pertinent_edge_in_spt << ',' << stats.total_spt_edges << ',' << stats.spt_edges_incorrectly_classified << ','
@@ -813,12 +819,8 @@ int run_benchmark_on_dense_graphs()
             process_dense_graph_file(filepath, WeightMode::Original, output_dir_original);
 
             cout << "Processing with random weights: " << endl;
-            // Case 2: random weights (true),
+            // // Case 2: random weights (true),
             process_dense_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
-
-            // cout << "Processing with uniform weights: " << endl;
-            // // Case 3: uniform weights (true),
-            // process_dense_graph_file(filepath, WeightMode::Uniform, output_dir_uniform);
 
             cout << "Processing with exponential weights: " << endl;
             // Case : Exponential weights (true),

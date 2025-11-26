@@ -54,6 +54,6 @@ class NewVariant
         SsspResult compute_shortest_path(NodeId src, NodeId dst);
         
         //builds result path
-        SsspResult build_path(const vector<int>& prev, const vector<Cost>& cost, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops);
+        SsspResult build_path(const vector<int>& prev, const vector<Cost>& cost, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops, int number_of_Q_pops, Cost median);
 };
 
