@@ -1,90 +1,10 @@
-// Test 1: as give in the paper using complete directed graphs. (they say with high probability, what does that even mean?)
-// report results for SPT and for shortest path between src / trg pairs
-// Test 2: use sparse graphs.
-// report results for SPT and for shortest path between src / trg pairs
-// Test 3: use TSP instances for dense graphs
-
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <filesystem>
-#include <set>
-#include <random>
-#include <unordered_set>
-#include <file_handler.hpp>
-#include <dijkstra.hpp>
-#include <spira.hpp>
-#include <new_variant.hpp>
+#include "benchmark_tests.hpp"
+#include <chrono>
 
 using namespace std;
 using namespace filesystem;
 
-struct PertinenceStats
-{
-    // Pertinence counts
-    int total_pertinent_edges = 0;
-    int total_out_pertinent_edges = 0;
-    int total_in_pertinent_edges = 0;
-    int total_in_pertinent_extracted_in_forward = 0;
-    int conflict_both = 0;
-
-    // SPT and Path analysis
-    int total_spt_edges = 0;
-    int out_spt = 0;
-    int in_spt = 0;
-    int non_pertinent_edge_in_spt = 0;
-    bool spt_edges_incorrectly_classified = false;
-
-    // --- Ratios ---
-    double ratio_pert_m = 0.0;         // total_pertinent_edges / m
-    double ratio_pert_n = 0.0;         // total_pertinent_edges / n
-    double ratio_in_transferred = 0.0; // total_in_pertinent_extracted_in_forward / total_in_pertinent_edges
-    double ratio_spt_out = 0.0;        // out_spt / total_spt_edges
-    double ratio_spt_in = 0.0;         // in_spt / total_spt_edges
-    double ratio_pop_pert = 0.0;       // no_of_pops / total_pert_edges
-};
-
-struct AggregateStats
-{
-    string filepath;
-    int n = 0;
-    int m = 0;
-
-    int runs = 0;
-
-    // ---- Times ----
-    double avg_d_time = 0;
-    double avg_s_time = 0;
-    double avg_nv_time = 0;
-
-    // ---- Pops ----
-    double avg_d_pops = 0;
-    double avg_s_pops = 0;
-    double avg_nv_pops = 0;
-
-    // ---- Pertinence counts ----
-    double avg_in = 0;
-    double avg_in_trans = 0;
-    double avg_out = 0;
-    double avg_pert = 0;
-
-    // ---- Ratios ----
-    double avg_ratio_pert_m = 0;
-    double avg_ratio_pert_n = 0;
-    double avg_ratio_in_trans = 0;
-    double avg_ratio_spt_out = 0;
-    double avg_ratio_spt_in = 0;
-    double avg_ratio_pop_pert = 0;
-
-    // ---- Suspicious runs ----
-    int runs_with_conflict = 0;
-    int runs_with_misclassified_spt = 0;
-
-    // ---- Wrong results for shortest paths ----
-    int mismatches = 0;
-};
-
-void finalize_aggregate_stats(AggregateStats& agg) {
+void BenchmarkTests::finalize_aggregate_stats(AggregateStats& agg) {
     int R = agg.runs;
     if (R <= 0) return;
 
@@ -97,6 +17,7 @@ void finalize_aggregate_stats(AggregateStats& agg) {
     agg.avg_d_pops  /= R;
     agg.avg_s_pops  /= R;
     agg.avg_nv_pops /= R;
+    agg.avg_nvq_pops /= R;
 
     // ---- Pertinence counts ----
     agg.avg_in      /= R;
@@ -114,7 +35,7 @@ void finalize_aggregate_stats(AggregateStats& agg) {
 }
 
 
-void append_average_summary(const AggregateStats& A, const string& output_csv_path) {
+void BenchmarkTests::append_average_summary(const AggregateStats& A, const string& output_csv_path) {
     namespace fs = std::filesystem;
 
     // Extract directory: e.g. ".../spt_benchmark/"
@@ -132,7 +53,7 @@ void append_average_summary(const AggregateStats& A, const string& output_csv_pa
     if (!exists) {
         out << "filename,n,m,runs,"
             << "avg_d_time,avg_s_time,avg_nv_time,"
-            << "avg_d_pops,avg_s_pops,avg_nv_pops,"
+            << "avg_d_pops,avg_s_pops,avg_nv_pops,avg_nvq_pops,"
             << "avg_in,avg_in_trans,avg_out,avg_pert,"
             << "ratio_pert_m,ratio_pert_n,ratio_in_trans,ratio_spt_out,ratio_spt_in,ratio_pop_pert,"
             << "runs_with_conflict,runs_with_misclassified_spt,mismatches\n";
@@ -144,7 +65,7 @@ void append_average_summary(const AggregateStats& A, const string& output_csv_pa
     out << filename << ","
         << A.n << "," << A.m << "," << A.runs << ","
         << A.avg_d_time << "," << A.avg_s_time << "," << A.avg_nv_time << ","
-        << A.avg_d_pops << "," << A.avg_s_pops << "," << A.avg_nv_pops << ","
+        << A.avg_d_pops << "," << A.avg_s_pops << "," << A.avg_nv_pops << "," << A.avg_nvq_pops << ","
         << A.avg_in << "," << A.avg_in_trans << "," << A.avg_out << "," << A.avg_pert << ","
         << A.avg_ratio_pert_m << "," << A.avg_ratio_pert_n << "," << A.avg_ratio_in_trans << ","
         << A.avg_ratio_spt_out << "," << A.avg_ratio_spt_in << "," << A.avg_ratio_pop_pert << ","
@@ -152,7 +73,7 @@ void append_average_summary(const AggregateStats& A, const string& output_csv_pa
         << "\n";
 }
 
-PertinenceStats analyze_spt_pertinence(
+PertinenceStats BenchmarkTests::analyze_spt_pertinence(
     const SsspResult &res,
     const Graph &graph)
 {
@@ -253,7 +174,7 @@ PertinenceStats analyze_spt_pertinence(
     return stats;
 }
 
-PertinenceStats analyze_path_pertinence(const SsspResult &res, const Graph &graph)
+PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, const Graph &graph)
 {
     PertinenceStats stats;
 
@@ -334,7 +255,7 @@ PertinenceStats analyze_path_pertinence(const SsspResult &res, const Graph &grap
     return stats;
 }
 
-vector<pair<int, int>> generate_query_pairs(int n)
+vector<pair<int, int>> BenchmarkTests::generate_query_pairs(int n)
 {
 
     // ----- Generate 100 unique (src, dst) pairs -----
@@ -367,7 +288,7 @@ vector<pair<int, int>> generate_query_pairs(int n)
 }
 
 // ---- Benchmark helper ----
-void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
+void BenchmarkTests::run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
 {
     const int n = graph.number_of_nodes();
     vector<pair<int, int>> query_pairs = generate_query_pairs(n);
@@ -454,6 +375,7 @@ void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
         agg.avg_d_pops += rd.number_of_pops;
         agg.avg_s_pops += rs.number_of_pops;
         agg.avg_nv_pops += rn.number_of_pops;
+        agg.avg_nvq_pops += rn.number_of_Q_pops;
 
         agg.avg_in += stats.total_in_pertinent_edges;
         agg.avg_in_trans += stats.total_in_pertinent_extracted_in_forward;
@@ -495,8 +417,8 @@ void run_src_dst_benchmark_on_graph(Graph &graph, const string &output_csv_path)
 }
 
 // ---- Helper: Count node-wise mismatches between two SPTs ----
-static int count_distance_mismatches(const std::vector<Cost> &a,
-                                     const std::vector<Cost> &b)
+int BenchmarkTests::count_distance_mismatches(const std::vector<Cost> &a,
+                                              const std::vector<Cost> &b)
 {
     int mismatches = 0;
     for (size_t i = 0; i < a.size(); ++i)
@@ -508,10 +430,10 @@ static int count_distance_mismatches(const std::vector<Cost> &a,
 }
 
 // ---- Helper: Compare SPT equality ----
-static bool compare_spt_results(const SsspResult &a,
-                                const SsspResult &b,
-                                const std::string &nameA,
-                                const std::string &nameB)
+bool BenchmarkTests::compare_spt_results(const SsspResult &a,
+                                         const SsspResult &b,
+                                         const std::string &nameA,
+                                         const std::string &nameB)
 {
     if (a.distance.size() != b.distance.size())
         return false;
@@ -534,7 +456,7 @@ static bool compare_spt_results(const SsspResult &a,
 }
 
 // ---- Main Benchmark ----
-void run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path)
+void BenchmarkTests::run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path)
 {
     const int n = graph.number_of_nodes();
     const int num_sources = std::min(n, 100);
@@ -653,6 +575,7 @@ void run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path
         agg.avg_d_pops += rd.number_of_pops;
         agg.avg_s_pops += rs.number_of_pops;
         agg.avg_nv_pops += rn.number_of_pops;
+        agg.avg_nvq_pops += rn.number_of_Q_pops;
 
         agg.avg_in += stats.total_in_pertinent_edges;
         agg.avg_in_trans += stats.total_in_pertinent_extracted_in_forward;
@@ -700,7 +623,7 @@ void run_spt_benchmark_on_graph(Graph &graph, const std::string &output_csv_path
 }
 
 // ---- Wrapper to read and run ----
-void process_sparse_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
+void BenchmarkTests::process_sparse_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
 {
     FileHandler fh;
     Graph graph = fh.read_sparse_graph_file(filepath, weight_mode);
@@ -727,7 +650,7 @@ void process_sparse_graph_file(const string &filepath, WeightMode weight_mode, s
 }
 
 // ---- Wrapper to read and run ----
-void process_dense_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
+void BenchmarkTests::process_dense_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
 {
     FileHandler fh;
     Graph graph = fh.read_dense_graph_file(filepath, weight_mode);
@@ -753,7 +676,7 @@ void process_dense_graph_file(const string &filepath, WeightMode weight_mode, st
     run_spt_benchmark_on_graph(graph, output_csv);
 }
 
-int run_benchmark_on_sparse_graphs()
+int BenchmarkTests::run_benchmark_on_sparse_graphs()
 {
     string input_dir = "./Input_Data/SparseRoadNetworks";
     string output_dir_random = "output/sparse_networks/random_weights";
@@ -794,7 +717,7 @@ int run_benchmark_on_sparse_graphs()
     return 0;
 }
 
-int run_benchmark_on_dense_graphs()
+int BenchmarkTests::run_benchmark_on_dense_graphs()
 {
     string input_dir = "./Input_Data/DenseNetworks";
     string output_dir_random = "output/DenseNetworks/random_weights";
@@ -837,13 +760,13 @@ int run_benchmark_on_dense_graphs()
     return 0;
 }
 
-int run_benchmark_on_exponential_size_sweep(int min_n = 100,
-                                            int max_n = 3000,
-                                            int num_sizes = 10,
-                                            double lambda = 1.0,
-                                            uint64_t base_seed = 4242,
-                                            string base_output_dir = "output/exp_complete",
-                                            bool symmetric_bidirectional = false)
+int BenchmarkTests::run_benchmark_on_exponential_size_sweep(int min_n,
+                                                            int max_n,
+                                                            int num_sizes,
+                                                            double lambda,
+                                                            uint64_t base_seed,
+                                                            string base_output_dir,
+                                                            bool symmetric_bidirectional)
 {
     using namespace std;
 
@@ -908,4 +831,148 @@ int run_benchmark_on_exponential_size_sweep(int min_n = 100,
     cout << endl;
 
     return 0;
+}
+
+
+
+// Reads the header of an OSM-style file where the first line is node count
+// and the second line is edge count. Useful for sizing a complete graph.
+GraphCounts BenchmarkTests::read_osm_header_counts(const std::string& osm_path)
+{
+    std::ifstream in(osm_path);
+    if (!in)
+    {
+        throw std::runtime_error("Cannot open OSM file: " + osm_path);
+    }
+
+    GraphCounts counts;
+    if (!(in >> counts.n))
+    {
+        throw std::runtime_error("Missing node count in OSM file: " + osm_path);
+    }
+    if (!(in >> counts.m))
+    {
+        throw std::runtime_error("Missing edge count in OSM file: " + osm_path);
+    }
+    return counts;
+}
+
+// Given a target number of undirected edges, return the node count needed
+// for a complete graph to have at least that many edges.
+long long BenchmarkTests::complete_graph_nodes_for_edges(long long target_edges)
+{
+    // Solve n(n-1)/2 >= target_edges for n.
+    double n = (1.0 + std::sqrt(1.0 + 8.0 * static_cast<double>(target_edges))) / 2.0;
+    cout << n << endl;
+    return static_cast<long long>(std::ceil(n));
+
+}
+
+void BenchmarkTests::run_benchmark_dense_graph_osm_edges() {
+    namespace fs = std::filesystem;
+
+    const string input_dir = "./Input_Data/SparseRoadNetworks";
+
+    // Exponential outputs
+    const string output_dir_exponential_base = "output/exp_complete_from_sparse/exponential_weights";
+    const string exp_src_dir = output_dir_exponential_base + "/src_dst_benchmark";
+    const string exp_spt_dir = output_dir_exponential_base + "/spt_benchmark";
+    create_directories(exp_src_dir);
+    create_directories(exp_spt_dir);
+
+    // Uniform-random outputs
+    const string output_dir_random_base = "output/exp_complete_from_sparse/random_weights";
+    const string rand_src_dir = output_dir_random_base + "/src_dst_benchmark";
+    const string rand_spt_dir = output_dir_random_base + "/spt_benchmark";
+    create_directories(rand_src_dir);
+    create_directories(rand_spt_dir);
+
+    FileHandler fh;
+    const double lambda = 1.0;
+    const uint64_t base_seed = 4242;
+
+    // auto generate_uniform_complete = [](int n, uint64_t seed) {
+    //     std::mt19937_64 gen(seed);
+    //     std::uniform_real_distribution<Cost> dist(0.0, 1.0);
+
+    //     Graph g(n);
+    //     for (int i = 0; i < n; ++i) {
+    //         Node node{i, 0.0, 0.0};
+    //         // node.id = i;
+    //         // node.latitude = 0.0;
+    //         // node.longitude = 0.0;
+    //         g.set_node(node);
+    //     // }
+    //     // for (int i = 0; i < n; ++i) {
+    //         for (int j = i + 1; j < n; ++j) {
+    //             Edge e, r;
+    //             e.src = i;
+    //             e.trg = j;
+    //             r.src = j;
+    //             r.trg = i;
+    //             Cost w = dist(gen);
+    //             e.cost = w;
+    //             r.cost = w;
+    //             g.set_edge(e, r);
+    //         }
+    //     }
+    //     return g;
+    // };
+
+    cout << "Starting complete-graph benchmarks sized from OSM edge counts...\n\n";
+
+    for (const auto &entry : fs::directory_iterator(input_dir)) {
+        if (entry.path().extension() != ".txt") continue;
+
+        const string filepath = entry.path().string();
+        const string stem = entry.path().stem().string();
+
+        GraphCounts counts = read_osm_header_counts(filepath);
+        // If your sparse graphs store each edge twice (both directions), counts.m already reflects that;
+        // we use counts.m as the target undirected edge count here.
+        long long target_edges = counts.m;
+        int n = static_cast<int>(complete_graph_nodes_for_edges(target_edges));
+        uint64_t seed = base_seed + static_cast<uint64_t>(n) * 1000003ULL;
+
+        cout << "OSM file: " << filepath << " -> edges " << counts.m << ", n for complete: " << n << "\n";
+
+        // Exponential weights
+        {
+            Graph graph = fh.generate_complete_exponential_graph(n, lambda, true, seed);
+            graph.sort_all_neighbors();
+
+            ostringstream fname1;
+            fname1 << exp_src_dir << "/m" << counts.m << "_" << stem << ".csv";
+            ostringstream fname2;
+            fname2 << exp_spt_dir << "/m" << counts.m << "_" << stem << ".csv";
+
+            cout << "Running src-dst benchmark (exp) -> " << fname1.str() << endl;
+            run_src_dst_benchmark_on_graph(graph, fname1.str());
+            cout << endl;
+            cout << "Running spt benchmark (exp) -> " << fname2.str() << endl;
+            run_spt_benchmark_on_graph(graph, fname2.str());
+            cout << endl;
+        }
+
+        // Uniform random weights
+        {
+            Graph graph = fh.generate_complete_uniform_random_graph(n, lambda, true, seed + 1);
+            graph.sort_all_neighbors();
+
+            ostringstream fname1;
+            fname1 << rand_src_dir << "/m" << counts.m << "_" << stem << ".csv";
+            ostringstream fname2;
+            fname2 << rand_spt_dir << "/m" << counts.m << "_" << stem << ".csv";
+
+            cout << "Running src-dst benchmark (uniform) -> " << fname1.str() << endl;
+            run_src_dst_benchmark_on_graph(graph, fname1.str());
+            cout << endl;
+            cout << "Running spt benchmark (uniform) -> " << fname2.str() << endl;
+            run_spt_benchmark_on_graph(graph, fname2.str());
+            cout << endl;
+        }
+    }
+
+    cout << "Completed complete-graph benchmarks sized from OSM edges.\n";
+    cout << "==============================================================================================================================" << endl;
 }

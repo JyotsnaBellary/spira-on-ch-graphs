@@ -1,6 +1,6 @@
 #pragma once
 #include <graph.hpp>
-#include "dijkstra.hpp"
+#include "sssp_result.hpp"
 #include <queue>
 
 class Spira
@@ -24,4 +24,3 @@ class Spira
         //builds result path
         SsspResult build_path(const vector<int>& prev, const vector<Cost>& cost, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops);
 };
-

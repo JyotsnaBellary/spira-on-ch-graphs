@@ -7,7 +7,7 @@
 #include <set>
 #include <random>
 #include "basic_test.cpp"
-#include "benchmark_tests.cpp"
+#include "benchmark_tests.hpp"
 #include "visualizer.hpp"
 
 using namespace std;
@@ -65,9 +65,14 @@ if (argc > 1 &&string(argv[1]) == "visualize") {
     return 0;
 }
     
-    run_benchmark_on_exponential_size_sweep();
-    run_benchmark_on_dense_graphs();
-    run_benchmark_on_sparse_graphs();
+    // To do: 
+    // add a interative while loop. provide option 
+
+   
+    BenchmarkTests::run_benchmark_on_sparse_graphs();
+    BenchmarkTests::run_benchmark_dense_graph_osm_edges();
+    BenchmarkTests::run_benchmark_on_dense_graphs();
+    BenchmarkTests::run_benchmark_on_exponential_size_sweep();
 
 
 }

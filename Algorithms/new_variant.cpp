@@ -347,6 +347,7 @@ SsspResult NewVariant::build_path(const vector<int> &prev, const vector<Cost> &c
 
     SsspResult result;
     result.number_of_pops = num_of_pops;
+    result.number_of_Q_pops = num_of_Q_pops;
 
     result.avg_pops_per_node =
         static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_edges());

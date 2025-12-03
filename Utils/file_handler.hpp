@@ -20,4 +20,9 @@ class FileHandler {
                                                        double lambda,
                                                        bool use_seed,
                                                        uint64_t seed);
+
+        Graph generate_complete_uniform_random_graph(int n,
+                                                       double lambda,
+                                                       bool use_seed,
+                                                       uint64_t seed);
 };

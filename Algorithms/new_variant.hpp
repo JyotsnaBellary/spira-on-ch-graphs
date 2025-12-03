@@ -1,6 +1,6 @@
 #pragma once
 #include "graph.hpp"
-#include "dijkstra.hpp"
+#include "sssp_result.hpp"
 #include <queue>
 
 class NewVariant
@@ -56,4 +56,3 @@ class NewVariant
         //builds result path
         SsspResult build_path(const vector<int>& prev, const vector<Cost>& cost, const vector<EdgeId>& viaEdge, NodeId dst, int number_of_pops, int number_of_Q_pops, Cost median);
 };
-

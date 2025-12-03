@@ -208,3 +208,49 @@ Graph FileHandler::generate_complete_exponential_graph(int n,
     return graph;
 }
 
+Graph FileHandler::generate_complete_uniform_random_graph(int n,
+                                                       double lambda,
+                                                       bool use_seed,
+                                                  uint64_t seed)
+{
+    // using namespace std;
+
+    if (n <= 0) {
+        cerr << "Error: number of nodes must be > 0\n";
+        return Graph{};
+    }
+
+    mt19937_64 gen(use_seed ? seed : random_device{}());
+    uniform_real_distribution<Cost> dist(lambda);
+
+    Graph graph(n);
+
+    // Create nodes (just assign IDs if you don’t have lat/long here)
+    for (int i = 0; i < n; ++i) {
+        Node node;
+        node.id = i;
+        node.latitude = 0.0;   
+        node.longitude = 0.0;
+        graph.set_node(node);
+    }
+
+    // Create bidirectional edges with exponential weights
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            Edge edge, reverse_edge;
+            edge.src = i;
+            edge.trg = j;
+            reverse_edge.src = j;
+            reverse_edge.trg = i;
+
+            Cost w = dist(gen);
+            edge.cost = w;
+            reverse_edge.cost = w;
+
+            graph.set_edge(edge, reverse_edge);
+        }
+    }
+
+    return graph;
+}
+
