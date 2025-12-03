@@ -5,6 +5,8 @@
 
 Dijkstra::Dijkstra(Graph &graph) : graph(graph) {}
 
+// Function to query for shortest paths between a src and dest.
+// Optionally query for SPT by giving dest = -1
 SsspResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
 {
     int num_nodes = graph.number_of_nodes();
@@ -74,6 +76,8 @@ SsspResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
             const Edge& edge = graph.get_edge(edgeId);
             NodeId adjacent_node = edge.trg;
             Cost new_dist = dist[node] + edge.cost;
+
+            // new shortest distance found for an adjacent node
             if (new_dist < dist[adjacent_node])
             {
                 dist[adjacent_node] = new_dist;
@@ -94,12 +98,13 @@ SsspResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
                       static_cast<double>(num_of_pops) / num_nodes, num_of_pops};
 }
 
+// Builds path from src to dst. Optionally returns SPT if dst = -1
 SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cost, const vector<EdgeId> &viaEdge, NodeId dst, int num_of_pops, const vector<int> &pops_per_node, int redundant_pops)
 {
     SsspResult result;
 
+    // Record pops for analysis later
     result.number_of_pops = num_of_pops;
-
     result.redundant_pops = redundant_pops;
     result.avg_pops_per_node =
                 static_cast<double>(num_of_pops) / static_cast<double>(graph.number_of_nodes());
@@ -118,13 +123,12 @@ SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cos
         return result;
     }
     
+    // Check if dst is unreachable
     if (dst >= (int)prev.size() || cost[dst] == INF_COST)
     {
         result.total_cost = -1; // unreachable
         return result;
     }
-
-    
     
     // Reconstruct nodes (backwards)
     vector<int> rev_nodes;
@@ -135,7 +139,8 @@ SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cos
         rev_nodes.push_back(v);
         if (prev[v] != -1 && viaEdge[v] != INVALID_EDGE)
         {
-            rev_edges.push_back(viaEdge[v]); // edge used to reach v
+            // edge used to reach v
+            rev_edges.push_back(viaEdge[v]); 
         }
     }
 
@@ -144,7 +149,7 @@ SsspResult Dijkstra::build_path(const vector<int> &prev, const vector<Cost> &cos
 
     result.path = move(rev_nodes);
     result.edge_ids = move(rev_edges);
-    result.total_cost = cost[dst]; // keep Dist in the struct
+    result.total_cost = cost[dst];
 
     return result;
 }

@@ -1,6 +1,5 @@
 #pragma once 
 #include <types.hpp>
-// #include "./Include/types.hpp"
 
 struct Edge {
     EdgeId id = INVALID_EDGE;
