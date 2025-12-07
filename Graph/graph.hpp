@@ -33,10 +33,16 @@ struct Graph
     // Edge Mutator
     void set_edge(Edge &edge, Edge &rev_edge);
 
+    // Get single node
     const Node &get_node(NodeId &nodeId) const;
+    
+    // Get single edge
     const Edge &get_edge(EdgeId &edgeId) const;
 
+    // Get all nodes
     const vector<Node>& get_nodes() const;
+
+    // Get all edges
     const vector<Edge>& get_edges() const;
 
     // Graph Properties

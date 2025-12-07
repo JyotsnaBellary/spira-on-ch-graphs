@@ -7,17 +7,17 @@
 
 using namespace std;
 
-static bool compare_and_print_spt_results(const SsspResult& a, const SsspResult& b, const std::string& nameA, const std::string& nameB)
+static bool compare_and_print_spt_results(const SsspResult& a, const SsspResult& b, const string& nameA, const string& nameB)
 {
     if (a.distance.size() != b.distance.size()) {
-        std::cerr << nameA << " and " << nameB << " differ in size.\n";
+        cerr << nameA << " and " << nameB << " differ in size.\n";
         return false;
     }
 
     bool allMatch = true;
     for (size_t i = 0; i < a.distance.size(); ++i) {
         if (a.distance[i] != b.distance[i]) {
-            std::cerr << "Distance mismatch at node " << i << ": "
+            cerr << "Distance mismatch at node " << i << ": "
                       << nameA << "=" << a.distance[i] << ", "
                       << nameB << "=" << b.distance[i] << "\n";
             allMatch = false;
@@ -25,7 +25,7 @@ static bool compare_and_print_spt_results(const SsspResult& a, const SsspResult&
     }
 
     if (allMatch)
-        std::cout << nameA << " and " << nameB << " distances match perfectly.\n";
+        cout << nameA << " and " << nameB << " distances match perfectly.\n";
 
     return allMatch;
 }
@@ -37,14 +37,14 @@ void run_all_algorithms_on_sparse() {
     // graph.print_adj_simple();
 
     auto time_algorithm = [](auto&& algorithm, int runs = 1) {
-        std::vector<long long> times;
+        vector<long long> times;
         for (int i = 0; i < runs; ++i) {
             auto start = chrono::high_resolution_clock::now();
             auto result = algorithm();
             auto end = chrono::high_resolution_clock::now();
             times.push_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
         }
-        return std::make_pair(times, times[0]); // return all times and first result time
+        return make_pair(times, times[0]); // return all times and first result time
     };
 
     Dijkstra dijkstra(graph);
@@ -215,14 +215,14 @@ void run_all_algorithms_on_dense() {
     // graph.print_adj_simple();
 
     auto time_algorithm = [](auto&& algorithm, int runs = 1) {
-        std::vector<long long> times;
+        vector<long long> times;
         for (int i = 0; i < runs; ++i) {
             auto start = chrono::high_resolution_clock::now();
             auto result = algorithm();
             auto end = chrono::high_resolution_clock::now();
             times.push_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
         }
-        return std::make_pair(times, times[0]); // return all times and first result time
+        return make_pair(times, times[0]); // return all times and first result time
     };
 
     Dijkstra dijkstra(graph);
@@ -336,7 +336,7 @@ void run_all_algorithms_on_exponential_weights()
     int trg = -1;
 
     auto time_algorithm = [](auto&& algorithm, int runs = 1) {
-        std::vector<long long> times;
+        vector<long long> times;
         for (int i = 0; i < runs; ++i) {
             auto start = chrono::high_resolution_clock::now();
             auto result = algorithm();
@@ -345,7 +345,7 @@ void run_all_algorithms_on_exponential_weights()
                 chrono::duration_cast<chrono::microseconds>(end - start).count()
             );
         }
-        return std::make_pair(times, times[0]);
+        return make_pair(times, times[0]);
     };
 
     Dijkstra dijkstra(graph);

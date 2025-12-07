@@ -3,7 +3,7 @@
 
 using namespace std;
 using namespace filesystem;
-using Clock = std::chrono::high_resolution_clock;
+using Clock = chrono::high_resolution_clock;
 
 // Take the average of 100 runs
 void BenchmarkTests::finalize_aggregate_stats(AggregateStats& agg) {
@@ -86,7 +86,7 @@ PertinenceStats BenchmarkTests::analyze_spt_pertinence(
     {
         Edge edge = graph.get_edge(eid);
 
-        // Check if an edge i smarked as in and out pertinent
+        // Check if an edge is marked as in and out pertinent
         if (res.in_pertinent_edges[eid] and res.out_pertinent_edges[eid])
         {
             cerr << "Warning: edge " << eid
@@ -172,13 +172,17 @@ PertinenceStats BenchmarkTests::analyze_spt_pertinence(
     }
     if (stats.total_in_pertinent_edges > 0)
     {
+        // ratio of in pertinent edges transferred to priority Queue P
         stats.ratio_in_transferred =
             (double)stats.total_in_pertinent_extracted_in_forward /
             (double)stats.total_in_pertinent_edges;
     }
     if (stats.total_spt_edges > 0)
     {
+        // ratio of out-pertinent edges to all pertinent edges
         stats.ratio_spt_out = (double)stats.out_spt / (double)stats.total_spt_edges;
+
+        // ratio of in-pertinent edges to all pertinent edges
         stats.ratio_spt_in = (double)stats.in_spt / (double)stats.total_spt_edges;
     }
 
@@ -193,6 +197,7 @@ PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, c
     for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid)
     {
 
+        // Check if an edge is marked as in and out pertinent
         if (res.in_pertinent_edges[eid] and res.out_pertinent_edges[eid])
         {
             cerr << "Warning: edge " << eid
@@ -201,6 +206,7 @@ PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, c
         }
         else if (res.in_pertinent_edges[eid])
         {
+            // count as in-pertinent
             stats.total_in_pertinent_edges += 1;
             if (res.in_pertinent_edges_extracted_in_forward_phase[eid])
             {
@@ -209,10 +215,12 @@ PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, c
         }
         else if (res.out_pertinent_edges[eid])
         {
+            // count as out-pertinent
             stats.total_out_pertinent_edges += 1;
         }
     }
 
+    // Track total number of pertinent edges
     stats.total_pertinent_edges = stats.total_in_pertinent_edges + stats.total_out_pertinent_edges;
 
     for (EdgeId eid : res.edge_ids)
@@ -230,7 +238,7 @@ PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, c
         if (is_in)
             stats.in_spt++;
 
-        // ---------- WARNING 1: Path edge is neither in nor out ----------
+        // SPT edge is neither in nor out
         if (!is_out && !is_in)
         {
             const Edge &e = graph.get_edge(eid);
@@ -241,15 +249,18 @@ PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, c
         }
     }
 
+    // Mark if non-pertinent edges are included in SPT
     stats.spt_edges_incorrectly_classified = (stats.non_pertinent_edge_in_spt > 0);
 
     // ----- Ratios -----
     if (graph.number_of_edges() > 0)
     {
+        // ratio of pertinent edges to total edges in a graph instance
         stats.ratio_pert_m = (double)stats.total_pertinent_edges / (double)graph.number_of_edges();
     }
     if (graph.number_of_nodes() > 0)
     {
+        // ratio of pertinent edges to total edges in a graph instance
         stats.ratio_pert_n = (double)stats.total_pertinent_edges / (double)graph.number_of_nodes();
     }
     if (stats.total_in_pertinent_edges > 0)
@@ -265,6 +276,16 @@ PertinenceStats BenchmarkTests::analyze_path_pertinence(const SsspResult &res, c
     }
 
     return stats;
+}
+
+// ---- Helper: Cost if cost mismatches between two src-dst queries ----
+bool BenchmarkTests::same_cost(Cost a, Cost b)
+{
+    // If one of the costs is "unreachable"
+    if (a < 0 || b < 0)
+        return a == b;
+
+    return fabs(a - b) <= 1e-9;
 }
 
 vector<pair<int, int>> BenchmarkTests::generate_query_pairs(int n)
@@ -355,14 +376,6 @@ void BenchmarkTests::run_src_dst_benchmark_on_graph(Graph &graph, const string &
         auto new_variant_end = Clock::now();
         long long new_variant_time_us = chrono::duration_cast<chrono::microseconds>(new_variant_end - new_variant_start).count();
         Cost new_variant_cost = result_new_variant.total_cost;
-
-        // === Compare costs ===
-        auto same_cost = [](Cost a, Cost b)
-        {
-            if (a < 0 || b < 0)
-                return a == b;
-            return fabs(a - b) <= 1e-9;
-        };
 
         // Check if the results of all three algorithms match
         bool matched = same_cost(dijkstra_cost, spira_cost) && same_cost(dijkstra_cost, new_variant_cost);

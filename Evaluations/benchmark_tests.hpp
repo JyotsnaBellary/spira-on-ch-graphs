@@ -119,6 +119,9 @@ public:
     // Append results to average.csv
     static void append_average_summary(const AggregateStats &A, const string &output_csv_path);
 
+    // To compare if cost of one path is the same as the other 
+    static bool same_cost(Cost a, Cost b);
+
     // Count if any node-wise mismatches between two SPTs (consistency checks)
     static int count_distance_mismatches(const vector<Cost> &a, const vector<Cost> &b);
 

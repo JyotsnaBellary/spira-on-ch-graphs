@@ -14,7 +14,7 @@ SsspResult Dijkstra::compute_shortest_path(NodeId src, NodeId dst)
     int redundant_pops = 0;
 
     // Track how many times each node is popped
-    std::vector<int> pops_per_node(num_nodes, 0);
+    vector<int> pops_per_node(num_nodes, 0);
 
     // 1. Initialize distances and priority queue.
     vector<Cost> dist(num_nodes, INF_COST);

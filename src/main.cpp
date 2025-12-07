@@ -19,13 +19,13 @@ int main(int argc, char* argv[])
     if (argc < 2) {
     cerr << "Usage: " << argv[0] << " <command> [options]\n";
     cerr << "\nCommands:\n";
-    // cerr << "  test                                  Run basic tests\n";
-    // cerr << "  benchmark_sparse                      Run benchmarks on sparse graphs\n";
-    // cerr << "  benchmark_dense                       Run benchmarks on dense graphs\n";
-    // cerr << "  benchmark_exponential_sweep           Run benchmarks on exponential size sweep\n";
+    cerr << "  test                                  Run basic tests\n";
+    cerr << "  benchmark_sparse                      Run benchmarks on sparse graphs\n";
+    cerr << "  benchmark_dense                       Run benchmarks on dense graphs\n";
+    cerr << "  benchmark_exponential_sweep           Run benchmarks on exponential size sweep\n";
     cerr << "  visualize <file> <algo> <src> <dst> <weightMode> <graphType>\n";
     cerr << "                                        Visualize shortest path from file\n";
-    // return 1;
+    return 1;
 }
 
 // Visualization mode
@@ -36,7 +36,7 @@ if (argc > 1 &&string(argv[1]) == "visualize") {
         cerr << "Example:\n";
         cerr << "  " << argv[0]
              << " visualize osm1 Dijkstra 0 500 original sparse\n";
-        // return 1;
+        return 1;
     }
 
     string file = argv[2];
