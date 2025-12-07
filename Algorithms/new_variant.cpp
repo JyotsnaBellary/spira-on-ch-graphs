@@ -13,18 +13,22 @@ NewVariant::NewVariant(Graph &graph) : graph(graph),
                                        req(graph.number_of_nodes()),
                                        active(graph.number_of_nodes(), false),
                                        in_S(graph.number_of_nodes(), false),
-                                       can_scan_out(graph.number_of_nodes(), true) {}
+                                        can_scan_out(graph.number_of_nodes(), true) {}
 
+// Resets the index vectors to point to the first outgoing edge                                         
 void NewVariant::reset(vector<int> &next_index)
 {
     next_index.assign(graph.number_of_nodes(), 0);
 }
 
+// Returns the list of outgoing edges appended to the request list of a node
 const vector<EdgeId> &NewVariant::get_requested_neighbors(NodeId nodeId) const
 {
     return req[nodeId];
 }
 
+// returns the next edge from any adjacency list passed to the function.
+// Used to get next outgoing edge from out-adjacency list, incoming edge from in-adjacency list and any requested edge from request list
 EdgeId NewVariant::next(vector<int> &next_index, NodeId &nodeId, const vector<EdgeId> &adjacent_neighbor_edges)
 {
     if (nodeId < 0 || nodeId >= graph.number_of_nodes())
@@ -32,11 +36,13 @@ EdgeId NewVariant::next(vector<int> &next_index, NodeId &nodeId, const vector<Ed
 
     if (next_index[nodeId] < (int)adjacent_neighbor_edges.size())
     {
-        return adjacent_neighbor_edges[next_index[nodeId]++]; // return current, then advance
+        // return current, then advance
+        return adjacent_neighbor_edges[next_index[nodeId]++]; 
     }
     return INVALID_EDGE;
 }
 
+// Forward scan function where edges are inserted to P
 void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
 {
     EdgeId edgeId = INVALID_EDGE;
@@ -54,7 +60,6 @@ void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<
         {
             const Edge &edge = graph.get_edge(edgeId);
             // Though this edge is valid, it may or may not be out-perminent after the first stage
-            // The ones extracted are out pertinent and the remaining n/2 edges may or may not be pertinent,
             // so do not classify as out-pertinent yet
 
             // Check if we are in the 2nd stage of the algorithm
@@ -79,22 +84,11 @@ void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<
     // if no out-pertinent edges to scan, check requested in-pertinent edges
     if (!can_scan_out[nodeId])
     {
+        // get next requested in-pertinent ege for the nodeId
         edgeId = next(next_index_request, nodeId, get_requested_neighbors(nodeId));
         if (edgeId != INVALID_EDGE)
         {
-
-            // all requested edges are in-pertinent edges
-            if (out_pertinent_edges[edgeId])
-            {
-                //add only in debug mode
-                // cerr << "ERROR: edge " << edgeId
-                //       << " appears in request list but is marked out-pertinent.\n";
-                      if (in_pertinent_edges[edgeId]) {
-                          // edge already marked in-pertinent too
-                          cerr << "ERROR: edge " << edgeId
-                               << " is marked both in-pertinent and out-pertinent.\n";
-                      }
-            }
+            // Tracking this for my own curiosity
             in_pertinent_edges_extracted_in_forward_phase[edgeId] = true;
         }
     }
@@ -110,48 +104,61 @@ void NewVariant::forward(NodeId nodeId, vector<Cost> &cost, priority_queue<pair<
         active[nodeId] = false;
     }
 
+    // If node is still active, 
     if (active[nodeId])
     {
         const Edge &edge = graph.get_edge(edgeId);
         if (isfinite(cost[edge.src]))
         {
+            // Add edge to priority Queue P
             pq.emplace(cost[edge.src] + edge.cost, edgeId);
         }
     }
 }
 
+// Backward Scan to append next lowest costing incoming edge of a node to Q
 void NewVariant::backward(NodeId nodeId, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
 {
-    // make sure v is not in S.
+    // make sure v is not in S before this.
+    // Get the next edge id from the in-adjacency list 
     EdgeId edgeId = next(next_index_in_adj, nodeId, graph.get_in_neighbors(nodeId));
     if (edgeId != INVALID_EDGE)
     {
+        // Get edge and append it to Q
         const Edge &edge = graph.get_edge(edgeId); // (u,v)
         pq.emplace(edge.cost, edgeId);
     }
 }
 
+// Append an edge to req list and additiionally call forward scan for a node immediately if urgernt. 
 void NewVariant::append_to_request(NodeId nodeId, EdgeId edgeId, vector<Cost> &cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> &pq)
 {
+    // Track if pointer is at the end of the list 
     bool index_past_end = next_index_request[nodeId] >= req[nodeId].size();
+    
     if (edgeId == INVALID_EDGE) return;
+
+    // Add the new -in-pertinent edge to the request list
     req[nodeId].push_back(edgeId);
 
+    // Update request pointer if it is the first unread element
     if (index_past_end)
     {
         next_index_request[nodeId] = req[nodeId].size() - 1;
     }
 
-    // urgent request
+    // urgent request: if node is settled but had no edge to scan previously
+    // process this in-pertinent edge immediately
     if (in_S[nodeId] && !active[nodeId])
     {
         forward(nodeId, cost, pq);
     }
 }
 
-// count edge relaxation in dijkstra.
+// Computes the shortest path from src to dst, optionally also computes SPT if dst = -1
 SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
 {
+    // For further analysis
     int number_of_nodes = graph.number_of_nodes();
     int num_of_pops = 0;
     int num_of_Q_pops = 0;
@@ -162,10 +169,17 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
     vector<NodeId> prev(number_of_nodes, -1);
     vector<EdgeId> via_edge(number_of_nodes, -1);
 
+    // req is the list requested edges for a node
     req.clear();
     req.resize(graph.number_of_nodes());
+
+    // Mauintains if a node has any appropriate edge to scan
     active.assign(graph.number_of_nodes(), false);
+
+    // Maintains if a node is settled
     in_S.assign(graph.number_of_nodes(), false);
+
+    // Maintains if a node still has out-pertinent edges 
     can_scan_out.assign(graph.number_of_nodes(), true);
 
     // reset pertinence state
@@ -223,7 +237,7 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         num_of_pops += 1;
 
         const Edge &edge = graph.get_edge(edgeId);
-        NodeId node = edge.src;
+        NodeId node_u = edge.src;
 
         // Section 4
         // In the 1st stage, All extracted edges are out-pertinent edges. 
@@ -245,6 +259,7 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
                 // Check if the edge needs to be classified as an out-pertinent edge
                 if (edge.cost <= 2 * (median_distance - cost[edge.src]))
                 {
+                    // edge is out-pertinent
                     out_pertinent_edges[edgeId] = true;
                 } 
                 else if (edge.cost < 2 * (cost[edge.trg] - median_distance))
@@ -256,42 +271,46 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             }
         }
         
-
-        const Cost EPS = (Cost)1e-9; // use 1e-6 if weights ~1
-        if (!std::isfinite(cost[node]) || !std::isfinite(curr_cost) ||
-            curr_cost > cost[node] + edge.cost + EPS)
+        // Not a necessary check
+        const Cost EPS = (Cost)1e-9;
+        if (!isfinite(cost[node_u]) || !isfinite(curr_cost) ||
+            curr_cost > cost[node_u] + edge.cost + EPS)
         {
             continue; // stale/invalid
         }
 
         // call forward(u)
-        forward(node, cost, P);
+        forward(node_u, cost, P);
 
         // if v not in S
-        NodeId trg = edge.trg;
-        if (!in_S[trg])
+        NodeId node_v = edge.trg;
+        if (!in_S[node_v])
         {
-            cost[trg] = curr_cost;
-            prev[trg] = node;
-            via_edge[trg] = edgeId;
-            in_S[trg] = true;
+            // settle v 
+            cost[node_v] = curr_cost;
+            prev[node_v] = node_u;
+            via_edge[node_v] = edgeId;
+            in_S[node_v] = true;
             ++settled;
 
             // Early exit when destination finalized
-            if (dst >= 0 && trg == dst)
+            if (dst >= 0 && node_v == dst)
                 return build_path(prev, cost, via_edge, dst, num_of_pops, num_of_Q_pops, median_distance);
 
-            forward(trg, cost, P);
+            
+            forward(node_v, cost, P);
 
+            // If half the nodes have been settled, then set the threshold M which is the "median_distance"
             if (settled == (number_of_nodes + 1) / 2)
             {
-                median_distance = cost[trg];
+                median_distance = cost[node_v];
                 // backward scan the first incoming edge of each vertex not yet in S
                 // and insert it into the priority queue Q
                 for (const Node &node : graph.get_nodes())
                 {
                     if (!in_S[node.id])
                     {
+                        // call backward scan on Node 
                         backward(node.id, Q);
                     }
                 }
@@ -301,11 +320,14 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
         // Find more in-pertinent edges
         while (Q.size() > 0)
         {
+            // minP should be set to INF if P is empty
             Cost minP = (P.empty()) ? INF_COST : (P.top().first);
 
+            // In-pertinence condition
             if (minP != INF_COST && Q.top().first >= 2 * (minP - median_distance))
             {
-                break; // condition no longer holds
+                // condition no longer holds
+                break; 
             }
 
             auto [in_cost, in_edgeId] = Q.top();
@@ -316,13 +338,17 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst)
             if (!in_S[edge.trg])
             {
                 // All edges extracted from Q that are pushed to Request are in-pertinent edges
+                #ifndef DEBUG
                 if (out_pertinent_edges[in_edgeId]) {
                     cerr << "ERROR: edge " << in_edgeId
                             << " discovered in Q but already out-pertinent.\n";
-                    // optional: std::abort();
                 } 
+                #endif
                 
+                // call backward scan on v of edge (u, v)
                 backward(edge.trg, Q);
+
+                // append edge to u's adjacency list in Req
                 append_to_request(edge.src, in_edgeId, cost, P);
 
             } // already in S
