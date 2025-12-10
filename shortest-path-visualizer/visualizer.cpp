@@ -13,128 +13,9 @@
 
 
 using namespace std;
-// struct PertinenceStats
-// {
-//     // Pertinence counts
-//     int total_pertinent_edges = 0;
-//     int total_out_pertinent_edges = 0;
-//     int total_in_pertinent_edges = 0;
-//     int total_in_pertinent_extracted_in_forward = 0;
-//     int conflict_both = 0;
-
-//     // SPT and Path analysis
-//     int total_spt_edges = 0;
-//     int out_spt = 0;
-//     int in_spt = 0;
-//     int non_pertinent_edge_in_spt = 0;
-//     bool spt_edges_incorrectly_classified = false;
-
-//     // --- Ratios ---
-//     double ratio_pert_m = 0.0;         // total_pertinent_edges / m
-//     double ratio_pert_n = 0.0;         // total_pertinent_edges / n
-//     double ratio_in_transferred = 0.0; // total_in_pertinent_extracted_in_forward / total_in_pertinent_edges
-//     double ratio_spt_out = 0.0;        // out_spt / total_spt_edges
-//     double ratio_spt_in = 0.0;         // in_spt / total_spt_edges
-//     double ratio_pop_pert = 0.0;       // no_of_pops / total_pert_edges
-// };
-
-// PertinenceStats analyze_spt_pertinence_here(
-//     const SsspResult &res,
-//     const Graph &graph)
-// {
-//     PertinenceStats stats;
-
-//     for (EdgeId eid = 0; eid < (EdgeId)graph.number_of_edges(); ++eid)
-//     {
-//         if (res.in_pertinent_edges[eid] and res.out_pertinent_edges[eid])
-//         {
-            
-//             cerr << "Warning: edge " << eid
-//                  << " is marked both in-pertinent and out-pertinent.\n";
-//             stats.conflict_both += 1;
-//         }
-//         else if (res.in_pertinent_edges[eid])
-//         {
-//             stats.total_in_pertinent_edges += 1;
-//             if (res.in_pertinent_edges_extracted_in_forward_phase[eid])
-//             {
-//                 stats.total_in_pertinent_extracted_in_forward += 1;
-//             }
-//         }
-//         else if (res.out_pertinent_edges[eid])
-//         {
-//             stats.total_out_pertinent_edges += 1;
-//         }
-//     }
-
-//     stats.total_pertinent_edges = stats.total_in_pertinent_edges + stats.total_out_pertinent_edges;
-//     // cout << "Total conflicting edges: " << stats.conflict_both << endl;
-//     // cout << "Analyzing SPT edges for pertinence...\n";
-//     for (NodeId u = 0; u < (NodeId)res.via_edge.size(); ++u)
-//     {
-//         EdgeId eid = res.via_edge[u];
-
-//         // skip root or unreachable
-//         if (eid == INVALID_EDGE || eid == -1)
-//             continue;
-
-//         stats.total_spt_edges++;
-
-//         bool is_out = res.out_pertinent_edges[eid];
-//         bool is_in = res.in_pertinent_edges[eid];
-
-//         if (is_out)
-//             stats.out_spt++;
-//         if (is_in)
-//             stats.in_spt++;
-
-//         // ---------- WARNING 1: SPT edge is neither in nor out ----------
-//         if (!is_out && !is_in)
-//         {
-//             // Send warnings to stderr so stdout remains pure JSON for the web client
-//             cerr << "WARNING: SPT edge " << eid
-//                  << " (" << graph.get_edge(eid).src << " -> "
-//                  << graph.get_edge(eid).trg
-//                  << ") is NOT pertinent.\n";
-
-//             // cout << "Cost: " << graph.get_edge(eid).cost << endl;
-//             // cout << "Cost from src to this edge.src: " << res.distance[graph.get_edge(eid).src] << endl;
-//             // cout << "Cost from src to this edge.trg: " << res.distance[graph.get_edge(eid).trg] << endl;
-//             stats.non_pertinent_edge_in_spt++;
-//         }
-//     }
-
-//     stats.spt_edges_incorrectly_classified = (stats.non_pertinent_edge_in_spt > 0);
-//     if (stats.spt_edges_incorrectly_classified) {
-//         // cout << "SPT edges are incorrectly classified.\n";
-//     }
-//     // ----- Ratios -----
-//     if (graph.number_of_edges() > 0)
-//     {
-//         stats.ratio_pert_m = (double)stats.total_pertinent_edges / (double)graph.number_of_edges();
-//     }
-//     if (graph.number_of_nodes() > 0)
-//     {
-//         stats.ratio_pert_n = (double)stats.total_pertinent_edges / (double)graph.number_of_nodes();
-//     }
-//     if (stats.total_in_pertinent_edges > 0)
-//     {
-//         stats.ratio_in_transferred =
-//             (double)stats.total_in_pertinent_extracted_in_forward /
-//             (double)stats.total_in_pertinent_edges;
-//     }
-//     if (stats.total_spt_edges > 0)
-//     {
-//         stats.ratio_spt_out = (double)stats.out_spt / (double)stats.total_spt_edges;
-//         stats.ratio_spt_in = (double)stats.in_spt / (double)stats.total_spt_edges;
-//     }
-
-//     return stats;
-// }
 
 
-
-    string resolve_graph_file(const string& filename)
+string resolve_graph_file(const string& filename)
 {
     static const unordered_map<string, string> fileMap = {
         {"osm1", "./Input_Data/SparseRoadNetworks/osm1.txt"},
@@ -236,40 +117,32 @@ void emit_json(const SsspResult& result,
                int src,
                int trg,
                const string& algorithm,
-               double dijkstra_runtime = -1,
-               double spira_runtime = -1,
-               double newvariant_runtime = -1)
+               double dijkstra_runtime,
+               double spira_runtime,
+               double newvariant_runtime)
 {
     cout << "{";
 
-    // ---------------------------------------------------
     // Basic info
-    // ---------------------------------------------------
     cout << "\"src\":" << src << ",";
     cout << "\"dst\":" << trg << ",";
     cout << "\"total_cost\":" << result.total_cost << ",";
 
-    // Runtime of the *selected* algorithm
+    // Runtime of the selected algorithm
     cout << "\"runtime_ms\":" << result.runtime_ms << ",";
 
-    // ---------------------------------------------------
-    // OPTIONAL: runtimes of other algorithms
-    // ---------------------------------------------------
+    // runtimes of other algorithms
     cout << "\"dijkstra_runtime_ms\":" << dijkstra_runtime << ",";
     cout << "\"spira_runtime_ms\":" << spira_runtime << ",";
     cout << "\"newvariant_runtime_ms\":" << newvariant_runtime << ",";
 
-    // ---------------------------------------------------
     // Pops and stats
-    // ---------------------------------------------------
     cout << "\"number_of_pops\":" << result.number_of_pops << ",";
     cout << "\"number_of_Q_pops\":" << result.number_of_Q_pops << ",";
     cout << "\"redundant_pops\":" << result.redundant_pops << ",";
     cout << "\"avg_pops_per_node\":" << result.avg_pops_per_node << ",";
 
-    // ---------------------------------------------------
     // SPT edges
-    // ---------------------------------------------------
     cout << "\"spt_edges\":[";
     bool first = true;
 
@@ -291,9 +164,7 @@ void emit_json(const SsspResult& result,
     }
     cout << "],";
 
-    // ---------------------------------------------------
     // Pertinent edges (NewVariant only)
-    // ---------------------------------------------------
     if (algorithm == "NewVariant")
     {
         cout << "\"pertinent_edges\":[";
@@ -323,9 +194,7 @@ void emit_json(const SsspResult& result,
         cout << "\"pertinent_edges\":[],";
     }
 
-    // ---------------------------------------------------
     // Shortest path
-    // ---------------------------------------------------
     cout << "\"shortest_path\":[";
     for (size_t i = 0; i < result.path.size(); ++i)
     {
