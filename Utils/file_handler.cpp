@@ -179,11 +179,11 @@ Graph FileHandler::generate_complete_exponential_graph(int n,
 
     Graph graph(n);
 
-    // Create nodes (just assign IDs if you don’t have lat/long here)
+    // Create nodes 
     for (int i = 0; i < n; ++i) {
         Node node;
         node.id = i;
-        node.latitude = 0.0;   // or skip if unused
+        node.latitude = 0.0;   
         node.longitude = 0.0;
         graph.set_node(node);
     }
@@ -225,7 +225,7 @@ Graph FileHandler::generate_complete_uniform_random_graph(int n,
 
     Graph graph(n);
 
-    // Create nodes (just assign IDs if you don’t have lat/long here)
+    // Create nodes 
     for (int i = 0; i < n; ++i) {
         Node node;
         node.id = i;
@@ -234,7 +234,7 @@ Graph FileHandler::generate_complete_uniform_random_graph(int n,
         graph.set_node(node);
     }
 
-    // Create bidirectional edges with exponential weights
+    // Create bidirectional edges with random weights
     for (int i = 0; i < n; ++i) {
         for (int j = i + 1; j < n; ++j) {
             Edge edge, reverse_edge;

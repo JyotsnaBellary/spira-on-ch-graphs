@@ -13,9 +13,9 @@ cmake --build build -j
 ```
 Run the CLI binary:
 ```bash
-build/cli
+build/sssp_cli
 ```
-After the initial CMake configure, you can optionally rebuild with:
+After the initial CMake configure, you can optionally rebuild and run with:
 ```bash
 ./build.sh build
 ```
