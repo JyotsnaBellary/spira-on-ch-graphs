@@ -18,7 +18,7 @@ add_library(sssp_lib
     Evaluations/basic_test.cpp
     Evaluations/benchmark_tests.cpp
     shortest-path-visualizer/visualizer.cpp
-    src/interactive_cli.cpp
+    shortest-path-visualizer/interactive_cli.cpp
 )
 
 # Use C++20; set per-target (best practice)
@@ -32,7 +32,7 @@ target_include_directories(sssp_lib PUBLIC
     ${CMAKE_SOURCE_DIR}/Utils   
     ${CMAKE_SOURCE_DIR}/Evaluations   
     ${CMAKE_SOURCE_DIR}/shortest-path-visualizer   
-    ${CMAKE_SOURCE_DIR}/src   
+    # ${CMAKE_SOURCE_DIR}/src   
 )
 
 # CLI app
