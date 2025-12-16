@@ -1,4 +1,11 @@
-// #pragma once
+/* The code in this file is intended for development, validation,
+ * and internal analysis only. It is not used in the final benchmark
+ * evaluation pipeline or the interactive/web interfaces.
+ *
+ * Hard-coded instances, sources, and parameters are used intentionally
+ * to facilitate debugging and inspection of algorithm behavior.
+ * */
+
 #include "file_handler.hpp"
 #include "dijkstra.hpp"
 #include "spira.hpp"

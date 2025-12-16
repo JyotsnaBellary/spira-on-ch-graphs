@@ -79,10 +79,12 @@ const vector<EdgeId> &Graph::get_out_neighbors(NodeId nodeId) const {
     return out_adjacency_list[nodeId];
 }
 
+// Query neighbors of node that have incoming edges to it
 const vector<EdgeId> &Graph::get_in_neighbors(NodeId nodeId) const {
     return in_adjacency_list[nodeId];
 }
 
+// Sort neighbors of a node by edge cost that has outgoing edges from it
 void Graph::sort_out_neighbors(NodeId nodeId)
 {
     if (nodeId < 0 || nodeId >= number_of_nodes())
@@ -95,6 +97,7 @@ void Graph::sort_out_neighbors(NodeId nodeId)
             });
 }
 
+// Sort neighbors of a node by edge cost that have incoming edge to it
 void Graph::sort_in_neighbors(NodeId nodeId)
 {
     if (nodeId < 0 || nodeId >= number_of_nodes())
@@ -107,6 +110,7 @@ void Graph::sort_in_neighbors(NodeId nodeId)
             });
 }
 
+// sort neighbors of all nodes
 void Graph::sort_all_neighbors()
 {
     for (NodeId nodeId = 0; nodeId < number_of_nodes(); nodeId++){
@@ -115,6 +119,7 @@ void Graph::sort_all_neighbors()
     }
 }
 
+// Simple print of adjacency list
 void Graph::print_adj_simple()
 {
     for (NodeId u = 0; u < static_cast<NodeId>(nodes.size()); ++u)
