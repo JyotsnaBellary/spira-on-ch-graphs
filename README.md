@@ -11,13 +11,15 @@ Configure the build directory once:
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j
 ```
-Run the CLI binary:
-```bash
-build/sssp_cli
-```
-After the initial CMake configure, you can optionally rebuild and run with:
+
+After the initial CMake configure, you can optionally rebuild with:
 ```bash
 ./build.sh build
+```
+
+Run the CLI binary:
+```bash
+build/sssp_cli interactive
 ```
 
 ## Run and interact
@@ -27,6 +29,12 @@ For the best experience, use the Web app to interact with the algorithms.
   cd shortest-path-visualizer/backend
   node server.js
   ```
+
+    - If there is a 404 server not found error, set the path to sssp_cli explicitely 
+    ```bash
+    export SSSP_CLI_PATH=/absolute/path/to/build/sssp_cli
+    ```
+
 - Frontend:
   ```bash
   cd shortest-path-visualizer/frontend

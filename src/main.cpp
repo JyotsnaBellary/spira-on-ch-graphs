@@ -20,11 +20,8 @@ int main(int argc, char *argv[])
     {
         cerr << "Usage: " << argv[0] << " <command> [options]\n";
         cerr << "\nCommands:\n";
-        cerr << "  test                                  Run basic tests\n";
-        cerr << "  benchmark_sparse                      Run benchmarks on sparse graphs\n";
-        cerr << "  benchmark_dense                       Run benchmarks on dense graphs\n";
-        cerr << "  benchmark_exponential_sweep           Run benchmarks on exponential size sweep\n";
-        cerr << "  visualize <file> <algo> <src> <dst> <weightMode> <graphType>\n";
+        cerr << "  interactive\n";
+        cerr << "  visualize <file> <algorithm> <src> <dst> <weightMode> <graphType>\n";
         cerr << "                                        Visualize shortest path from file\n";
         return 1;
     }
