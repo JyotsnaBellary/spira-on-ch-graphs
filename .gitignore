@@ -5,5 +5,5 @@
 *.fdb_latexmk
 *.fls
 *.log
-*.pdf
 *.toc
+*.DS_Store

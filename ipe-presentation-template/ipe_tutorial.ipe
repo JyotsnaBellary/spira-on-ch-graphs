@@ -1,0 +1,1573 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipe SYSTEM "ipe.dtd">
+<ipe version="70218" creator="Ipe 7.2.28">
+<info created="D:20250121141253" modified="D:20250402132748" title="IPE Manual" author="Nicolas Luckert" numberpages="yes"/>
+<preamble>%Enter the information for your title page here:
+\newcommand{\fulltitle}{An Interactive and Introductory\\ IPE Tutorial} %Potentially break manually using \\
+\newcommand{\subtitle}{Basics of IPE \&amp; Creating Presentations}
+\newcommand{\name}{Algorithmics Chair of the University of Konstanz}
+\newcommand{\subject}{}
+\newcommand{\displayDate}{Apr 2025}
+
+\newcommand{\shorttitle}{IPE Tutorial}
+%Enter the information for the bottom bar here:
+\newcommand{\bottomleft}{\displayDate}
+\newcommand{\bottommiddle}{\shorttitle} 
+\newcommand{\bottomright}{Algorithmics @ Uni KN}</preamble>
+<bitmap id="1" width="380" height="242" BitsPerComponent="8" ColorSpace="DeviceRGBAlpha" Filter="FlateDecode" length="9634" alphaLength="5694" encoding="base64">
+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
+</bitmap>
+<bitmap id="3" width="28" height="28" BitsPerComponent="8" ColorSpace="DeviceRGB" Filter="FlateDecode" length="351" encoding="base64">
+eNr78GEUDBiYNHkyeRpfvXrV2tYeHRvX1z/h/fv3yFLKapqpaRkvXrwAst+9e9ffPwGorK29
+/fXr1/jNBBoI1AtBs2bNPnHiBNAcCIIIenr7PHz4cMbMmXBl7e0d+M2MjU+AKy4oLLp85UpX
+dw8EAUVU1LUam5qByvILCuHK4hIS8ZsJ9DJc8ZIlS5GlNLT15i9YAGEvWrQYrmzCxIn4zQQG
+FNDLQBd2dnUD/YgstWvXLjj76tVrQCuSU9Nmz54D1EJkZOXmAf1XhEsWKJWWnkFqArh48WJt
+XT1WKaAjtXT1zpw5Q8WESp4j4WDjpk137tyhriOzsrLRQpVCRwIBMH1OnjJlMIckMpg7d97N
+mzep60hg7nN193Rx8yCYDYkEb968MTO3gmRDMwtrIJdyM4GJH561gQjIpdxMYIlqbGYBMdDE
+zJJgaUkkOH78ODC6gQhYnI7Wd8MAAAA58OdQ
+</bitmap>
+<ipestyle name="algoKN_16_9">
+<symbol name="Background">
+<group>
+<path stroke="kn_seeblau" pen="thin">
+0 0 m
+1680 0 l
+</path>
+<group matrix="1 0 0 1 0 3.92508">
+<text matrix="1 0 0 1 -5.44807 -1.60517" transformations="translations" pos="5.44807 -36.4975" stroke="black" type="label" width="111.177" height="19.844" depth="5.665" valign="baseline" size="bottombar">\bottomleft</text>
+<text matrix="1 0 0 1 105.022 0.632654" transformations="translations" pos="734.978 -38.9333" stroke="black" type="label" width="140.244" height="19.8055" depth="0.44" halign="center" valign="baseline" size="bottombar">\bottommiddle</text>
+<text matrix="1 0 0 1 333.63 -12.8146" transformations="translations" pos="1346.37 -27.9721" stroke="black" type="label" width="279.394" height="20.24" depth="6.05" halign="right" valign="baseline" size="bottombar">\bottomright</text>
+</group>
+<image matrix="0.808331 0 0 0.808331 960.175 600.855" rect="697.48 294.237 982.52 475.763" bitmap="1"/>
+</group>
+</symbol>
+<symbol name="arrow/arc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/farc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="mark/circle(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</symbol>
+<symbol name="mark/disk(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+</path>
+</symbol>
+<symbol name="mark/fdisk(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+0.5 0 0 0.5 0 0 e
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</group>
+</symbol>
+<symbol name="mark/box(sx)" transformations="translations">
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</symbol>
+<symbol name="mark/square(sx)" transformations="translations">
+<path fill="sym-stroke">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+</path>
+</symbol>
+<symbol name="mark/fsquare(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+-0.5 -0.5 m
+0.5 -0.5 l
+0.5 0.5 l
+-0.5 0.5 l
+h
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="mark/cross(sx)" transformations="translations">
+<group>
+<path fill="sym-stroke">
+-0.43 -0.57 m
+0.57 0.43 l
+0.43 0.57 l
+-0.57 -0.43 l
+h
+</path>
+<path fill="sym-stroke">
+-0.43 0.57 m
+0.57 -0.43 l
+0.43 -0.57 l
+-0.57 0.43 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="arrow/fnormal(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/pointed(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fpointed(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/linear(spx)">
+<path stroke="sym-stroke" pen="sym-pen">
+-1 0.333 m
+0 0 l
+-1 -0.333 l
+</path>
+</symbol>
+<symbol name="arrow/fdouble(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/double(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="decoration/bigPeachBackground">
+<path matrix="1 0 0 1 0 -2" fill="kn_peach_35">
+65 235 m
+65 65 l
+335 65 l
+335 235 l
+h
+</path>
+</symbol>
+<symbol name="decoration/thightGreenBox">
+<path matrix="1 0 0 1 -3 -4" stroke="kn_seegruen">
+98 210 m
+98 98 l
+308 98 l
+308 210 l
+h
+</path>
+</symbol>
+<symbol name="decoration/thightBlueBox">
+<path matrix="1 0 0 1 -3 -4" stroke="kn_seeblau">
+98 210 m
+98 98 l
+308 98 l
+308 210 l
+h
+</path>
+</symbol>
+<symbol name="titlePage">
+<group>
+<path fill="white">
+-120 1000 m
+-120 -80 l
+1800 -80 l
+1800 1000 l
+h
+</path>
+<text matrix="1 0 0 1 -755.953 -43.641" transformations="translations" pos="786.786 478.364" stroke="black" type="minipage" width="1389.85" height="108.9" depth="81.62" valign="bottom" size="LARGE">\fulltitle</text>
+<text matrix="1 0 0 1 -755.953 -72.4319" transformations="translations" pos="786.786 478.364" stroke="kn_grau" type="minipage" width="1389.85" height="45.2705" depth="17.82" valign="top" size="large">\subtitle</text>
+<image matrix="1.0716 0 0 1.0716 707.67 447.314" rect="697.48 294.237 982.52 475.763" bitmap="1"/>
+<text matrix="1 0 0 1 -597.729 27.2001" transformations="translations" pos="628.562 236.281" stroke="kn_seeblau_65" type="label" width="1038.96" height="36.3715" depth="10.945" valign="top" size="small">\name</text>
+<text matrix="1 0 0 1 -887.279 61.6696" transformations="translations" pos="918.112 130.271" stroke="kn_seeblau_65" type="label" width="0" height="0" depth="0" valign="top" size="small">\subject</text>
+<path stroke="kn_seeblau" pen="thin">
+0 0 m
+1680 0 l
+</path>
+<text matrix="1 0 0 1 494.861 528.345" transformations="translations" pos="1007.1 190.466" stroke="black" type="label" width="111.177" height="19.844" depth="5.665" valign="baseline" size="tiny">\displayDate</text>
+</group>
+</symbol>
+<anglesize name="22.5 deg" value="22.5"/>
+<anglesize name="30 deg" value="30"/>
+<anglesize name="45 deg" value="45"/>
+<anglesize name="60 deg" value="60"/>
+<anglesize name="90 deg" value="90"/>
+<arrowsize name="large" value="40"/>
+<arrowsize name="normal" value="30"/>
+<arrowsize name="small" value="20"/>
+<arrowsize name="tiny" value="12"/>
+<color name="kn_bordeaux" value="0.557 0.125 0.263"/>
+<color name="kn_bordeaux_20" value="0.824 0.651 0.706"/>
+<color name="kn_bordeaux_35" value="0.737 0.478 0.561"/>
+<color name="kn_bordeaux_65" value="0.647 0.302 0.412"/>
+<color name="kn_bordeaux_d" value="0.467 0.078 0.204"/>
+<color name="kn_grau" value="0.451 0.471 0.494"/>
+<color name="kn_grau_20" value="0.882 0.886 0.898"/>
+<color name="kn_grau_35" value="0.722 0.737 0.757"/>
+<color name="kn_grau_65" value="0.604 0.627 0.655"/>
+<color name="kn_grau_d" value="0.302 0.314 0.329"/>
+<color name="kn_karpfenblau" value="0.243 0.329 0.588"/>
+<color name="kn_karpfenblau_20" value="0.706 0.737 0.839"/>
+<color name="kn_karpfenblau_35" value="0.51 0.565 0.733"/>
+<color name="kn_karpfenblau_65" value="0.345 0.42 0.643"/>
+<color name="kn_karpfenblau_d" value="0.196 0.263 0.463"/>
+<color name="kn_peach" value="0.996 0.627 0.565"/>
+<color name="kn_peach_20" value="0.996 0.886 0.867"/>
+<color name="kn_peach_35" value="0.996 0.812 0.78"/>
+<color name="kn_peach_65" value="1 0.722 0.675"/>
+<color name="kn_peach_d" value="1 0.557 0.482"/>
+<color name="kn_petrol" value="0.027 0.443 0.529"/>
+<color name="kn_petrol_20" value="0.612 0.776 0.812"/>
+<color name="kn_petrol_35" value="0.416 0.667 0.718"/>
+<color name="kn_petrol_65" value="0.224 0.553 0.624"/>
+<color name="kn_petrol_d" value="0.012 0.373 0.447"/>
+<color name="kn_pinky" value="0.878 0.376 0.494"/>
+<color name="kn_pinky_20" value="0.953 0.749 0.796"/>
+<color name="kn_pinky_35" value="0.925 0.627 0.698"/>
+<color name="kn_pinky_65" value="0.902 0.502 0.596"/>
+<color name="kn_pinky_d" value="0.792 0.29 0.408"/>
+<color name="kn_seeblau" value="0 0.663 0.878"/>
+<color name="kn_seeblau_20" value="0.8 0.933 0.976"/>
+<color name="kn_seeblau_35" value="0.651 0.882 0.957"/>
+<color name="kn_seeblau_65" value="0.349 0.78 0.922"/>
+<color name="kn_seeblau_d" value="0 0.557 0.808"/>
+<color name="kn_seegruen" value="0.039 0.565 0.525"/>
+<color name="kn_seegruen_20" value="0.443 0.82 0.8"/>
+<color name="kn_seegruen_35" value="0.329 0.749 0.718"/>
+<color name="kn_seegruen_65" value="0.039 0.639 0.596"/>
+<color name="kn_seegruen_d" value="0.024 0.494 0.475"/>
+<color name="kn_signal_green" value="0.486 0.792 0.537"/>
+<color name="kn_signal_red" value="0.816 0.082 0.337"/>
+<color name="kn_signal_yellow" value="0.937 0.863 0.376"/>
+<dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
+<dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
+<dashstyle name="dashed" value="[4] 0"/>
+<dashstyle name="dense dashed" value="[8 3] 0"/>
+<dashstyle name="dense dotted" value="[1 1.5] 0"/>
+<dashstyle name="dotted" value="[1 3] 0"/>
+<dashstyle name="long dash dotted" value="[12 6 1 6] 0"/>
+<dashstyle name="long dashed" value="[12] 0"/>
+<gridsize name="10 pts (~3.5 mm)" value="10"/>
+<gridsize name="14 pts (~5 mm)" value="14"/>
+<gridsize name="16 pts (~6 mm)" value="16"/>
+<gridsize name="20 pts (~7 mm)" value="20"/>
+<gridsize name="28 pts (~10 mm)" value="28"/>
+<gridsize name="32 pts (~12 mm)" value="32"/>
+<gridsize name="56 pts (~20 mm)" value="56"/>
+<opacity name="10%" value="0.1"/>
+<opacity name="20%" value="0.2"/>
+<opacity name="30%" value="0.3"/>
+<opacity name="40%" value="0.4"/>
+<opacity name="50%" value="0.5"/>
+<opacity name="60%" value="0.6"/>
+<opacity name="70%" value="0.7"/>
+<opacity name="80%" value="0.8"/>
+<opacity name="90%" value="0.9"/>
+<pen name="fat" value="8.4"/>
+<pen name="heavier" value="5.6"/>
+<pen name="normal" value="3.2"/>
+<pen name="thin" value="2"/>
+<pen name="ultrafat" value="15"/>
+<pen name="ultrathin" value="1"/>
+<symbolsize name="large" value="30"/>
+<symbolsize name="normal" value="18"/>
+<symbolsize name="small" value="12"/>
+<symbolsize name="tiny" value="7"/>
+<textsize name="Huge" value="\Huge"/>
+<textsize name="LARGE" value="\LARGE"/>
+<textsize name="Large" value="\Large"/>
+<textsize name="bottombar" value="\tiny"/>
+<textsize name="footnote" value="\footnotesize"/>
+<textsize name="huge" value="\huge"/>
+<textsize name="large" value="\large"/>
+<textsize name="normal" value="\normalsize"/>
+<textsize name="script" value="\scriptsize"/>
+<textsize name="small" value="\small"/>
+<textsize name="tiny" value="\tiny"/>
+<textsize name="title" value="\Large"/>
+<textstretch name="Huge" value="5.5"/>
+<textstretch name="LARGE" value="5.5"/>
+<textstretch name="Large" value="5.5"/>
+<textstretch name="bottombar" value="5.5"/>
+<textstretch name="footnote" value="5.5"/>
+<textstretch name="huge" value="5.5"/>
+<textstretch name="large" value="5.5"/>
+<textstretch name="normal" value="5.5"/>
+<textstretch name="script" value="5.5"/>
+<textstretch name="small" value="5.5"/>
+<textstretch name="tiny" value="5.5"/>
+<textstretch name="title" value="5.5"/>
+<textstyle name="center" begin="\begin{center}" end="\end{center}"/>
+<textstyle name="enumerate" begin="\begin{flushleft}\begin{enumerate}[I.]" end="\end{enumerate}\end{flushleft}"/>
+<textstyle name="item" begin="\begin{flushleft}\begin{itemize}\item{}" end="\end{itemize}\end{flushleft}"/>
+<textstyle name="itemize" begin="\begin{flushleft}\begin{itemize}[itemsep=2pt]" end="\end{itemize}\end{flushleft}"/>
+<textstyle name="normal" begin="\begin{flushleft}" end="\end{flushleft}"/>
+<textstyle name="subheadline" begin="\textbf{\textcolor{kn_seeblau_65}{" end="}}"/>
+<preamble>
+% default font Arial like
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% use seeblau en-dash as default itemize item
+\def\labelitemi{\textcolor{kn_seeblau}{--}}
+
+% make underline seeblau
+\usepackage{soul}
+\setulcolor{kn_seeblau}
+\setul{2.5pt}{0.125ex}
+
+% custom commands: 
+% &apos;subheader&apos; for topic divisions on the same page
+\newcommand{\subheader}[1]{\textbf{\textcolor{kn_seeblau_65}{#1}}}
+% &apos;define&apos; for new key terms
+\newcommand{\define}[1]{\emph{\ul{#1}}}
+
+% useful packages
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage[shortlabels]{enumitem}
+\usepackage[linesnumbered, ruled, vlined]{algorithm2e}
+\SetKw{KwAnd}{and}
+\SetKw{KwOr}{or}
+\SetKw{KwReturn}{return}
+\DontPrintSemicolon
+
+% Copied from default presentation style sheet
+\renewcommand\rmdefault{cmss}
+\makeatletter
+\leftmargini 1.5em
+\leftmargin \leftmargini
+\leftmarginii  1.2em
+\leftmarginiii 1em
+\def\@listI{\leftmargin\leftmargini
+            \parsep \z@
+	    \partopsep 3pt
+	    \topsep \z@
+            \itemsep \z@}
+\@listI
+\def\@listii {\leftmargin\leftmarginii
+              \labelwidth\leftmarginii
+              \advance\labelwidth-\labelsep
+              \topsep    \z@
+              \parsep    \z@
+              \itemsep   \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+              \labelwidth\leftmarginiii
+              \advance\labelwidth-\labelsep
+              \topsep    \z@
+              \parsep    \z@
+              \partopsep \z@
+              \itemsep   \topsep}
+\makeatother
+</preamble>
+<layout paper="1920 1080" origin="120 80" frame="1680 770" skip="32" crop="no"/>
+<pagenumberstyle pos="1700.5 913.9" color="0" size="bottombar" valign="baseline">
+  \ipeNumber{\arabic{ipePage}}{\arabic{ipePage}\alph{ipeView}} 
+</pagenumberstyle>
+<titlestyle pos="0 860" size="title" color="kn_seeblau"  valign="baseline"/>
+<tiling name="falling" angle="-60" step="12" width="3"/>
+<tiling name="rising" angle="30" step="12" width="3"/>
+</ipestyle>
+<page>
+<layer name="alpha"/>
+<layer name="beta"/>
+<view layers="alpha" active="alpha"/>
+<view layers="alpha beta" active="beta"/>
+<use layer="alpha" name="titlePage"/>
+<text matrix="-2.32968 0 0 -22.7932 4554.68 4844.4" transformations="translations" pos="1536 208" stroke="kn_grau" type="label" width="703.714" height="39.6275" depth="12.155" valign="baseline">To go to the next page, press</text>
+<text matrix="1 0 0 1 1105.76 -107.218" transformations="translations" pos="368 144" stroke="kn_seegruen" type="label" width="206.245" height="39.6275" depth="12.155" valign="baseline">PgDown</text>
+<text layer="beta" matrix="1.48643 0.449035 -0.762606 1.46873 -581.391 -805.936" transformations="rigid" pos="1388.84 298.717" stroke="kn_grau" type="minipage" width="538.226" height="75.625" depth="48.29" valign="baseline" size="script">Action instructions are in grey, \\shortcuts will be shown \\in \textcolor{kn_seegruen}{seegrün}</text>
+<path stroke="kn_seegruen" arrow="normal/normal">
+1451.28 281.105 m
+1558.55 220.265
+1661.02 249.084
+1736.27 172.234
+1745.87 90.5802
+1701.04 61.7613 c
+</path>
+</page>
+<page section="What is IPE and why you should use it!">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 0 -352" pin="h" transformations="translations" pos="0 770" stroke="kn_seeblau" type="minipage" width="1680" height="58.036" depth="30.635" valign="top" size="LARGE">What is IPE and why you should use it!</text>
+<text matrix="1 0 0 1 -1392 -59.2178" transformations="translations" pos="1392 96" stroke="kn_seegruen" type="label" width="137.038" height="39.6275" depth="12.155" valign="baseline">PgUp</text>
+<text matrix="-2.32968 0 0 -22.7932 3578.39 4844.4" transformations="translations" pos="1536 208" stroke="kn_grau" type="label" width="807.224" height="39.6275" depth="12.155" valign="baseline">To go to the previous page, press</text>
+</page>
+<page title="What is IPE?" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="187.154" depth="160.05" valign="top" style="itemize">\item At its core, IPE is a drawing editor
+\item It can be used to \ul{create professional figures} (e.g. for a thesis)
+\item \ul{Presentations} like this one (or for your seminar/colloquium...or Prof. Storandt&apos;s lecture slides) can easily be created as well
+\item IPE is a tool specifically aimed at the scientific community</text>
+<group>
+<text matrix="1 0 0 1 -389.893 -6.4042" transformations="translations" pos="663.564 258.69" stroke="kn_grau" type="minipage" width="1073.85" height="66.8085" depth="39.435" valign="baseline">Annoyed by the grid and green boxes?\\
+Press</text>
+<text matrix="1 0 0 1 -92.098 -5.54509" transformations="translations" pos="798.052 226.669" stroke="kn_grau" type="label" width="560.758" height="40.4195" depth="12.155" valign="baseline">to toggle the grid on/off</text>
+<text matrix="1 0 0 1 -130.523 -17.9877" transformations="translations" pos="836.477 172.234" stroke="kn_grau" type="label" width="700.375" height="39.6275" depth="12.155" valign="baseline">to toggle the bounding boxes</text>
+<text matrix="1 0 0 1 74.1873 19.2126" transformations="translations" pos="433.013 196.249" stroke="kn_seegruen" type="label" width="94.4075" height="39.589" depth="0" valign="baseline">F12</text>
+<text matrix="1 0 0 1 -7.24243 33.622" transformations="translations" pos="455.427 114.596" stroke="kn_seegruen" type="label" width="212.438" height="40.4085" depth="0.88" valign="baseline">Ctrl+F12</text>
+</group>
+</page>
+<page title="What makes IPE so useful" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<layer name="gamma"/>
+<view layers="alpha" active="alpha"/>
+<view layers="alpha beta" active="beta"/>
+<view layers="gamma" active="gamma"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="255.794" depth="228.91" valign="top" style="itemize">\item IPE not only features useful drawing tools and snapping modes, but also has \ul{full \LaTeX $\ $support!}
+\item Any text or label you add to your figures and presentations is interpreteted as \LaTeX \ text
+\item This means that, for example, adding \ul{equations} like \\$\sum_{i=1}^nn^2 =$ ? (I forgot the formula) is easy
+\item Same goes for \ul{pseudocode}:</text>
+<text matrix="1 0 0 1 -979.842 -95.3504" transformations="translations" pos="1065.43 257.089" stroke="black" type="minipage" width="658.425" height="100.617" depth="73.37" valign="baseline">\For{$i = 1 \ldots n$}
+{
+      $sum = sum + i^2$
+}
+\KwReturn{sum}</text>
+<text layer="beta" matrix="0.997978 -0.0635609 0.0635609 0.997978 -286.08 33.0785" transformations="rigid" pos="1143.88 228.27" stroke="kn_grau" type="minipage" width="752.831" height="139.568" depth="112.42" valign="baseline" size="footnote">Check it out yourself: Select (\textcolor{kn_seegruen}{S} for selection mode) the list with the \textcolor{kn_seegruen}{left mouse}, go to the \emph{context menu} with the \textcolor{kn_seegruen}{right mouse} and select \emph{Edit text}.\\
+See the \LaTeX \ commands?</text>
+<text layer="gamma" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="214.588" depth="187.55" valign="top" style="itemize">\item Basically, with IPE you get the \ul{power for scientific notation} and tools provided by \LaTeX
+\item But at the same time, also the \ul{ease of visual arrangement} and tuning that drawing programs offer
+\item For presentations, IPE is sort of a sweetspot between Latex Beamer and Powerpoint</text>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="164.036 218.664" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="196.057 143.415" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="295.322 249.084" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="354.561 188.244" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="425.007 100.187" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="312.934 85.7771" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -179.318 -1.60105" name="mark/disk(sx)" pos="216.871 295.515" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+164.036 218.664 m
+216.871 295.515 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+216.871 295.515 m
+295.322 249.084 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+196.057 143.415 m
+164.036 218.664 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+164.036 218.664 m
+354.561 188.244 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+216.871 295.515 m
+312.934 85.7771 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+196.057 143.415 m
+425.007 100.187 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+425.007 100.187 m
+354.561 188.244 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+354.561 188.244 m
+312.934 85.7771 l
+</path>
+<path matrix="1 0 0 1 -179.318 -1.60105" stroke="black">
+196.057 143.415 m
+295.322 249.084 l
+</path>
+<text matrix="1 0 0 1 -403.464 3.2021" transformations="translations" pos="546.687 253.887" stroke="black" type="minipage" width="731.614" height="60.423" depth="33.055" valign="baseline" size="footnote">Try making this graph quickly with tikz\\
+or moving things to the right place</text>
+<text matrix="1 0 0 1 172.913 -142.493" transformations="translations" pos="1065.43 257.089" stroke="black" type="minipage" width="520.735" height="100.617" depth="73.37" valign="baseline">\For{$i = 1 \ldots n$}
+{
+      $sum = sum + i^2$
+}
+\KwReturn{sum}</text>
+<text matrix="1 0 0 1 475.512 12.8088" transformations="translations" pos="546.687 253.887" stroke="black" type="minipage" width="515.472" height="60.445" depth="33.055" valign="baseline" size="footnote">Or adding pseudocode or equations in PowerPoint</text>
+<text matrix="1 0 0 1 8.00525 35.2231" transformations="translations" pos="444.22 68.1655" stroke="kn_peach" type="label" width="590.837" height="39.6" depth="11.715" valign="baseline">With IPE, both are easy!</text>
+</page>
+<page title="Other cool properties of IPE" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="149.05" depth="121.88" valign="top" style="itemize">\item IPE is super \ul{extensible} and \ul{configureable}:
+\item New functionality can be added by writing Lua scripts
+\item Style sheets allow defining colors, symbols, background templates and many more, and can be easily modified</text>
+<text matrix="1 0 0 1 0 -15.21" pin="h" transformations="translations" pos="0 467.07" stroke="black" type="minipage" width="1680" height="110.511" depth="83.27" valign="top" style="itemize">\item IPE produces PDF documents and any PDF that was created by IPE can be opened in it and modified (like this tutorial)
+\item You can steal other people&apos;s style sheets</text>
+<text matrix="1 0 0 1 0 -30.4199" pin="h" transformations="translations" pos="0 241.288" stroke="black" type="minipage" width="1680" height="80.454" depth="53.13" valign="top" style="itemize">\item IPE is actually quite \ul{intuitive} and \ul{easy to use}
+\item Many \ul{shortcuts} for fast editing</text>
+</page>
+<page title="Compilation" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="280.423" depth="253.55" valign="top" style="itemize">\item IPE needs to compile \LaTeX. There are two options:
+\item You have the option to let IPE \ul{compile online} which requires no local  \LaTeX \ distribution. Internet connection is obviously required and your text will be forwarded to the compilation service.
+\item If you have a \LaTeX \ distribution installed \ul{on your machine}, it can be used. This can be helpful if you want to use IPE in places where you don&apos;t have internet connection. You need to ensure that your installation has all packages used by the file you are editing.</text>
+<text matrix="1 0 0 1 0 -14.3889" pin="h" transformations="translations" pos="0 204.027" stroke="kn_grau" type="minipage" width="1680" height="86.4105" depth="59.125" valign="top" size="footnote">To switch between these option, go to the \emph{Help} tab and select \emph{Enable online Latex-compilation}. In the dialogue you can either enable or disable it, depending on what you are currently using.</text>
+</page>
+<page section="Basics of using IPE">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 0 -352" pin="h" transformations="translations" pos="0 770" stroke="kn_seeblau" type="minipage" width="1680" height="58.828" depth="31.405" valign="top" size="LARGE">Basics of using IPE</text>
+</page>
+<page title="Moving around" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="176.836" depth="149.71" valign="top" style="itemize">\item Using \textcolor{kn_seegruen}{Ctrl+Zoom} (Mousewheel/Touchpad) is the most standard way to get your page where and how close you need it
+\item The cursor is used as a reference point for zooming into/out of, so e.g. zooming in to the left of the page will make the page go to the right (you&apos;ll get it, it&apos;s similar to other drawing programs)</text>
+<text matrix="1 0 0 1 0 -16" pin="h" transformations="translations" pos="0 411.454" stroke="black" type="minipage" width="1680" height="138.16" depth="110.99" valign="top" style="itemize">\item If you&apos;re lost, pressing \textcolor{kn_seegruen}{x} centers on the location of the cursor by panning
+\item If you&apos;re totally lost, pressing  \textcolor{kn_seegruen}{\textbackslash} (backslash) fits the page to your view</text>
+<text matrix="1 0 0 1 0 -112" pin="h" transformations="translations" pos="0 229.485" stroke="kn_grau" type="minipage" width="1680" height="60.61" depth="33.22" valign="top" size="footnote">Try it! Zoom out with the cursor to the left of the page, then center on it by pressing x and then zoom in again.</text>
+</page>
+<page title="Selecting" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="110.781" depth="83.49" valign="top" style="itemize">\item Selecting in IPE can be a bit tricky, but first go to Selection mode by pressing  \textcolor{kn_seegruen}{S}
+\item Objects are selected with the \textcolor{kn_seegruen}{Left Mouse}</text>
+<text pin="h" transformations="translations" pos="0 543.729" stroke="black" type="minipage" width="1680" height="72.6495" depth="45.32" valign="top" style="item">Important: IPE only considers an \ul{object&apos;s border} for selecting which is why enabling the green boxes (\textcolor{kn_seegruen}{Ctrl+F12}) is helpful</text>
+<path matrix="1 0 0 1 384 32" stroke="kn_pinky" fill="kn_seeblau_20" pen="fat">
+1024 384 m
+1024 192 l
+1360 192 l
+1360 384 l
+h
+</path>
+<text matrix="1 0 0 1 -528 30.915" transformations="translations" pos="464 336" stroke="kn_grau" type="minipage" width="1456" height="60.61" depth="33.22" valign="top" size="footnote">Try selecting this rectangle by clicking in the middle of it. Nothing happens.\\
+Now try selecting by clicking on or close to the pink border. Works.</text>
+<text matrix="1 0 0 1 0 35.1718" pin="h" transformations="translations" pos="0 157.511" stroke="black" type="minipage" width="1680" height="105.298" depth="77.99" valign="top" style="item">Deselecting works by clicking somewhere where there is no object (e.g. off the page) or by selecting the same object again while holding down  \textcolor{kn_seegruen}{Shift}</text>
+<text matrix="1 0 0 1 49.0214 30.4141" transformations="translations" pos="816 32" stroke="kn_grau" type="minipage" width="608" height="34.6225" depth="7.15" valign="top" size="footnote">(Now deselect the rectangle)</text>
+</page>
+<page title="Further selection tricks" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<view layers="alpha" active="alpha"/>
+<view layers="beta" active="beta"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="72.4625" depth="45.1" valign="top" style="item">As common in other programs, while holding down  \textcolor{kn_seegruen}{Shift}, you can select multiple objects</text>
+<text matrix="1 0 0 1 0 -321.935" pin="h" transformations="translations" pos="0 620.438" stroke="black" type="minipage" width="1680" height="72.6495" depth="45.32" valign="top" style="item">If multiple objects are close, selecting the right one may require  \textcolor{kn_seegruen}{holding down the left mouse} and tabbing through them with  \textcolor{kn_seegruen}{Space}</text>
+<text layer="beta" matrix="1 0 0 1 0 331.25" pin="h" transformations="translations" pos="0 438.75" stroke="black" type="minipage" width="1680" height="209.292" depth="182.325" valign="top" style="itemize">\item You can also select (multiple) objects by making a box through holding down the left mouse button and moving it
+\item If you go from left to right, it selects all objects \ul{entirely contained} in the box
+\item But if you go from right to left, it selects all objects that \ul{intersect} the box</text>
+<path layer="alpha" matrix="1 0 0 1 258.5 39.6472" stroke="black" fill="kn_peach">
+61.8497 0 0 61.8497 504.864 551.097 e
+</path>
+<path matrix="1 0 0 1 183.963 -82.4662" stroke="black" fill="kn_petrol">
+706.272 736.646 m
+706.272 603.432 l
+833.143 603.432 l
+833.143 736.646 l
+h
+</path>
+<path matrix="1 0 0 1 63.4356 39.6472" stroke="black" fill="kn_seeblau_35">
+1017.11 593.916 m
+1085.3 509.864 l
+1399.31 514.622 l
+1331.11 598.674 l
+h
+</path>
+<path matrix="1 0 0 1 1452.67 22.2024" stroke="black" fill="kn_bordeaux">
+132.18 506.693 m
+46.5422 587.573 l
+117.907 624.048 l
+201.959 562.199 l
+168.656 503.521 l
+129.008 568.542 l
+155.969 479.732 l
+h
+</path>
+<text matrix="1 0 0 1 -122.113 39.6472" transformations="translations" pos="151.211 566.956" stroke="kn_grau" type="minipage" width="647.043" height="34.1" depth="6.71" valign="top" size="footnote">Here are some practice objects:</text>
+<text matrix="1 0 0 1 0 431.362" pin="h" transformations="translations" pos="0 42.278" stroke="black" type="minipage" width="1680" height="75.2125" depth="47.85" valign="top" style="item">You&apos;ll notice one object of a selected group (last selected) has a different outline. This is the \ul{reference object} for aligning etc.</text>
+<text matrix="1 0 0 1 -128.885 17.4162" transformations="translations" pos="251.22 102.469" stroke="kn_grau" type="minipage" width="814.222" height="34.441" depth="6.985" valign="top" size="footnote">Try selecting the red vertex in this graph:</text>
+<use matrix="1 0 0 1 305.692 3.17178" name="mark/disk(sx)" pos="704 128" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 305.692 3.17178" name="mark/disk(sx)" pos="1040 144" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 305.692 3.17178" name="mark/disk(sx)" pos="1120 48" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 305.692 3.17178" stroke="black" fill="kn_bordeaux">
+704 128 m
+896 64 l
+</path>
+<path matrix="1 0 0 1 305.692 3.17178" stroke="black" fill="kn_bordeaux">
+896 64 m
+1040 144 l
+</path>
+<path matrix="1 0 0 1 305.692 3.17178" stroke="black" fill="kn_bordeaux">
+896 64 m
+1120 48 l
+</path>
+<use matrix="1 0 0 1 305.692 3.17178" name="mark/disk(sx)" pos="896 64" size="normal" stroke="kn_signal_red"/>
+<path layer="beta" stroke="black" fill="kn_bordeaux">
+773.045 253.859 m
+773.045 124.462 l
+918.31 124.462 l
+918.31 253.859 l
+h
+</path>
+<path stroke="black" fill="kn_karpfenblau">
+649.752 301.467 m
+649.752 154.98 l
+820.653 154.98 l
+820.653 301.467 l
+h
+</path>
+<path matrix="1 0 0 1 -106.203 -51.2703" stroke="black" fill="kn_peach">
+998.878 389.359 m
+998.878 236.769 l
+1106.3 236.769 l
+1106.3 389.359 l
+h
+</path>
+<path matrix="1 0 0 1 68.3604 -4.88288" stroke="black" fill="kn_seeblau_35">
+560.639 137.89 m
+560.639 14.5974 l
+730.319 14.5974 l
+730.319 137.89 l
+h
+</path>
+<path matrix="1 0 0 1 241.703 7.32432" stroke="black" fill="kn_petrol">
+482.513 374.71 m
+482.513 235.548 l
+624.117 235.548 l
+624.117 374.71 l
+h
+</path>
+<path matrix="1 0 0 1 -98.8784 -28.0766" stroke="black" fill="kn_pinky_20">
+962.256 183.057 m
+962.256 52.4397 l
+1124.61 52.4397 l
+1124.61 183.057 l
+h
+</path>
+<text matrix="1 0 0 1 -258.793 98.8784" transformations="translations" pos="288.418 194.043" stroke="kn_grau" type="minipage" width="507.82" height="112.112" depth="84.865" valign="top" size="footnote">Try selecting only the blue-green-ish rectangles on the left using these techniques</text>
+<text matrix="1 0 0 1 897.23 125.529" transformations="translations" pos="288.418 194.043" stroke="kn_grau" type="minipage" width="465.095" height="138.738" depth="111.54" valign="top" size="footnote">Or only the dark blue plus both red-ish ones (forming the diagonal from top left to bottom right)</text>
+</page>
+<page title="Drawing shapes" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<layer name="gamma"/>
+<view layers="alpha" active="alpha"/>
+<view layers="alpha beta" active="alpha"/>
+<view layers="alpha beta gamma" active="gamma"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="286.099" depth="259.27" valign="top" style="itemize">\item You can draw a bunch of different shapes using the tools in the top bar
+\item Shapes are each defined by a characteristic set of \ul{control points} which are placed with the \textcolor{kn_seegruen}{Left Mouse}
+\item \textcolor{kn_seegruen}{Shift} may act as a modifier (e.g. for making squares with the rectangle tool)
+\item The control points of  lines can be undone by pressing \textcolor{kn_seegruen}{Del} and lines are finished using a \textcolor{kn_seegruen}{double-click}</text>
+<text matrix="1 0 0 1 156.252 67.1396" transformations="translations" pos="506.928 104.931" stroke="kn_grau" type="minipage" width="599.374" height="34.419" depth="6.985" valign="top" size="footnote">Draw your favorite shape here:</text>
+<text layer="beta" matrix="1 0 0 1 194.094 1.22069" transformations="translations" pos="506.928 104.931" stroke="kn_grau" type="minipage" width="518.806" height="60.423" depth="33.055" valign="top" size="footnote" style="center">Now delete it, by selecting it and pressing \textcolor{kn_seegruen}{Del}!!</text>
+<text layer="gamma" matrix="1 0 0 1 -1191.42 10.4703" transformations="translations" pos="1180.77 37.7911" stroke="kn_grau" type="label" width="638.544" height="32.032" depth="16.555" valign="baseline" size="footnote">(This is how you \ul{delete} anything)</text>
+<path stroke="kn_grau" arrow="normal/small">
+643.648 60.9848 m
+679.049 34.1289
+730.319 39.0118 c
+</path>
+<path layer="alpha" stroke="kn_grau" pen="thin">
+1278.42 275.832 m
+1278.42 23.1424 l
+1676.38 23.1424 l
+1676.38 275.832 l
+h
+</path>
+</page>
+<page title="Object properties" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 0 -0.00028352" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="176.429" depth="149.325" valign="top" style="itemize">\item Your new object gets the \ul{properties} that are currently displayed on the left
+\item To change your object, either select it and then change the properties on the left or go to the context menu with \textcolor{kn_seegruen}{Right Mouse} and change it there</text>
+<path matrix="1 0 0 1 124.514 -7.32432" stroke="black" fill="kn_seeblau_35">
+705.905 143.994 m
+824.315 320.998 l
+932.959 146.435 l
+1050.15 259.962 l
+1109.96 202.588 l
+1310.16 405.228 l
+</path>
+<text matrix="1 0 0 1 41.5045 -47.6081" transformations="translations" pos="118.738 383.255" stroke="kn_grau" type="minipage" width="582.284" height="108.235" depth="80.96" valign="top" size="footnote">Change this object&apos;s properties to make it a fat green line (no fill) with a large forward arrow</text>
+</page>
+<page title="Translate, rotate, stretch" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="116.215" depth="88.99" valign="top" style="itemize">\item Move objects around by going to Translating mode by pressing \textcolor{kn_seegruen}{T}
+\item Rotate objects in Rotating mode: \textcolor{kn_seegruen}{R}
+\item Make objects bigger/smaller/stretch them in Stretching mode: \textcolor{kn_seegruen}{E}</text>
+<text matrix="1 0 0 1 0 275.883" pin="h" transformations="translations" pos="0 250.562" stroke="black" type="minipage" width="1680" height="181.913" depth="154.825" valign="top" style="itemize">\item \textcolor{kn_seegruen}{Shift} acts as a modifier: 
+\item When translating, it allows moving either horizontally or vertically, but not both
+\item When stretching, it actually scales the object, keeping its proportions</text>
+<path matrix="0.325748 0 0 0.325748 115.533 81.8212" stroke="black" fill="kn_pinky_20">
+141.932 156.201 m
+141.932 35.3497 l
+262.783 35.3497 l
+262.783 156.201 l
+h
+</path>
+<text matrix="1 0 0 1 -107.423 56.045" transformations="translations" pos="1389.51 133.007" stroke="kn_grau" type="minipage" width="367.438" height="81.8895" depth="54.615" valign="top" size="footnote">Make the pink square over there cover this blue one</text>
+<path matrix="-0.695678 0.718354 -0.718354 -0.695678 2045.95 -682.822" stroke="kn_grau" fill="kn_seeblau_35">
+1130.72 148.877 m
+1130.72 14.5974 l
+1265 14.5974 l
+1265 148.877 l
+h
+</path>
+</page>
+<page title="Snapping" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<layer name="gamma"/>
+<view layers="alpha" active="alpha"/>
+<view layers="beta" active="beta"/>
+<view layers="gamma" active="gamma"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="99.836" depth="72.6" valign="top" style="item">IPE offers a couple of snapping modes that are very useful for making nice-looking figures. They can be toggled at the very top left or via shortcuts</text>
+<text matrix="1 0 0 1 0 -18.3108" pin="h" transformations="translations" pos="0 565.564" stroke="black" type="minipage" width="1680" height="105.27" depth="77.99" valign="top" style="item">Use \ul{grid snapping} (\textcolor{kn_seegruen}{F7}) to aid making regular alignments
+\item You can change the grid size in the middle of the top toolbar (where it says &apos;xy&apos; pts)</text>
+<path stroke="black" pen="thin" cap="1">
+1280.86 511.431 m
+1280.86 511.431 l
+</path>
+<path stroke="black" fill="kn_petrol" pen="thin">
+1008 224 m
+1008 112 l
+1120 112 l
+1120 224 l
+h
+</path>
+<text matrix="1 0 0 1 -72.0225 42.7937" transformations="translations" pos="140 224" stroke="kn_grau" type="minipage" width="887.366" height="112.579" depth="85.36" valign="top" size="footnote">Use grid snapping to make a new square of equal size to the green one, spaced exactly one such square size apart to the right (you may have to change grid size)</text>
+<text layer="beta" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="214.967" depth="187.935" valign="top" style="itemize">\item \ul{Vertex snapping} (\textcolor{kn_seegruen}{F4}) allows snapping to end points or corners of shapes
+\item \ul{Control point snapping} (\textcolor{kn_seegruen}{Shift + F4}) allows snapping to the points that were used to make a shape
+\item \ul{Boundary snapping} (\textcolor{kn_seegruen}{F5}) allows snapping to continuous boundarys (edges) of objects or the page&apos;s frame</text>
+<text layer="gamma" matrix="1 0 0 1 91.4912 452.118" transformations="translations" pos="91.3198 219.505" stroke="kn_grau" type="minipage" width="1314.38" height="229.141" depth="202.18" valign="top" size="script" style="enumerate">\item Select your favorite color in the top color property field (stroke color)
+\item Trace parts of the arc of the circle at the bottom with a circular arc (\textcolor{kn_seegruen}{A}). Select the circle center first (control point snapping), then two points on the boundary (boundary snapping)
+\item Now create a line (\textcolor{kn_seegruen}{P}) that goes from one end of the arc you just created (vertex snapping) to the circle&apos;s center and then to the arc&apos;s other end
+\item Select both, the arc and the wedge shaped line, right click and then select \emph{Join paths}
+\item Give your new shape a fill (if it doesn&apos;t have one already) and your result should look something like the one on the left (label optional)</text>
+<path matrix="1 0 0 1 -287.09 22.8409" stroke="black" pen="thin">
+81.8884 0 0 81.8884 1127.09 103.878 e
+</path>
+<text matrix="1 0 0 1 0 798.432" pin="h" transformations="translations" pos="0 -28.5998" stroke="black" type="minipage" width="1680" height="39.842" depth="12.375" valign="top" style="itemize">\item Let&apos;s use these snapping modes to make a cool figure!</text>
+<path matrix="1 0 0 1 -287.09 22.8409" stroke="black" pen="thin">
+81.8884 0 0 81.8884 1127.09 103.878 e
+</path>
+<path matrix="1 0 0 1 -1061.37 352.085" stroke="black" pen="thin">
+81.8884 0 0 81.8884 1127.09 103.878 e
+</path>
+<path matrix="1 0 0 1 -1427.79 295.273" stroke="kn_peach_d" fill="kn_peach_20">
+1575.36 163.34 m
+81.8884 0 0 81.8884 1493.51 160.689 1497.3 242.49 a
+1493.51 160.689 l
+h
+</path>
+<text matrix="1 0 0 1 -16.1696 -8.87781" transformations="translations" pos="100.487 485.504" stroke="kn_peach_d" type="label" width="35.255" height="23.5895" depth="0" valign="baseline" style="math">\alpha</text>
+</page>
+<page title="Text objects" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<view layers="alpha" active="alpha"/>
+<view layers="beta" active="beta"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="39.9795" depth="12.595" valign="top" style="item">There are multiple ways to add text to your figures/presentations:</text>
+<text matrix="1 0 0 1 0 -6.34356" pin="h" transformations="translations" pos="0 685.426" stroke="black" type="minipage" width="1680" height="138.16" depth="110.99" valign="top" style="itemize">\item A \ul{text label} (\textcolor{kn_seegruen}{L}) is the simplest, creating a text object that fits to its content&apos;s width (typically one line)
+\item For multiple lines in a label, change its \emph{Type} to `minipage&apos; in the context menu and use manual line breaks</text>
+<text matrix="1 0 0 1 0 -126.085" pin="h" transformations="translations" pos="0 508.958" stroke="black" type="minipage" width="1680" height="110.973" depth="83.71" valign="top" style="itemize">\item For a \ul{paragraph} (\textcolor{kn_seegruen}{L}), you can manually define its width and text will be broken into lines automatically according to the width
+\item Changing the width is possible through the context menu</text>
+<text matrix="1 0 0 1 0 -11.1012" pin="h" transformations="translations" pos="0 152.231" stroke="black" type="minipage" width="1680" height="72.6495" depth="45.32" valign="top" style="item">Mainly for presentations, a \ul{text box} (\textcolor{kn_seegruen}{F10}) inserts a text object that spans the entire page frame below the lowest text on the page</text>
+<text layer="beta" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="116.215" depth="88.99" valign="top" style="itemize">\item All text objects have two options:
+\item The \emph{Style} defines the environment, e.g. math, itemize etc.
+\item The \emph{Size}...well, you can guess</text>
+<text matrix="0.969199 0.246278 -0.246278 0.969199 76.247 -112.22" transformations="rigid" pos="172.773 450.18" stroke="kn_grau" type="minipage" width="628.012" height="60.61" depth="33.22" valign="top" size="footnote">Feel free to try creating labels, paragraphs or text boxes here</text>
+<text matrix="1 0 0 1 15.8589 12.6871" transformations="translations" pos="994.263 499.343" stroke="kn_grau" type="minipage" width="607.395" height="97.658" depth="70.4" valign="top" size="script">If you want to rotate a label or paragraph, you need to change its \emph{Transformation} to `rigid&apos; first through the context menu</text>
+<path stroke="kn_grau" arrow="normal/normal">
+975.233 440.665 m
+848.361 332.825
+627.923 364.542 c
+</path>
+</page>
+<page title="Aligning" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="149.435" depth="122.32" valign="top" style="itemize">\item Options for \ul{aligning and distributing} objects can be found under \emph{Ipelets $&gt;$ Align \&amp; distribute}
+\item Objects are moved to align with the reference object
+\item Logical shortcuts for aligning use the modifier \textcolor{kn_seegruen}{Shift} and:</text>
+<text matrix="1 0 0 1 -16 -66.6667" transformations="translations" pos="128 528" stroke="black" type="minipage" width="1408" height="217.789" depth="190.85" valign="top" size="small">\textcolor{kn_seegruen}{T} for aligning at the top\\
+\textcolor{kn_seegruen}{B} for aligning at the bottom\\
+\textcolor{kn_seegruen}{L} for aligning on the left side\\
+\textcolor{kn_seegruen}{R} for aligning on the right side\\
+\textcolor{kn_seegruen}{C} for aligning the center points\\
+\textcolor{kn_seegruen}{V} for aligning vertical center points\\
+\textcolor{kn_seegruen}{H} for aligning horizontal center points\\</text>
+<path matrix="1 0 0 1 10.2778 -90.4444" stroke="black" fill="kn_seeblau_35">
+1138.06 368.889 m
+1138.06 262 l
+1257.28 262 l
+1257.28 368.889 l
+h
+</path>
+<path matrix="1 0 0 1 4.11111 -28.7778" stroke="black" fill="kn_pinky_35">
+1337.44 268.167 m
+1337.44 134.556 l
+1483.39 134.556 l
+1483.39 268.167 l
+h
+</path>
+<text matrix="1 0 0 1 2.05556 361.778" transformations="translations" pos="1125.72 70.8333" stroke="kn_grau" type="minipage" width="472.778" height="60.214" depth="32.89" valign="top" size="footnote">Here are two objects \\to try it out on:</text>
+</page>
+<page title="Distributing and other alignment tricks" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="72.6495" depth="45.32" valign="top" style="itemize">\item Distributing multiple objects is possible from the same menu as aligning (no predefined shortcuts)</text>
+<text matrix="1 0 0 1 0 -10.2778" pin="h" transformations="translations" pos="0 620.03" stroke="black" type="minipage" width="1680" height="176.044" depth="148.94" valign="top" style="itemize">\item The option to \emph{distribute top to bottom} can be interesting to match one object&apos;s top to another objects bottom, i.e. putting them right above another
+\item If you \emph{set skip} (a value in pts) first, that amount of space will be left between the objects</text>
+<path matrix="1 0 0 1 431.667 6.16667" stroke="black" fill="kn_pinky_35">
+167.833 235.278 m
+167.833 200.333 l
+1181.22 200.333 l
+1181.22 235.278 l
+h
+</path>
+<path matrix="1 0 0 1 285.723 -121.278" stroke="black" fill="kn_seeblau_35">
+167.833 235.278 m
+167.833 200.333 l
+1181.22 200.333 l
+1181.22 235.278 l
+h
+</path>
+<text matrix="1 0 0 1 -1235.39 10.2778" transformations="translations" pos="1257.28 233.222" stroke="kn_grau" type="minipage" width="411.111" height="112.239" depth="84.975" valign="top" size="footnote">Make these two bars align horizontally and space them 10 pts apart vertically</text>
+</page>
+<page title="Drawing graphs" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="72.6495" depth="45.32" valign="top" style="itemize">\item As computer scientists (especially algorithmics enthusiasts), we need to draw graphs from time to time. IPE makes this easy!
+</text>
+<text matrix="1 0 0 1 0 -7.92945" pin="h" transformations="translations" pos="0 620.03" stroke="black" type="minipage" width="1680" height="143.974" depth="116.82" valign="top" style="itemize">\item Use marks (\textcolor{kn_seegruen}{M}) as nodes/vertices. Mark shapes are configurable through the properties (third from the bottom), but `disk&apos; works well
+\item Enable vertex snapping mode and draw each edge as a separate line (\textcolor{kn_seegruen}{P}) between two vertices (should show a red guide element)</text>
+<text matrix="1 0 0 1 0 -79.2945" pin="h" transformations="translations" pos="0 377.131" stroke="black" type="minipage" width="1680" height="72.6495" depth="45.32" valign="top" style="itemize">\item If you do this, you can now move your graph nodes with the corresponding tool, and all connected edges will follow!</text>
+<image matrix="2.84223 0 0 2.84223 1569.94 198.776" rect="0 0 28 28" bitmap="3"/>
+<use matrix="1 0 0 1 -218.391 -10.3015" name="mark/disk(sx)" pos="364.665 148.862" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -218.391 -10.3015" name="mark/disk(sx)" pos="347.22 41.0211" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -218.391 -10.3015" name="mark/disk(sx)" pos="651.711 34.6775" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -218.391 -10.3015" name="mark/disk(sx)" pos="512.153 112.386" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 -218.391 -10.3015" name="mark/disk(sx)" pos="485.193 60.0518" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+364.665 148.862 m
+347.22 41.0211 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+347.22 41.0211 m
+485.193 60.0518 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+364.665 148.862 m
+512.153 112.386 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+512.153 112.386 m
+692.139 135.401 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+692.139 135.401 m
+651.711 34.6775 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+651.711 34.6775 m
+485.193 60.0518 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+485.193 60.0518 m
+692.139 135.401 l
+</path>
+<path matrix="1 0 0 1 -218.391 -10.3015" stroke="black">
+692.139 135.401 m
+364.665 148.862 l
+</path>
+<use matrix="1 0 0 1 -179.55 -11.0748" name="mark/disk(sx)" pos="653.297 136.174" size="normal" stroke="kn_seegruen_65"/>
+<text matrix="1 0 0 1 -274.019 12.3618" transformations="translations" pos="844.101 139.859" stroke="kn_grau" type="minipage" width="423.741" height="81.8895" depth="54.615" valign="top" size="footnote">Move the green node with this tool and see the effect!</text>
+<text matrix="1 0 0 1 196.553 -9.15136" transformations="translations" pos="844.101 139.859" stroke="kn_grau" type="minipage" width="308.994" height="60.423" depth="33.055" valign="top" size="footnote">Draw your own graph here:</text>
+<path stroke="kn_grau" pen="thin">
+1359.93 174.721 m
+1359.93 16.132 l
+1716.76 16.132 l
+1716.76 174.721 l
+h
+</path>
+</page>
+<page title="Style sheets" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="255.986" depth="229.075" valign="top" style="itemize">\item IPE has style sheets. Think of them like a CSS file. \\Technically, they&apos;re XML.
+\item Primarily, the style sheets define all of the \ul{property options} you have for your objects (e.g. colors, line widths, text sizes etc.)
+\item They can also control the \ul{appearance} of your page(s), including possible \ul{templates} like the one used in this presentation
+\item They can define a set of \LaTeX \ \ul{packages} you always need</text>
+<text matrix="1 0 0 1 0 25.671" pin="h" transformations="translations" pos="0 252.939" stroke="black" type="minipage" width="1680" height="149.297" depth="122.1" valign="top" style="itemize">\item Basically, style sheets can do a lot and are advanced IPE stuff
+\item If you want to check or \ul{edit} your/this/any document&apos;s style sheets, press \textcolor{kn_seegruen}{Ctrl+Shift+S} for options
+\item \textcolor{kn_seegruen}{Ctrl+Shift+U} updates them if you made and saved changes</text>
+<text matrix="1 0 0 1 20.3068 3.13072" transformations="translations" pos="828.62 95.8883" stroke="kn_karpfenblau" type="label" width="793.029" height="20.0475" depth="5.83" valign="baseline" size="tiny">(more on how style sheets work in the official IPE documentation)</text>
+</page>
+<page section="Making presentations in IPE">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 0 -352" pin="h" transformations="translations" pos="0 770" stroke="kn_seeblau" type="minipage" width="1680" height="58.399" depth="31.075" valign="top" size="LARGE">Making presentations in IPE</text>
+<text matrix="1 0 0 1 -242.98 4.12059" transformations="translations" pos="430.983 254.531" stroke="kn_grau" type="label" width="839.443" height="32.0375" depth="9.735" valign="baseline" size="footnote">(This is what you&apos;re here for anyway, right?)</text>
+<text matrix="1 0 0 1 -24.5891 -80.3511" transformations="translations" pos="430.983 254.531" stroke="kn_grau" type="label" width="1266.52" height="32.0375" depth="9.735" valign="baseline" size="footnote">(But don&apos;t sleep on IPE&apos;s potential to make figures for your thesis)</text>
+</page>
+<page title="Presentation concepts: Page, layer, view" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<layer name="gamma"/>
+<layer name="delta"/>
+<layer name="epsilon"/>
+<view layers="alpha" active="alpha"/>
+<view layers="beta gamma" active="beta"/>
+<view layers="beta delta" active="gamma"/>
+<view layers="beta epsilon" active="epsilon"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="143.594" depth="116.38" valign="top" style="itemize">\item A presentation made with IPE is simply a set of \ul{PDF slides}. This means no fancy transitions, just plain content.
+\item IPE lets you create \emph{pages, views, and layers}. Here&apos;s how they translate to your final presentation:</text>
+<text matrix="1 0 0 1 0 -12.3334" pin="h" transformations="translations" pos="0 478.026" stroke="black" type="minipage" width="1680" height="239.679" depth="212.795" valign="top" size="small" style="itemize">\item Each \emph{page} in IPE is a new piece of canvas for you to draw on.
+\item Each \emph{view} in IPE will be a \ul{new slide} in your final PDF. Each IPE page may have multiple views.
+\item IPE&apos;s \emph{layers} allow you to group objects and manage their visibility. Whether a layer appears on a slide is determined by whether it is part of the corresponding view. New objects get added to the \emph{active layer} (yellow highlighting).</text>
+<text layer="beta" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="39.6" depth="12.21" valign="top" style="item">Consider this structure for example:</text>
+<text matrix="1 0 0 1 -67.3812 72.9665" transformations="translations" pos="194.556 580.611" stroke="black" type="label" width="125.752" height="39.6275" depth="12.155" valign="baseline">Page</text>
+<text matrix="1 0 0 1 -85.8811 -96.1927" transformations="translations" pos="213.056 434.667" stroke="black" type="label" width="117.645" height="39.611" depth="0.88" valign="baseline">View</text>
+<text matrix="1 0 0 1 -110.548 303.7" transformations="translations" pos="237.722 192.111" stroke="black" type="label" width="134.299" height="39.6" depth="11.715" valign="baseline">Layer</text>
+<text matrix="1 0 0 1 8.67431 34.5116" transformations="translations" pos="550.167 613.5" stroke="black" type="label" width="30.4645" height="38.6045" depth="0" valign="baseline">1</text>
+<text matrix="1 0 0 1 378.645 59.1783" transformations="translations" pos="877 588.833" stroke="black" type="label" width="30.4645" height="38.6045" depth="0" valign="baseline">2</text>
+<group matrix="1 0 0 1 -5.76879 65.7673">
+<text matrix="1 0 0 1 -55.5 149.544" transformations="translations" pos="490.556 280.5" stroke="black" type="label" width="134.024" height="39.6275" depth="11.385" valign="baseline">alpha</text>
+<text matrix="1 0 0 1 -141.833 192.711" transformations="translations" pos="759.833 237.333" stroke="black" type="label" width="106.629" height="39.611" depth="0.88" valign="baseline">beta</text>
+</group>
+<group matrix="1 0 0 1 95.0077 65.7673">
+<text matrix="1 0 0 1 172.892 176.266" transformations="translations" pos="1002.39 253.778" stroke="black" type="label" width="182.683" height="29.7055" depth="12.155" valign="baseline">gamma</text>
+<text matrix="1 0 0 1 324.777 149.544" transformations="translations" pos="490.556 280.5" stroke="black" type="label" width="134.024" height="39.6275" depth="11.385" valign="baseline">alpha</text>
+<text matrix="1 0 0 1 249.172 192.711" transformations="translations" pos="759.833 237.333" stroke="black" type="label" width="106.629" height="39.611" depth="0.88" valign="baseline">beta</text>
+<text matrix="1 0 0 1 37 -10.7894" transformations="translations" pos="1380.61 440.833" stroke="black" type="label" width="118.794" height="39.611" depth="0.88" valign="baseline">delta</text>
+</group>
+<text matrix="1 0 0 1 378.645 59.1783" transformations="translations" pos="877 588.833" stroke="black" type="label" width="30.4645" height="38.6045" depth="0" valign="baseline">2</text>
+<group matrix="1 0 0 1 95.0077 65.7673">
+<text matrix="1 0 0 1 172.892 176.266" transformations="translations" pos="1002.39 253.778" stroke="black" type="label" width="182.683" height="29.7055" depth="12.155" valign="baseline">gamma</text>
+<text matrix="1 0 0 1 324.777 149.544" transformations="translations" pos="490.556 280.5" stroke="black" type="label" width="134.024" height="39.6275" depth="11.385" valign="baseline">alpha</text>
+<text matrix="1 0 0 1 249.172 192.711" transformations="translations" pos="759.833 237.333" stroke="black" type="label" width="106.629" height="39.611" depth="0.88" valign="baseline">beta</text>
+<text matrix="1 0 0 1 37 -10.7894" transformations="translations" pos="1380.61 440.833" stroke="black" type="label" width="118.794" height="39.611" depth="0.88" valign="baseline">delta</text>
+</group>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black" fill="kn_seeblau_35" dash="dashed">
+800 640 m
+800 256 l
+800 256 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black" fill="kn_seeblau_35">
+544.043 565.173 m
+471.161 477.858 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black" fill="kn_seeblau_35">
+544.043 565.173 m
+633.523 481.466 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_seegruen" fill="kn_seeblau_35">
+471.26 404.713 m
+487.197 322.215 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_bordeaux" fill="kn_seeblau_35">
+628.756 419.712 m
+595.007 322.215 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_pinky" fill="kn_seeblau_35">
+948.145 408.48 m
+1046.8 323.226 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_seeblau" fill="kn_seeblau_35">
+1132.05 417.005 m
+1223.39 325.662 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_peach" fill="kn_seeblau_35">
+1330.57 408.48 m
+1417.04 324.444 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_peach" fill="kn_seeblau_35">
+1537.62 421.877 m
+1417.04 324.444 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_peach" fill="kn_seeblau_35">
+1132.05 417.005 m
+1417.04 324.444 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_bordeaux" fill="kn_seeblau_35">
+471.26 404.713 m
+595.007 322.215 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black">
+1239.32 568.269 m
+947.765 481.084 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black">
+1239.32 568.269 m
+1135.26 479.209 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black">
+1239.32 568.269 m
+1324.63 471.709 l
+</path>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="black">
+1239.32 568.269 m
+1534.62 480.147 l
+</path>
+<group matrix="1 0 0 1 29.2299 60.4169">
+<path stroke="black" dash="dotted" arrow="normal/small">
+160 560 m
+160 496 l
+</path>
+<text matrix="1 0 0 1 -55.3075 -9.79275" transformations="translations" pos="64 528" stroke="black" type="label" width="129.421" height="20.0255" depth="0.44" valign="baseline" size="tiny">consists of</text>
+</group>
+<group matrix="1 0 0 1 29.2299 63.0908">
+<path matrix="1.33333 0 0 1.33333 -53.3333 -112" stroke="black" dash="dotted" arrow="normal/small">
+160 336 m
+160 384 l
+</path>
+<text matrix="1 0 0 1 -33.385 -166.999" transformations="translations" pos="64 528" stroke="black" type="label" width="98.1365" height="19.8275" depth="5.83" valign="baseline" size="tiny">displays</text>
+</group>
+<path matrix="1 0 0 1 29.2299 65.7673" stroke="kn_seeblau">
+948.145 408.48 m
+1223.39 325.662 l
+</path>
+<text matrix="1 0 0 1 28.2019 -115.122" transformations="translations" pos="482.333 453.167" stroke="kn_seegruen" type="label" width="15.235" height="39.589" depth="0" valign="baseline">I</text>
+<text matrix="1 0 0 1 9.70191 -117.177" transformations="translations" pos="597.444 455.222" stroke="kn_bordeaux" type="label" width="30.4645" height="39.589" depth="0" valign="baseline">II</text>
+<text matrix="1 0 0 1 536.499 -115.122" transformations="translations" pos="887.278 453.167" stroke="kn_peach" type="label" width="45.6995" height="39.589" depth="0" valign="baseline">III</text>
+<text matrix="1 0 0 1 589.944 -115.122" transformations="translations" pos="482.333 453.167" stroke="kn_pinky" type="label" width="15.235" height="39.589" depth="0" valign="baseline">I</text>
+<text matrix="1 0 0 1 642.968 -117.177" transformations="translations" pos="597.444 455.222" stroke="kn_seeblau" type="label" width="30.4645" height="39.589" depth="0" valign="baseline">II</text>
+<text layer="gamma" matrix="1 0 0 1 0 38.9732" pin="h" transformations="translations" pos="0 239.827" stroke="black" type="minipage" width="1680" height="146.344" depth="119.185" valign="top" style="itemize">\item This final presentation will consist of 5 slides -- one for each view.
+\item The first slide will show layer alpha of page 1. The second slide will additionally show the layer beta of page 1 and keeps alpha visible. This is typical for \ul{incrementally revealing} e.g. bullet points.</text>
+<text layer="delta" matrix="1 0 0 1 0 -26.7941" pin="h" transformations="translations" pos="0 305.594" stroke="black" type="minipage" width="1680" height="105.518" depth="78.21" valign="top" style="item">Notice how the last slide (view III of page 2) adds two new layers (gamma and delta) compared the view before and also drops the first layer? Everything is possible!</text>
+<text layer="epsilon" matrix="1 0 0 1 -6.21465 200.945" transformations="translations" pos="55.8851 72.2556" stroke="kn_grau" type="minipage" width="1580.66" height="138.562" depth="111.43" valign="top" size="footnote">Take a look at the layers and views of this page (shown on the left)!\\
+Play with which layers are active in which view to get a better understanding.\\
+If you enable all layers, you&apos;ll see that this IPE page is actually massively overloaded.
+This is not good practice (better to create a new page than overloading views and layers), but sometimes helpful.</text>
+</page>
+<page title="Shortcuts" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="78.3035" depth="50.985" valign="top" style="itemize">\item New pages can be created with \textcolor{kn_seegruen}{Ctrl+I}
+\item Cuting/Copying/Pasting pages can be done with \textcolor{kn_seegruen}{Ctrl+Shift+X/C/V}</text>
+<text matrix="1 0 0 1 0 -28.3333" pin="h" transformations="translations" pos="0 608.712" stroke="black" type="minipage" width="1680" height="39.787" depth="12.32" valign="top" style="item">A new layer can be created with \textcolor{kn_seegruen}{Ctrl+Shift+N}</text>
+<text matrix="1 0 0 1 0 -54.6111" pin="h" transformations="translations" pos="0 508.605" stroke="black" type="minipage" width="1680" height="100.028" depth="72.765" valign="top" style="item">Most commonly, you will probably need the shortcut \textcolor{kn_seegruen}{Ctrl+Shift+I} to create a new view and new layer that gets activated for the new view</text>
+<text matrix="1 0 0 1 0 -133.444" pin="h" transformations="translations" pos="0 287.811" stroke="black" type="minipage" width="1680" height="67.111" depth="39.765" valign="top" size="small" style="item">Deleting is not possible via shortcuts. Pages and views can be deleted from the corresponding tabs at the top, layers from the list on the left</text>
+<text transformations="translations" pos="313.778 301.056" stroke="kn_grau" type="minipage" width="1210.72" height="55.902" depth="28.545" valign="top" size="footnote">Try adding a new view and layer, add something to it and go back and forth to see the effect</text>
+</page>
+<page title="Presentation style sheets" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="280.643" depth="253.77" valign="top" style="itemize">\item Presentations require certain properties (landscape format, bigger font sizes etc.) that need a \ul{dedicated style sheet}
+\item IPE&apos;s installation supplies a `presentation&apos; style sheet for 4:3 format slides in the subfolder `styles&apos;. Add this and remove the style sheet `basic&apos; from a new IPE project to get started with a presentation.
+\item Presentation style sheets can also define a design template for the pages</text>
+</page>
+<page title="Using this template" subsection="">
+<layer name="alpha"/>
+<layer name="beta"/>
+<layer name="gamma"/>
+<layer name="delta"/>
+<layer name="epsilon"/>
+<layer name="zeta"/>
+<view layers="alpha beta" active="alpha"/>
+<view layers="alpha gamma" active="gamma"/>
+<view layers="alpha zeta" active="zeta"/>
+<view layers="alpha delta" active="delta"/>
+<view layers="alpha epsilon" active="epsilon"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="143.401" depth="116.27" valign="top" style="itemize">\item This template (contained in the `algoKN&apos; style file) gives you the look you see in this presentation (and for example all corporate design colors of the University of Konstanz)
+\item Here are some pointers on how to use it:</text>
+<text layer="beta" matrix="1 0 0 1 0 -20.5556" pin="h" transformations="translations" pos="0 478.329" stroke="black" type="minipage" width="1680" height="176.825" depth="149.71" valign="top" style="itemize">\item To add a \ul{page title}, press \textcolor{kn_seegruen}{Ctrl+P}. Here you can also create bookmarks for your PDF with the sections (pretty cool, right?)
+\item The \ul{bottom bar} requires you to define the following commands in the Latex preamble of the document properties (\textcolor{kn_seegruen}{Ctrl+Shift+P}):
+\begin{verbatim} \bottomleft \bottommiddle \bottomright \end{verbatim}</text>
+<text matrix="1 0 0 1 -26.7222 0" transformations="translations" pos="79.4444 89.3333" stroke="kn_grau" type="minipage" width="1574.56" height="34.6225" depth="7.15" valign="top" size="footnote" style="center">Try to change the bottom bar and the title of this page now!</text>
+<text layer="gamma" pin="h" transformations="translations" pos="0 478.329" stroke="black" type="minipage" width="1680" height="241.851" depth="214.94" valign="top" style="itemize">\item The \ul{title page} can be inserted by using a \emph{symbol} via the tab \emph{Ipelets $&gt;$ Symbols $&gt;$ use symbol} and selecting `titlePage&apos; from the second drop down. Use vertex snapping to fit it on a page. 
+\item It requires you to define the following commands in the Latex preamble of the document properties (\textcolor{kn_seegruen}{Ctrl+Shift+P}):
+\begin{verbatim}\fulltitle \subtitle \name \subject \displayDate \end{verbatim}
+They may be left empty, but need to be defined.</text>
+<text layer="delta" matrix="1 0 0 1 0 -47.2778" pin="h" transformations="translations" pos="0 478.329" stroke="black" type="minipage" width="1680" height="143.594" depth="116.38" valign="top" style="itemize">\item If you want to use this template, you are probably best off using the .ipe file that has this configured already
+\item Alternatively, you can copy the preamble from this document or from the Git repository</text>
+<text layer="epsilon" matrix="1 0 0 1 0 -104.833" pin="h" transformations="translations" pos="0 478.329" stroke="black" type="minipage" width="1680" height="105.133" depth="77.825" valign="top" style="item">Pro tip: If you do not want the template background (logo, bottom bar) on a given page, add a layer named `BACKGROUND&apos; (all caps!) to it!</text>
+<text matrix="1 0 0 1 9.25 -11.5092" transformations="translations" pos="260.333 169.5" stroke="kn_grau" type="minipage" width="1140.83" height="34.441" depth="6.985" valign="top" size="footnote">Try it now and see how the logo and bottom bar disappear!</text>
+<text layer="zeta" matrix="1 0 0 1 0 -14.3889" pin="h" transformations="translations" pos="0 478.329" stroke="black" type="minipage" width="1680" height="176.644" depth="149.545" valign="top" style="itemize">\item \ul{Page numbers} can be (de)activated in the document properties and their appearance is determined by the style sheet
+\item \begin{verbatim}\ul{...}, \subheader{...}, \define{...}\end{verbatim} are (pre)defined \ul{commands} set up to help you create a consistent appearance throughout this template</text>
+<text matrix="1 0 0 1 -6.1665 22.6111" transformations="translations" pos="81.5 97.5556" stroke="kn_grau" type="minipage" width="1529.33" height="34.6225" depth="7.15" valign="top" size="footnote">Try adding a label or text box here and use the define or subheader command:</text>
+</page>
+<page title="Presentation tips" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 0 -65.7778" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="253.237" depth="226.38" valign="top" style="itemize">\item Text boxes are great for presentations
+\item Remember the shortcuts for new pages, new views, and new layers -- you&apos;ll be needing them
+\item Transfer good coding practices to making presentations and make use of pages and layers
+\item The subheader command or subheadline text style are great for separating topics on a page:</text>
+<text matrix="1 0 0 1 0 -197.333" pin="h" transformations="translations" pos="0 400.85" stroke="black" type="minipage" width="1680" height="39.655" depth="12.21" valign="top" style="subheadline">Presenting your slides</text>
+<text matrix="1 0 0 1 0 603.583" pin="h" transformations="translations" pos="0 166.929" stroke="black" type="minipage" width="1680" height="39.655" depth="12.21" valign="top" style="subheadline">Making your slides</text>
+<text matrix="1 0 0 1 0 32.8889" pin="h" transformations="translations" pos="0 109.374" stroke="black" type="minipage" width="1680" height="80.454" depth="53.13" valign="top" style="itemize">\item Your slides can be presented with any PDF viewer
+\item IPE comes with the \ul{IPE presenter} application which works great</text>
+<text matrix="1 0 0 1 -166.5 -423.444" transformations="translations" pos="1532.15 711.8" stroke="kn_signal_red" type="minipage" width="489.222" height="123.673" depth="96.47" valign="top" size="footnote" style="itemize">\item Stay in the frame (grid pattern box)!
+\item Don&apos;t overload a page visually</text>
+</page>
+<page section="Conclusion">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 0 -352" pin="h" transformations="translations" pos="0 770" stroke="kn_seeblau" type="minipage" width="1680" height="49.346" depth="22" valign="top" size="LARGE">Conclusion</text>
+</page>
+<page title="Further resources" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="247.775" depth="220.88" valign="top" style="itemize">\item The \ul{official IPE Manual}:\\
+https://otfried.github.io/ipe/index.html\\
+(or via \emph{Help $&gt;$ ipe manual} from inside IPE)
+\item For making your \ul{own presentation template}:\\
+https://olejorik.github.io/post/ipe\_presentation\_template/
+% Copy this link, not the one above: https://olejorik.github.io/post/ipe_presentation_template/
+\item The Github link for this presentation and its \ul{README}:\\
+missing</text>
+</page>
+<page title="Final remark" subsection="">
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" pin="h" transformations="translations" pos="0 770" stroke="black" type="minipage" width="1680" height="214.588" depth="187.55" valign="top" style="itemize">\item IPE is really easy to get a hang of and we hoped this tutorial helped you get a good feel for it!
+\item We encourage you to take a look at the style file used in this presentation, modify it, or make your own!
+\item Create your next presentation and your figures with IPE to impress Prof. Storandt!</text>
+<group matrix="1 0 0 1 162.389 10.2778">
+<path stroke="black" fill="kn_seeblau_35">
+589.222 239.389 m
+872.889 206.5 l
+940.722 323.667 l
+h
+</path>
+<path stroke="black" fill="kn_pinky_35">
+872.889 206.5 m
+940.722 323.667 l
+1179.17 292.833 l
+h
+</path>
+<path stroke="black" fill="kn_seegruen_20">
+677.611 109.889 m
+589.222 239.389 l
+872.889 206.5 l
+h
+</path>
+<path stroke="black" fill="kn_peach">
+677.611 109.889 m
+918.111 60.5556 l
+872.889 206.5 l
+h
+</path>
+<path stroke="black" fill="kn_karpfenblau_35">
+872.889 206.5 m
+918.111 60.5556 l
+1242.89 138.667 l
+h
+</path>
+<path stroke="black" fill="kn_petrol_65">
+872.889 206.5 m
+1179.17 292.833 l
+1242.89 138.667 l
+h
+</path>
+<path stroke="black" fill="kn_bordeaux_65">
+1179.17 292.833 m
+1380.61 251.722 l
+1242.89 138.667 l
+h
+</path>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="509.056 257.889" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="597.444 128.389" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="792.722 225" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="860.556 342.167" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="1162.72 157.167" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="837.944 79.0556" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="1300.44 270.222" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 80.1667 -18.5" name="mark/disk(sx)" pos="1099 311.333" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+509.056 257.889 m
+792.722 225 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+792.722 225 m
+860.556 342.167 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+792.722 225 m
+837.944 79.0556 l
+837.944 79.0556 l
+837.944 79.0556 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+597.444 128.389 m
+509.056 257.889 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+1099 311.333 m
+860.556 342.167 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+1099 311.333 m
+792.722 225 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+837.944 79.0556 m
+1162.72 157.167 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+1162.72 157.167 m
+792.722 225 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+1162.72 157.167 m
+1300.44 270.222 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+1099 311.333 m
+1162.72 157.167 l
+1162.72 157.167 l
+1162.72 157.167 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+597.444 128.389 m
+792.722 225 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+1300.44 270.222 m
+1099 311.333 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+509.056 257.889 m
+860.556 342.167 l
+</path>
+<path matrix="1 0 0 1 80.1667 -18.5" stroke="black">
+597.444 128.389 m
+837.944 79.0556 l
+</path>
+</group>
+</page>
+</ipe>
