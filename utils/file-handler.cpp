@@ -89,7 +89,20 @@ Graph FileHandler::read_sparse_graph_file(const string &filePath, WeightMode wei
         switch (weight_mode)
         {
             case WeightMode::Original:
-                edge.cost = 1.0; // or read from file if costs exist
+            {
+                // edge.cost = 1.0; // or read from file if costs exist
+
+                // take euclidean distance instead of 1 and run again
+                const Node &u = graph.get_node(edge.src);
+                const Node &v = graph.get_node(edge.trg);
+                double dx = u.latitude - v.latitude;
+                double dy = u.longitude - v.longitude;
+                edge.cost = sqrt(dx * dx + dy * dy);
+
+                break;
+        }
+        case WeightMode::Uniform:
+                edge.cost = 1.0;
                 break;
             case WeightMode::UniformRandomDistribution:
                 edge.cost = uniform_dist(gen);

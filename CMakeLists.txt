@@ -1,15 +1,17 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 project(spira_on_ch LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Main executable
 add_executable(spira
     src/main.cpp
     algorithms/bfs.cpp
+    utils/kahip-runner.cpp
     algorithms/pre-processing/witness-dijkstra.cpp
     algorithms/pre-processing/contraction-hierarchy.cpp
+    algorithms/pre-processing/customizable-contraction-hierarchy.cpp
     algorithms/shortest-path/ch-dijkstra.cpp
     algorithms/shortest-path/dijkstra.cpp
     algorithms/shortest-path/spira.cpp
@@ -19,14 +21,14 @@ add_executable(spira
     # data-structures/ch-graph.cpp
     utils/file-handler.cpp
     utils/utilities.cpp
-    utils/kahip-runner.cpp
 )
 
-target_include_directories(spira PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/algorithms
+                                         
+target_include_directories(spira PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/utils
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/algorithms
                                          ${CMAKE_CURRENT_SOURCE_DIR}/data-structures
                                          ${CMAKE_CURRENT_SOURCE_DIR}/include
                                          ${CMAKE_CURRENT_SOURCE_DIR}/evaluations
-                                         ${CMAKE_CURRENT_SOURCE_DIR}/utils
 )
 
 # KaHIP configuration

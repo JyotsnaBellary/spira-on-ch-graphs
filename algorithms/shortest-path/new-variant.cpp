@@ -235,6 +235,7 @@ SsspResult NewVariant::compute_shortest_path(NodeId src, NodeId dst, int thresho
     forward(src, cost, P);
     int settled = 1;
 
+    // cout << "Starting main loop with threshold: " << threshold << " and total reachable nodes: " << graph.number_of_nodes() << endl;
     // While the queue is not empty:
     while (P.size() > 0 && settled < number_of_nodes)
     {

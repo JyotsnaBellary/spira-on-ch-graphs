@@ -19,6 +19,17 @@ struct CH_DijkstraResult
     int number_of_pops;
 };
 
+struct Query_Graph_Type {
+    vector<vector<EdgeId>> out_adjacency_list;
+    vector<vector<EdgeId>> in_adjacency_list;
+    vector<Edge> all_edges;
+    vector<Node> reachable_nodes;
+    int edge_count;
+    vector<int> rank;
+    vector<NodeId> old_to_new;
+};
+
+
 // This is a common struct is used to store with upper edges
 // It is used for CH and CCH for query Processing
 struct CH_Graph
@@ -63,6 +74,7 @@ struct CH_Graph
     inline const vector<Edge> &get_all_edges() const { return edges; }
     inline const int &get_number_of_shortcuts() const { return shortcuts; }
 
+    int get_rank(NodeId node_id) { return rank[node_id];}
     // To query only for upper ranked neighbors
     const unordered_map<NodeId, pair<EdgeId, Weight>> &up_neighbors(NodeId node) const
     {
@@ -73,6 +85,7 @@ struct CH_Graph
         return upward_edges_adj[node];
     }
     inline const vector<Node> &get_all_nodes() const { return nodes; }
+    inline const Node &get_node(NodeId id) const { return nodes[id]; }
 
     inline int number_of_edges() const { return static_cast<int>(edges.size()); }
 
@@ -144,38 +157,51 @@ struct CH_Graph
 
     // Simple print of adjacency list
     void print_adj_out()
+{
+    cout << "Outgoing adjacency list:\n";
+    for (NodeId u = 0; u < static_cast<NodeId>(nodes.size()); ++u)
     {
-        for (NodeId u = 0; u < static_cast<NodeId>(nodes.size()); ++u)
+        cout << "[" << u << "] : [";
+        const auto &A = out_adjacency_list[u];
+
+        for (size_t i = 0; i < A.size(); ++i)
         {
-            cout << "[" << u << "] : [";
-            const auto &A = out_adjacency_list[u];
-            for (size_t i = 0; i < A.size(); ++i)
-            {
-                EdgeId eid = A[i];
-                cout << edges[eid].trg;
-                if (i + 1 < A.size())
-                    cout << " ";
-            }
-            cout << "]\n";
+            EdgeId eid = A[i];
+            const Edge &edge = edges[eid];
+
+            cout << edge.trg << "(w=" << edge.cost << ")";
+
+            if (i + 1 < A.size())
+                cout << " ";
         }
+
+        cout << "]\n";
     }
+}
+
     void print_adj_in()
+{
+    cout << "Incoming adjacency list:\n";
+    for (NodeId u = 0; u < static_cast<NodeId>(nodes.size()); ++u)
     {
-        cout << "Incoming adjacency list:\n";
-        for (NodeId u = 0; u < static_cast<NodeId>(nodes.size()); ++u)
+        cout << "[" << u << "] : [";
+        const auto &A = in_adjacency_list[u];
+
+        for (size_t i = 0; i < A.size(); ++i)
         {
-            cout << "[" << u << "] : [";
-            const auto &A = in_adjacency_list[u];
-            for (size_t i = 0; i < A.size(); ++i)
-            {
-                EdgeId eid = A[i];
-                cout << edges[eid].src;
-                if (i + 1 < A.size())
-                    cout << " ";
-            }
-            cout << "]\n";
+            EdgeId eid = A[i];
+            const Edge &edge = edges[eid];
+
+            cout << edge.src << "(w=" << edge.cost << ")";
+
+            if (i + 1 < A.size())
+                cout << " ";
         }
+
+        cout << "]\n";
     }
+}
+
     // helper for recursive unpacking of edges after CH and CCh Query
     inline void append_unpacked(EdgeId eid,
                                 vector<EdgeId> &edge_out,
@@ -299,27 +325,53 @@ struct CH_Graph
     Query_Graph_Type get_upward_graph(NodeId src)
     {
         vector<NodeId> reachable_nodes = find_reachable_nodes(src);
-        int edge_count = 0;
-        vector<vector<EdgeId>> query_out_adjacency_list(number_of_edges());
-        vector<vector<EdgeId>> query_in_adjacency_list(number_of_edges());
 
+        vector<NodeId> old_to_new(number_of_nodes(), INVALID_NODE);
         Query_Graph_Type query_graph_info;
+        int edge_count = 0;
 
-        for (NodeId node_id: reachable_nodes) {
-            for (const EdgeId edgeId: get_out_neighbors(node_id)) {
-                const Edge &edge = get_edge(edgeId);
-                if (is_up(edge.src, edge.trg)) {
-                    edge_count++;
-                    query_out_adjacency_list[edge.src].push_back(edgeId);
-                    query_in_adjacency_list[edge.trg].push_back(edgeId);
-                }
+        query_graph_info.out_adjacency_list.resize(reachable_nodes.size());
+        query_graph_info.in_adjacency_list.resize(reachable_nodes.size());
+
+        for (NodeId new_node_id = 0; new_node_id < reachable_nodes.size(); ++new_node_id) {
+            NodeId node_id = reachable_nodes[new_node_id];
+            old_to_new[node_id] = new_node_id;
+
+            Node new_node;            
+            
+            new_node.id = new_node_id;
+            new_node.latitude = nodes[node_id].latitude;
+            new_node.longitude = nodes[node_id].longitude;
+
+            query_graph_info.reachable_nodes.push_back(new_node);
+            query_graph_info.rank.push_back(rank[node_id]);
+        }
+
+        for (NodeId old_node_id: reachable_nodes) {
+            for (const EdgeId edgeId: get_out_neighbors(old_node_id)) {
+                const Edge &old_edge = get_edge(edgeId);
+
+                if (!is_up(old_edge.src, old_edge.trg))
+                continue;
+
+                NodeId new_src = old_to_new[old_edge.src];
+            NodeId new_trg = old_to_new[old_edge.trg];
+
+            if (new_src == INVALID_NODE || new_trg == INVALID_NODE)
+                continue;
+
+            Edge new_edge = old_edge;
+            new_edge.id = static_cast<EdgeId>(query_graph_info.all_edges.size());
+            new_edge.src = new_src;
+            new_edge.trg = new_trg;
+            
+            query_graph_info.all_edges.push_back(new_edge);
+            query_graph_info.out_adjacency_list[new_src].push_back(new_edge.id);
+            query_graph_info.in_adjacency_list[new_trg].push_back(new_edge.id);
             }
         }
 
-        query_graph_info.out_adjacency_list = move(query_out_adjacency_list);
-        query_graph_info.in_adjacency_list = move(query_in_adjacency_list);
-        query_graph_info.reachable_nodes = move(reachable_nodes);
-        query_graph_info.edge_count = edge_count;
+        query_graph_info.edge_count = static_cast<int>(query_graph_info.all_edges.size());
 
         return query_graph_info;
     }

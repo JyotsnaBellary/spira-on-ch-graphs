@@ -25,6 +25,8 @@
 #include <shortest-path/new-variant.hpp>
 #include <ch-graph.hpp>
 #include <pre-processing/contraction-hierarchy.hpp>
+#include <pre-processing/customizable-contraction-hierarchy.hpp>
+
 #include <types.hpp>
 
 using namespace std;
@@ -116,6 +118,11 @@ struct AggregateStats
     int mismatches = 0;
 };
 
+struct ThresholdConfig {
+        string name;
+        double fraction;
+    };
+
 class BenchmarkTests
 {
 public:
@@ -149,7 +156,7 @@ public:
     static PertinenceStats analyze_path_pertinence(const SsspResult &res, const CH_Graph &graph);
 
     // ---- Print run stats ----
-    static void print_run_stats(NodeId src, const CH_Graph &graph, const Query_Graph_Type &reachable_query_graph,
+    static void print_run_stats(NodeId src, int rank, const CH_Graph &graph, const Query_Graph_Type &reachable_query_graph, double subgraph_density,
                      long long dijkstra_time_us, long long spira_time_us, long long new_variant_time_us,
                      const SsspResult &result_dijkstra, const SsspResult &result_spira, const SsspResult &result_new_variant,
                      const PertinenceStats &stats, int mismatch_count_ds, int mismatch_count_dn, bool mismatches);
@@ -176,13 +183,15 @@ public:
     static void run_src_dst_benchmark_on_CH_graph(CH_Graph &graph, const string &output_csv_path);
 
     // ---- Benchmark algorithms on SPT queries ----
-    static void run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string &output_csv_path);
+    static void run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string &output_csv_path, double threshold_fraction);
 
     // ---- Wrappers to read and run ----
 
     // For Sparse Graphs
-    static void process_sparse_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir);
-    static int run_benchmark_on_sparse_graphs();
+    static void process_sparse_graph_file(const string &filepath, const bool customizable, WeightMode weight_mode, string &output_dir, double threshold_fraction);
+    static CH_Graph pre_process_sparse_graph_for_CH(Graph &graph);
+    static CH_Graph pre_process_sparse_graph_for_CCH(Graph &graph);
+    static int run_benchmark_on_sparse_graphs(const bool customizable);
 
     // For Dense Graphs
     static void process_dense_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir);

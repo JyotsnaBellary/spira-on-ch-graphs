@@ -722,16 +722,18 @@ bool BenchmarkTests::compare_spt_results(const SsspResult &result_a,
     return true;
 }
 
-void BenchmarkTests::print_run_stats(NodeId src, const CH_Graph &graph, const Query_Graph_Type &reachable_query_graph,
+void BenchmarkTests::print_run_stats(NodeId src, int rank, const CH_Graph &graph, const Query_Graph_Type &reachable_query_graph, double subgraph_density,
                      long long dijkstra_time_us, long long spira_time_us, long long new_variant_time_us,
                      const SsspResult &result_dijkstra, const SsspResult &result_spira, const SsspResult &result_new_variant,
                      const PertinenceStats &stats, int mismatch_count_ds, int mismatch_count_dn, bool mismatches) {
 
     // print results of this run 
         cout << "Source: " << src << "\n";
+        cout << "Source rank: " << rank << "\n";
         cout << "nodes : " << graph.number_of_nodes() << ", edges: " << graph.number_of_edges() << "\n";
         cout << "Reachable nodes from source: " << reachable_query_graph.reachable_nodes.size() << "\n";
         cout << "Edges in query graph: " << reachable_query_graph.edge_count << "\n";
+        cout << "Desnity of subgraph: " << subgraph_density << "\n";
 
         cout << "================================\n";
         // print time taken by all 
@@ -780,7 +782,7 @@ void BenchmarkTests::print_run_stats(NodeId src, const CH_Graph &graph, const Qu
 }
 
 // ---- Main Benchmark ----
-void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string &output_csv_path)
+void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string &output_csv_path, double threshold_fraction)
 {
     const int n = graph.number_of_nodes();
     const int num_sources = min(n, 100);
@@ -801,15 +803,10 @@ void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string
             sources.push_back(src);
     }
 
-    // Initialize teh SSSP algorithms
-    // Dijkstra dijkstra(graph);
-    // Spira spira(graph);
-    // NewVariant new_variant(graph);
-
     // CSV Header
     ofstream out(output_csv_path);
-    out << "src,"
-        << "nodes,edges,reachable_nodes,query_graph_edges,"
+    out << "src,rank,"
+        << "nodes,edges,reachable_nodes,query_graph_edges,subgraph_density,"
         << "d_time_us,s_time_us,nv_time_us,"
         << "d_pops,s_pops,nv_pops,nv_q_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
@@ -821,6 +818,7 @@ void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string
         << "mismatches,"
         << "shortcuts_added\n";
 
+    
     AggregateStats agg;
     agg.filepath = output_csv_path;
     agg.n = graph.number_of_nodes();
@@ -837,54 +835,65 @@ void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string
 
         Query_Graph_Type reachable_query_graph = graph.get_upward_graph(src);
 
-        CH_Graph query_graph(graph.get_all_nodes(), graph.get_all_edges(), graph.rank, false);
+
+        // maybe the input is wrong. 
+        CH_Graph query_graph(reachable_query_graph.reachable_nodes, reachable_query_graph.all_edges, reachable_query_graph.rank, false);
         query_graph.shortcuts = graph.shortcuts;
+
         // cout << "Reachables nodes from source " << src << ": " << reachable_query_graph.reachable_nodes.size() << endl;
         query_graph.set_upward_adj_lists(reachable_query_graph.out_adjacency_list, reachable_query_graph.in_adjacency_list);
-        
+
+        query_graph.print_adj_in();
+        query_graph.print_adj_out();
+        cout << query_graph.number_of_nodes() << " nodes and" << query_graph.number_of_edges() << " edges in the query graph.\n";
         Dijkstra dijkstra(query_graph);
+
         // Sort neighbors
         query_graph.sort_all_neighbors();
 
         Spira spira(query_graph);
         NewVariant new_variant(query_graph);
 
+        NodeId src_mapped_to_new = 0;
         // === Dijkstra ===
         auto dijkstra_start = Clock::now();
-        SsspResult result_dijkstra = dijkstra.compute_shortest_path(src, -1);
+        SsspResult result_dijkstra = dijkstra.compute_shortest_path(src_mapped_to_new, -1);
         auto dijkstra_end = Clock::now();
         long long dijkstra_time_us =
             chrono::duration_cast<chrono::microseconds>(dijkstra_end - dijkstra_start).count();
 
+            // cout << "Finished dijkstra" << endl;
         // // === Spira ===
         auto spira_start = Clock::now();
-        SsspResult result_spira = spira.compute_shortest_path(src, -1);
+        SsspResult result_spira = spira.compute_shortest_path(src_mapped_to_new, -1, reachable_query_graph.reachable_nodes.size());
         auto spira_end = Clock::now();
         long long spira_time_us =
             chrono::duration_cast<chrono::microseconds>(spira_end - spira_start).count();
+            // cout << "finished spira" << endl;
 
         // === New Variant ===
-        int threshold = (reachable_query_graph.reachable_nodes.size() + 1) / 2;
+        int threshold = reachable_query_graph.reachable_nodes.size() * threshold_fraction;
+        // cout << "Running new variant with threshold: " << threshold << endl;
         auto new_variant_start = Clock::now();
-        SsspResult result_new_variant = new_variant.compute_shortest_path(src, -1, threshold);
+        SsspResult result_new_variant = new_variant.compute_shortest_path(src_mapped_to_new, -1, threshold);
         auto new_variant_end = Clock::now();
         long long new_variant_time_us =
             chrono::duration_cast<chrono::microseconds>(new_variant_end - new_variant_start).count();
 
-        // cout << "Finished SPT queries for source " << src << ". Analyzing results..." << endl;
+        cout << "Finished SPT queries for source " << src << ". Analyzing results..." << endl;
 
-        // for (int i = 0; i < reachable_query_graph.reachable_nodes.size(); ++i)
-        // {
-        //     NodeId node = reachable_query_graph.reachable_nodes[i]; 
-        //     if (result_dijkstra.distance[node] < INF_COST)
-        //     {
-        //         cout << "Distance from source " << src << " to node " << node << ": "
-        //              << "Dijkstra=" << result_dijkstra.distance[node] << ", "
-        //              << "Spira=" << result_spira.distance[node] << ", "
-        //              << "NewVariant=" << result_new_variant.distance[node] << "\n";
-        //     }
-        // }
-
+        for (int i = 0; i < reachable_query_graph.reachable_nodes.size(); ++i)
+        {
+            Node node = reachable_query_graph.reachable_nodes[i]; 
+            if (result_dijkstra.distance[node.id] < INF_COST)
+            {
+                cout << "Distance from source " << src_mapped_to_new << " to node " << node.id << ": "
+                     << "Dijkstra=" << result_dijkstra.distance[node.id] << ", "
+                     << "Spira=" << result_spira.distance[node.id] << ", "
+                     << "NewVariant=" << result_new_variant.distance[node.id] << "\n";
+            }
+        }
+// exit(0);
         // === Compare distances ===
         bool match_dijkstra_spira = compare_spt_results(result_dijkstra, result_spira, "Dijkstra", "Spira");
         bool match_dijkstra_new_variant = compare_spt_results(result_dijkstra, result_new_variant, "Dijkstra", "NewVariant");
@@ -919,9 +928,11 @@ void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string
         //     cout << "Median distance from source " << src << " is " << result_new_variant.median << endl;
         // }
 
+
         double pops_d_to_m = (result_dijkstra.number_of_pops > 0) ? (double)result_dijkstra.number_of_pops / (double)reachable_query_graph.edge_count : 0.0;
         double pops_s_to_m = (result_spira.number_of_pops > 0) ? (double)result_spira.number_of_pops / (double)reachable_query_graph.edge_count : 0.0;
         double pops_nv_to_m = (result_new_variant.number_of_pops > 0) ? (double)result_new_variant.number_of_pops / (double)reachable_query_graph.edge_count : 0.0;
+        double subgraph_density = (double)query_graph.number_of_edges() / ((double)query_graph.number_of_nodes() * ((double)query_graph.number_of_nodes() - 1) / 2);
 
         // aggregate stats
         agg.avg_d_time += dijkstra_time_us;
@@ -959,12 +970,12 @@ void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string
         if (mismatches)
             agg.mismatches++;
 
-        // print_run_stats(src, query_graph, reachable_query_graph, dijkstra_time_us, spira_time_us, new_variant_time_us,
-        //                 result_dijkstra, result_spira, result_new_variant, stats, mismatch_count_ds, mismatch_count_dn, mismatches);
+        print_run_stats(src, graph.get_rank(src), query_graph, reachable_query_graph, subgraph_density, dijkstra_time_us, spira_time_us, new_variant_time_us,
+                        result_dijkstra, result_spira, result_new_variant, stats, mismatch_count_ds, mismatch_count_dn, mismatches);
 
         // // === Write one CSV row ===
-        out << src << ','
-            << graph.number_of_nodes() << ',' << graph.number_of_edges() << ',' << reachable_query_graph.reachable_nodes.size() << ',' << reachable_query_graph.edge_count << ','
+        out << src << ',' << graph.get_rank(src) << ',' 
+            << graph.number_of_nodes() << ',' << graph.number_of_edges() << ',' << reachable_query_graph.reachable_nodes.size() << ',' << reachable_query_graph.edge_count << ',' << subgraph_density << ","
             << dijkstra_time_us << ',' << spira_time_us << ',' << new_variant_time_us << ','
             << result_dijkstra.number_of_pops << ',' << result_spira.number_of_pops << ',' << result_new_variant.number_of_pops << ',' << result_new_variant.number_of_Q_pops << ','
             << result_dijkstra.avg_pops_per_node << ',' << result_spira.avg_pops_per_node << ',' << result_new_variant.avg_pops_per_node << ','
@@ -989,14 +1000,8 @@ void BenchmarkTests::run_spt_benchmark_on_CH_graph(CH_Graph &graph, const string
     append_average_summary(agg, output_csv_path);
 }
 
-// ---- Wrapper to read and run ----
-void BenchmarkTests::process_sparse_graph_file(const string &filepath, WeightMode weight_mode, string &output_dir)
-{
-    // Read Sparse graph instance
-    FileHandler fh;
-    Graph graph = fh.read_sparse_graph_file(filepath, weight_mode);
 
-    // Preprocess the graph 
+CH_Graph BenchmarkTests::pre_process_sparse_graph_for_CH(Graph &graph) {
     CH ch(graph);
     int shortcuts = ch.preprocess();
     CH_Graph ch_graph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order(), true);
@@ -1004,12 +1009,62 @@ void BenchmarkTests::process_sparse_graph_file(const string &filepath, WeightMod
     // ch_graph.print_adj_out();
     // ch_graph.print_adj_in();
 
-    cout << "Preprocessed graph. Shortcuts added: " << shortcuts << endl;
+    cout << "Preprocessed graph with CH. Shortcuts added: " << shortcuts << endl;
 
     ch_graph.shortcuts = shortcuts;
+    ch_graph.print_adj_out();
+    return ch_graph;
+}
+
+CH_Graph BenchmarkTests::pre_process_sparse_graph_for_CCH(Graph &graph) {
+    CCH cch(graph);
+    cch.compute_contraction_order();
+    cout << "Computed Seperator Decomposition. Processing Graph now!" << endl;
+    CCH_Result cch_res = cch.preprocess();
+
+    cout << "Preprocessed graph. Shortcuts added: " << cch_res.shortcuts << endl;
+
+     // Assign weight of shortcuts
+    cch.customization();
+
+    cout << "customization done" << endl;
+    CH_Graph cch_graph(cch.get_graph().get_all_nodes(), cch.get_graph().get_all_edges(), cch.get_ranks(), true);
+
+    cch_graph.shortcuts = cch_res.shortcuts;
+    // ch_graph.print_adj_out();
+    // ch_graph.print_adj_in();
+
+    // cch_graph.print_adj_out();
+    // bool default_setting = true;
+    // bool assign_random_weights = false;
+    // cch.customization(default_setting, assign_random_weights);
+
+    // ch_graph.shortcuts = shortcuts;
+    cout << "Returning cch graph" << endl;
+    return cch_graph;
+}
+
+// ---- Wrapper to read and run ----
+void BenchmarkTests::process_sparse_graph_file(const string &filepath, const bool customizable, WeightMode weight_mode, string &output_dir, double threshold_fraction)
+{
+    // Read Sparse graph instance
+    FileHandler fh;
+    Graph graph = fh.read_sparse_graph_file(filepath, weight_mode);
+
+    CH_Graph ch_graph;
+    // Preprocess the graph 
+    if (customizable) {
+        ch_graph = pre_process_sparse_graph_for_CCH(graph);
+    }
+    else {
+        ch_graph = pre_process_sparse_graph_for_CH(graph);
+    }
+
     // string output_src_dst = output_dir + "/src_dst_benchmark";
     // create_directories(output_src_dst); // make sure directory exists
 
+    // ch_graph.print_adj_out();
+    cout << "creating, directories" << endl;
     // Get file name
     string filename = path(filepath).stem().string();
     // string output_csv = output_src_dst + "/" + filename + ".csv";
@@ -1027,7 +1082,7 @@ void BenchmarkTests::process_sparse_graph_file(const string &filepath, WeightMod
     
     cout << endl;
     cout << "Running spt benchmark -> " << output_csv << endl;
-    run_spt_benchmark_on_CH_graph(ch_graph, output_csv);
+    run_spt_benchmark_on_CH_graph(ch_graph, output_csv, threshold_fraction);
 }
 #if 0
 
@@ -1061,38 +1116,62 @@ void BenchmarkTests::process_dense_graph_file(const string &filepath, WeightMode
 }
 #endif
 // Calls for Benchmarking on Sparse Graphs with different edge-weight distributions
-int BenchmarkTests::run_benchmark_on_sparse_graphs()
+int BenchmarkTests::run_benchmark_on_sparse_graphs(const bool customizable)
 {
-    string input_dir = "./Input_Data/SparseRoadNetworks";
-    string output_dir_random = "output/sparse_networks/random_weights";
-    string output_dir_exponential = "output/sparse_networks/exponential_weights";
-    string output_dir_original = "output/sparse_networks/original_weights";
+    vector<ThresholdConfig> thresholds = {
+    {"output_10", 0.10},
+    {"output_20", 0.20},
+    {"output_30", 0.30},
+    {"output_40", 0.40},
+    {"output_50", 0.50},
+    {"output_60", 0.60},
+    {"output_70", 0.70},
+    {"output_80", 0.80},
+    {"output_90", 0.90},
+    {"output_100", 1.00}
+};
 
-    cout << "starting benchmark on sparse graphs...\n" << endl;
-    cout << endl;
+    string input_dir = "./Input_Data/SparseRoadNetworks";
+    for (const auto &threshold_config : thresholds)
+{
+    string base_output_dir = "output_cch/sparse_networks/" + threshold_config.name;
+
+    string output_dir_original = base_output_dir + "/original_weights";
+    string output_dir_uniform = base_output_dir + "/uniform_weights";
+    string output_dir_exponential = base_output_dir + "/exponential_weights";
 
     for (const auto &entry : directory_iterator(input_dir))
     {
         if (entry.path().extension() == ".txt")
         {
             string filepath = entry.path().string();
-            cout << "Processing file: " << filepath << endl;
-            cout << endl;
-            
-            cout << "Processing with original weights: " << endl;
-            // Case 3: original weights
-            process_sparse_graph_file(filepath, WeightMode::Original, output_dir_original);
 
-            cout << "Processing with random weights: " << endl;
-            // Case 1: random weights (true)
-            process_sparse_graph_file(filepath, WeightMode::UniformRandomDistribution, output_dir_random);
+            process_sparse_graph_file(
+                filepath,
+                customizable,
+                WeightMode::Original,
+                output_dir_original,
+                threshold_config.fraction
+            );
 
-            cout << "Processing with exponential weights: " << endl;
-            // Case 2: exponential weights
-            process_sparse_graph_file(filepath, WeightMode::Exponential, output_dir_exponential);
+            process_sparse_graph_file(
+                filepath,
+                customizable,
+                WeightMode::Uniform,
+                output_dir_uniform,
+                threshold_config.fraction
+            );
 
+            process_sparse_graph_file(
+                filepath,
+                customizable,
+                WeightMode::Exponential,
+                output_dir_exponential,
+                threshold_config.fraction
+            );
         }
     }
+}
 
     cout << "Benchmarking completed for all sparse graphs with original, exponential and uniformly random weights.\n";
     cout << endl;

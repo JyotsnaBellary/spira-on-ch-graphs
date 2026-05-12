@@ -147,7 +147,7 @@ filesystem::path Utils::run_kahip(const char *out_name)
     string command = kahip_executable;
     command += " --preconfiguration=fast";
     command += " --output_filename=" + string(out_name);
-    command += " ./RoadNetworks/test.graph"; // Input graph file
+    command += " ./Input_Data/test.graph"; // Input graph file
 
     // Execute the command
     int ret = system(command.c_str());

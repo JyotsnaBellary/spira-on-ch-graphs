@@ -1,3 +1,7 @@
 /build/*
 /Input_Data/*
 /output/*
+/bad_input/*
+/output_local/*
+/plots/*
+*.csv

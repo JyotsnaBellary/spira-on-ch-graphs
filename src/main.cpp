@@ -98,5 +98,5 @@ int run_algorithms() {
 }
 
 int main() {
-    BenchmarkTests::run_benchmark_on_sparse_graphs();
+    BenchmarkTests::run_benchmark_on_sparse_graphs(false);
 }

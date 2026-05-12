@@ -26,7 +26,7 @@ filesystem::path run_kahip_on_test_graph(const char* out_name) {
     namespace fs = filesystem;
 
     // input is *not* under src, so keep your adjusted path:
-    const fs::path graph   = fs::path(ERP_SOURCE_DIR) / "RoadNetworks/test.graph";
+    const fs::path graph   = fs::path(ERP_SOURCE_DIR) / "Input_Data/test.graph";
     const fs::path out_dir = fs::path(ERP_SOURCE_DIR) / "output_files/nested_dissections";
 
     if (!fs::exists(graph)) {
