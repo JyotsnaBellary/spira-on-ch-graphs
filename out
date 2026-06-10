@@ -1,0 +1,207 @@
+running CCH with elimination tree on OSM 1
+Computed Seperator Decomposition. Processing Graph now!
+Preprocessed graph. Shortcuts added: 338
+adding customized weights
+customization done
+CCH graph ready.
+Outgoing adjacency list:
+[0] : [2(w=0.00086007) 3(w=0.000658743) 4(w=0.00118837)]
+[1] : [5(w=0.000341303) 6(w=0.000809534)]
+[2] : [3(w=0.00151881) 7(w=0.00222463) 8(w=0.00382297)]
+[3] : []
+[4] : [2(w=0.00191629) 3(w=0.00184711) 8(w=0.00190668) 9(w=0.00393964)]
+[5] : [10(w=0.000218325) 6(w=0.00115084)]
+[6] : [11(w=0.00149793) 12(w=0.00424619) 13(w=0.00281331)]
+[7] : [3(w=0.00063907) 8(w=0.00278529)]
+[8] : [3(w=0.00174072)]
+[9] : [2(w=0.00212309) 8(w=0.00584631) 3(w=0.00578675) 7(w=0.00501741)]
+[10] : [11(w=0.000128763) 6(w=0.00136916)]
+[11] : [14(w=0.00140733) 15(w=0.0014542) 13(w=0.00431123) 12(w=0.00574412)]
+[12] : [14(w=0.00222047) 16(w=0.00892719) 17(w=0.010466) 18(w=0.0055445)]
+[13] : [17(w=0.00340649) 12(w=0.0070595) 15(w=0.00241414) 14(w=0.00571856)]
+[14] : [18(w=0.00319075) 17(w=0.00619032) 16(w=0.00761258)]
+[15] : [18(w=0.00146527) 14(w=0.0021494) 17(w=0.00404092) 12(w=0.00719831)]
+[16] : [9(w=0.00242933) 19(w=0.00145126) 20(w=0.00295384) 21(w=0.00689512)]
+[17] : [18(w=0.00390787) 20(w=0.00407285) 21(w=0.00244365) 16(w=0.0138029)]
+[18] : [16(w=0.00209704) 20(w=0.00357155) 19(w=0.0031676) 21(w=0.00479808)]
+[19] : [2(w=0.00206634) 7(w=0.00244851) 9(w=0.00256889) 21(w=0.00461463)]
+[20] : [21(w=0.00187074) 7(w=0.00099333) 19(w=0.0027439) 9(w=0.00538317)]
+[21] : [8(w=0.0022719) 7(w=0.00257663) 3(w=0.0028644) 9(w=0.00718353) 2(w=0.00668097)]
+22 nodes and70 edges in the query graph.
+Building elimination tree...
+Node 0 has parent edge ID: 2
+Node 1 has parent edge ID: 3
+Node 2 has parent edge ID: 6
+Node 3 has parent edge ID: 2147483647
+Node 4 has parent edge ID: 11
+Node 5 has parent edge ID: 12
+Node 6 has parent edge ID: 14
+Node 7 has parent edge ID: 18
+Node 8 has parent edge ID: 19
+Node 9 has parent edge ID: 20
+Node 10 has parent edge ID: 25
+Node 11 has parent edge ID: 28
+Node 12 has parent edge ID: 30
+Node 13 has parent edge ID: 36
+Node 14 has parent edge ID: 39
+Node 15 has parent edge ID: 44
+Node 16 has parent edge ID: 47
+Node 17 has parent edge ID: 49
+Node 18 has parent edge ID: 53
+Node 19 has parent edge ID: 60
+Node 20 has parent edge ID: 63
+Node 21 has parent edge ID: 68
+Old to new mapping for reachable nodes: 
+Old ID: 187 -> New ID: 0
+Old ID: 65 -> New ID: 1
+Old ID: 212 -> New ID: 2
+Old ID: 140 -> New ID: 3
+Old ID: 246 -> New ID: 4
+Old ID: 77 -> New ID: 5
+Old ID: 34 -> New ID: 6
+Old ID: 122 -> New ID: 7
+Old ID: 118 -> New ID: 8
+Old ID: 268 -> New ID: 9
+Old ID: 93 -> New ID: 10
+Old ID: 113 -> New ID: 11
+Old ID: 206 -> New ID: 12
+Old ID: 22 -> New ID: 13
+Old ID: 179 -> New ID: 14
+Old ID: 132 -> New ID: 15
+Old ID: 251 -> New ID: 16
+Old ID: 49 -> New ID: 17
+Old ID: 128 -> New ID: 18
+Old ID: 219 -> New ID: 19
+Old ID: 104 -> New ID: 20
+Old ID: 70 -> New ID: 21
+Elimination Tree (Node -> Parent Node):
+0 -> 4
+1 -> 5
+2 -> 7
+3 -> None
+4 -> 9
+5 -> 10
+6 -> 11
+7 -> 8
+8 -> 3
+9 -> 2
+10 -> 6
+11 -> 13
+12 -> 14
+13 -> 15
+14 -> 17
+15 -> 12
+16 -> 20
+17 -> 18
+18 -> 16
+19 -> 21
+20 -> 19
+21 -> 9
+popped forward node: 0 with dist: 0
+relaxing forward node: 
+relaxing forward edge: 0
+pushing to forward scheduler: node 2 with dist: 0.00086007
+relaxing forward edge: 1
+pushing to forward scheduler: node 3 with dist: 0.000658743
+relaxing forward edge: 2
+pushing to forward scheduler: node 4 with dist: 0.00118837
+popping backward node 1 with dist: 0
+pushing to backward scheduler: node 5 with dist: 0.000341303
+pushing to backward scheduler: node 6 with dist: 0.000809534
+popping backward node 5 with dist: 0.000341303
+pushing to backward scheduler: node 10 with dist: 0.000559629
+popping backward node 10 with dist: 0.000559629
+pushing to backward scheduler: node 11 with dist: 0.000688392
+popped forward node: 3 with dist: 0.000658743
+relaxing forward node: 
+popping backward node 11 with dist: 0.000688392
+pushing to backward scheduler: node 14 with dist: 0.00209572
+pushing to backward scheduler: node 15 with dist: 0.00214259
+pushing to backward scheduler: node 13 with dist: 0.00499962
+pushing to backward scheduler: node 12 with dist: 0.00643251
+popping backward node 6 with dist: 0.000809534
+pushing to backward scheduler: node 12 with dist: 0.00505573
+pushing to backward scheduler: node 13 with dist: 0.00362284
+popped forward node: 2 with dist: 0.00086007
+relaxing forward node: 
+relaxing forward edge: 5
+relaxing forward edge: 6
+pushing to forward scheduler: node 7 with dist: 0.0030847
+relaxing forward edge: 7
+pushing to forward scheduler: node 8 with dist: 0.00468304
+popped forward node: 4 with dist: 0.00118837
+relaxing forward node: 
+relaxing forward edge: 8
+relaxing forward edge: 9
+relaxing forward edge: 10
+pushing to forward scheduler: node 8 with dist: 0.00309504
+relaxing forward edge: 11
+pushing to forward scheduler: node 9 with dist: 0.005128
+popping backward node 14 with dist: 0.00209572
+pushing to backward scheduler: node 18 with dist: 0.00528647
+pushing to backward scheduler: node 17 with dist: 0.00828604
+pushing to backward scheduler: node 16 with dist: 0.00970831
+popping backward node 15 with dist: 0.00214259
+pushing to backward scheduler: node 18 with dist: 0.00360786
+pushing to backward scheduler: node 17 with dist: 0.00618351
+popped forward node: 7 with dist: 0.0030847
+relaxing forward node: 
+relaxing forward edge: 17
+relaxing forward edge: 18
+popped forward node: 8 with dist: 0.00309504
+relaxing forward node: 
+relaxing forward edge: 19
+popping backward node 18 with dist: 0.00360786
+pushing to backward scheduler: node 16 with dist: 0.0057049
+pushing to backward scheduler: node 20 with dist: 0.0071794
+pushing to backward scheduler: node 19 with dist: 0.00677546
+pushing to backward scheduler: node 21 with dist: 0.00840594
+popping backward node 13 with dist: 0.00362284
+popped forward node: 8 with dist: 0.00468304
+stale
+popping backward node 13 with dist: 0.00499962
+stale
+popping backward node 12 with dist: 0.00505573
+popped forward node: 9 with dist: 0.005128
+relaxing forward node: 
+relaxing forward edge: 20
+relaxing forward edge: 21
+relaxing forward edge: 22
+relaxing forward edge: 23
+popping backward node 18 with dist: 0.00528647
+stale
+popping backward node 16 with dist: 0.0057049
+pushing to backward scheduler: node 9 with dist: 0.00813423
+popping backward node 17 with dist: 0.00618351
+popping backward node 12 with dist: 0.00643251
+stale
+popping backward node 19 with dist: 0.00677546
+pushing to backward scheduler: node 2 with dist: 0.0088418
+pushing to backward scheduler: node 7 with dist: 0.00922397
+popping backward node 20 with dist: 0.0071794
+pushing to backward scheduler: node 7 with dist: 0.00817273
+popping backward node 9 with dist: 0.00813423
+best node updated: 9 with dist: 0.0132622
+pushing to backward scheduler: node 8 with dist: 0.0139805
+pushing to backward scheduler: node 3 with dist: 0.013921
+popping backward node 7 with dist: 0.00817273
+best node updated: 7 with dist: 0.0112574
+pushing to backward scheduler: node 3 with dist: 0.0088118
+pushing to backward scheduler: node 8 with dist: 0.010958
+popping backward node 17 with dist: 0.00828604
+stale
+popping backward node 21 with dist: 0.00840594
+pushing to backward scheduler: node 8 with dist: 0.0106778
+popping backward node 3 with dist: 0.0088118
+best node updated: 3 with dist: 0.00947055
+popping backward node 2 with dist: 0.0088418
+popping backward node 7 with dist: 0.00922397
+stale
+popping backward node 16 with dist: 0.00970831
+stale
+popping backward node 8 with dist: 0.0106778
+finish forward side
+Dijkstra complete. Shortest path cost: 0.00947055
+Path: 
+Number of PQ pops: 34
+Runtime: 59.7939 ms

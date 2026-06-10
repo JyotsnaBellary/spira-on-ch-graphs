@@ -12,15 +12,21 @@ add_executable(spira
     algorithms/pre-processing/witness-dijkstra.cpp
     algorithms/pre-processing/contraction-hierarchy.cpp
     algorithms/pre-processing/customizable-contraction-hierarchy.cpp
+    algorithms/shortest-path/bi-directional/bi-directional-dijkstra.cpp
+    algorithms/shortest-path/bi-directional/bi-directional-spira.cpp
+    algorithms/shortest-path/bi-directional/bi-directional-variant.cpp
     algorithms/shortest-path/ch-dijkstra.cpp
     algorithms/shortest-path/dijkstra.cpp
     algorithms/shortest-path/spira.cpp
     algorithms/shortest-path/new-variant.cpp
-    evaluations/benchmark_tests.cpp
-    # data-structures/graph.cpp
-    # data-structures/ch-graph.cpp
+    evaluations/benchmark-tests.cpp
+    evaluations/benchmark-elimination-tree.cpp
+    data-structures/graph.cpp
+    data-structures/ch-graph.cpp
+    data-structures/elimination-tree.cpp
     utils/file-handler.cpp
     utils/utilities.cpp
+    utils/node-scheduler.cpp
 )
 
                                          

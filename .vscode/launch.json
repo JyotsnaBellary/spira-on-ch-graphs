@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "name": "Debug spira",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Debug/spira",
+      "args": [
+        "1",
+        "300"
+      ],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "console": "integratedTerminal",
+      "externalConsole": false,
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Break at main",
+          "text": "break main",
+          "ignoreFailures": false
+        },
+        {
+          "description": "Disable debuginfod",
+          "text": "set debuginfod enabled off",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

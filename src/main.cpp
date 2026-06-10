@@ -6,7 +6,8 @@
 #include<pre-processing/contraction-hierarchy.hpp>
 #include <shortest-path/spira.hpp>
 #include <shortest-path/new-variant.hpp>
-#include <benchmark_tests.hpp>
+#include <benchmark-tests.hpp>
+#include <benchmark-elimination-tree.hpp>
 
 using namespace std;
 
@@ -24,6 +25,8 @@ int run_algorithms() {
     //     dst = stoi(argv[2]);
     // }
 
+    src = 1;
+    dst = -1;
     cerr << "Running Dijkstra on " << filepath
                   << " src=" << src << " dst=" << dst << endl;
 
@@ -39,7 +42,7 @@ int run_algorithms() {
         // ch.build_downward_adj();
 
         // Now run spira quesries on the upward and downward adjacency lists
-         CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order());
+         CH_Graph chGraph(graph.get_all_nodes(), graph.get_all_edges(), ch.get_rank_order(), true);
 
          chGraph.print_upward_adj();
 
@@ -81,7 +84,7 @@ int run_algorithms() {
         NewVariant newVariant(chGraph);
         SsspResult new_variant_result = newVariant.compute_shortest_path(src, dst);
 
-        cout << "Spira complete. Shortest path cost: " << new_variant_result.total_cost << endl;
+        cout << "New Variant complete. Shortest path cost: " << new_variant_result.total_cost << endl;
 
         // in SPT mode, print distances to nodes that are reachable from src
         for (size_t i = 0; i < new_variant_result.distance.size(); ++i) {
@@ -97,6 +100,16 @@ int run_algorithms() {
     return 0;
 }
 
-int main() {
-    BenchmarkTests::run_benchmark_on_sparse_graphs(false);
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        cerr << "Usage: " << argv[0] << " <src> <dst>\n";
+        return 1;
+    }
+
+    NodeId src = stoi(argv[1]);
+    NodeId dst = stoi(argv[2]);
+
+    BenchmarkEliminationTree::run_dijkstra_with_elimination_tree(src, dst);
+
+    return 0;
 }

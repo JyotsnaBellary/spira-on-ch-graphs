@@ -25,7 +25,7 @@ EdgeId Spira::next(NodeId nodeId) {
 }
 
 // Forward scan inserts the next outgoing edge into priority Queue P
-void Spira::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>>& pq) {
+void Spira::forward(NodeId nodeId, vector<Cost>& cost, EdgePQ& pq) {
     EdgeId edgeId = next(nodeId);
     if (edgeId != INVALID_EDGE) {
         const auto& edge = graph.get_edge(edgeId); 
@@ -33,6 +33,7 @@ void Spira::forward(NodeId nodeId, vector<Cost>& cost, priority_queue<pair<Cost,
         pq.emplace(cost[edge.src] + edge.cost, edgeId);
     }
 }
+
 SsspResult Spira::compute_shortest_path(NodeId src, NodeId dst)
 {
     return compute_shortest_path(src, dst, graph.number_of_nodes());
@@ -65,7 +66,7 @@ SsspResult Spira::compute_shortest_path(NodeId src, NodeId dst, int threshold)
     }
 
     // priority queue storing (tentative distance, edge)
-    priority_queue<pair<Cost, EdgeId>, vector<pair<Cost, EdgeId>>, greater<pair<Cost, EdgeId>>> pq;
+    EdgePQ pq;
 
     // Initialize the source node
     reset();

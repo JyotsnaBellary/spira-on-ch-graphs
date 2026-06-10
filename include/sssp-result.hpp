@@ -41,3 +41,13 @@ struct SsspResult {
         cout << "\n";
     }
 };
+
+struct Bi_Directional_Dijkstra_Result
+{
+    vector<NodeId> path;
+    vector<NodeId> ch_path;
+    Dist total_cost;
+    vector<EdgeId> edge_ids;
+    vector<EdgeId> ch_edge_ids;
+    int number_of_pops;
+};

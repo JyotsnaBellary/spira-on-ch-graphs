@@ -12,9 +12,13 @@ using NodeId = int32_t;
 using EdgeId = int32_t;
 using Weight = double;
 using Dist = double;
-using PQItem = pair<int, NodeId>;
-using NodePQ = priority_queue<PQItem, vector<PQItem>, greater<PQItem>>;
 using Cost = double;
+
+// changed from int to dist
+using PQItem = pair<Dist, NodeId>;
+using NodePQ = priority_queue<PQItem, vector<PQItem>, greater<PQItem>>;
+using EdgePQItem = pair<Cost, EdgeId>;
+using EdgePQ = priority_queue<EdgePQItem, vector<EdgePQItem>, greater<EdgePQItem>>;
 
 struct Shortcut {
     NodeId u;       // left neighbor

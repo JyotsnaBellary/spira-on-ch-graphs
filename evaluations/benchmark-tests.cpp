@@ -1,4 +1,4 @@
-#include <benchmark_tests.hpp>
+#include <benchmark-tests.hpp>
 #include <chrono>
 
 using namespace std;
@@ -549,7 +549,8 @@ void BenchmarkTests::run_src_dst_benchmark_on_CH_graph(CH_Graph &graph, const st
     // CSV Header
     ofstream out(output_csv_path);
     out << boolalpha;
-    out << "src,dst,d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,"
+    out << "src,dst,nodes,edges,reachable_nodes, reachable_edges,subgraph_density,"
+        << "d_time_us,d_cost,s_time_us,s_cost,nv_time_us,nv_cost,"
         << "d_pops,s_pops,nv_pops,nv_q_pops,"
         << "d_avg_pops_per_node,s_avg_pops_per_node,nv_avg_pops_per_node,"
         << "in_pert,in_pert_trans,out_pert,pert,pert_conflicts,"
